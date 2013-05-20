@@ -41,7 +41,7 @@ def project(proj_id):
 
 @app.route("/<objectId:camp_id>/leaderboard")
 def leaderboard(camp_perma):
-	return requests.get(crud_url+'/leaderboards/?where={"camp_id":"'+camp_id+'"}')
+	return requests.get(crud_url+'/leaderboards/',params={'where':'{"camp_id":"'+camp_id+'"}'})
 
 @app.route("/create/<objectId:camp_id>/project")
 def create_proj():
