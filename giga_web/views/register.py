@@ -13,7 +13,8 @@ app = giga_web
 def register_user():
     email = (request.form['email']).lower()
     pw = request.form['pw']
-    r = requests.get(crud_url + '/users/?where={"email":"' + email + '"}')
+    r = requests.get(crud_url + '/users/',
+                     params={'where': '{"email":"' + email + '"}'})
     if r.status_code == requests.codes.ok:
         res = r.json()
         if len(res['_items']) == 0:
@@ -32,3 +33,13 @@ def register_user():
             return json.dumps({'error': 'User exists'})
     else:
         return json.dumps({'error': 'Could not query DB'})
+
+
+@app.route("/register/client")
+def register_client():
+    pass
+
+
+@app.route("/register/c_user")
+def register_client_user():
+    pass

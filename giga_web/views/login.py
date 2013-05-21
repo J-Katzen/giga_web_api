@@ -15,7 +15,8 @@ app = giga_web
 def login():
     email = (request.form['email']).lower()
     pw = request.form['pw']
-    r = requests.get(crud_url + '/users/?where={"email":"' + email + '"}')
+    r = requests.get(crud_url + '/users/',
+                     params={'where': '{"email":"' + email + '"}'})
     if r.status_code == requests.codes.ok:
         res = r.json()
         hashed = res['_items'][0]['pw']

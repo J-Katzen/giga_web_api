@@ -9,23 +9,22 @@ app = giga_web
 
 
 # display user page
-@app.route("/user/<objectid:id>")
+@app.route("/users/<objectid:id>")
 def user(id):
     pass
 
 
-#make a generic function that takes projections
 @app.route("/<campaign_perma>")
 def campaign(campaign_perma):
     return requests.get(crud_url + '/campaigns/' + campaign_perma)
 
 
-@app.route("/<client_perma>")
+@app.route("/clients/<client_perma>")
 def client(client_perma):
     return requests.get(crud_url + '/clients/' + client_perma)
 
 
-@app.route("/<objectid:proj_id>")
+@app.route("/projects/<objectid:proj_id>")
 def project(proj_id):
     return requests.get(crud_url + '/projects/' + proj_id)
 
