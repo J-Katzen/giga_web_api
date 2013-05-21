@@ -2,6 +2,7 @@ from giga_web import giga_web
 from userapi import UserAPI
 from projectapi import ProjectAPI
 from campaignapi import CampaignAPI
+from leaderboardapi import LeaderboardAPI
 
 app = giga_web
 
@@ -17,4 +18,4 @@ def register_api(view, endpoint, url, pk='id'):
 register_api(UserAPI, 'user_api', '/users/', pk='id')
 register_api(CampaignAPI, 'campaign_api', '/campaigns/', pk='campaign_perma')
 register_api(ProjectAPI, 'project_api', '/projects/', pk='proj_id')
-register_api(LeaderboardAPI,'leaderboard_api','/leaderboards/',pk='id')
+register_api(LeaderboardAPI, 'leaderboard_api', '/leaderboards/', pk='id')
