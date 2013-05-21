@@ -10,7 +10,6 @@ app = giga_web
 
 # login
 
-
 @app.route("/login", methods=['POST'])
 def login():
     email = (request.form['email']).lower()
