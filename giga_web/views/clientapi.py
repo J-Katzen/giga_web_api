@@ -1,24 +1,27 @@
 # -*- coding: utf-8 -*-
 
+from giga_web import crud_url
 from flask.views import MethodView
 from flask import request
 from helpers import generic_get
+import requests
 import json
+import bcrypt
 
 
-class ProjectAPI(MethodView):
+class ClientAPI(MethodView):
 
     def get(self, id):
         if id is None:
             pass
         else:
-            path = '/projects/'
-            proj = generic_get(path, proj_id)
-            return json.dumps(proj.content)
+            path = '/clients/'
+            client = generic_get(path, id)
+            return json.dumps(client.content)
 
     def post(self, id):
         if id is not None:
-            pass  # patch
+            pass #patch
         else:
             name = request.form['name']
             perma_name = request.form['perma_name']
@@ -62,8 +65,8 @@ class ProjectAPI(MethodView):
         if id is None:
             return json.dumps({'error': 'did not provide id'})
         else:
-            r = generic_delete('/projects/', user_id)
-            if r.status_code == requests.codes.ok:
-                return json.dumps({'message': 'successful deletion'})
-            else:
-                return json.dumps(r.content)
+            r = requests.get(crud_url + '/clients/' + id)
+            r_json = r.json()
+            etag = r_json['etag']
+            del_req = requests.delete(crud_url + '/clients/' + id,
+                                      headers={'If-Match': etag})

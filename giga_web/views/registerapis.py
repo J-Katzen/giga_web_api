@@ -13,7 +13,7 @@ def register_api(view, endpoint, url, pk='id'):
                      view_func=view_func, methods=['GET', ])
     app.add_url_rule(url, view_func=view_func, methods=['POST', ])
     app.add_url_rule('%s<%s>' % (url, pk), view_func=view_func,
-                     methods=['GET', 'PUT', 'DELETE'])
+                     methods=['GET', 'POST', 'DELETE'])
 
 register_api(UserAPI, 'user_api', '/users/', pk='id')
 register_api(CampaignAPI, 'campaign_api', '/campaigns/', pk='campaign_perma')

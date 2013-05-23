@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from flask.views import MethodView
+from projectapi import ProjectAPI
+from leaderboardapi import LeaderboardAPI
 from flask import request
 from helpers import generic_get
 import json
