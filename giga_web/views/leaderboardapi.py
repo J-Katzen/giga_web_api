@@ -8,7 +8,7 @@ import json
 
 class LeaderboardAPI(MethodView):
 
-    def get(self, id):
+    def get(self, id, cid=None):
         if id is None:
             pass
         else:
@@ -16,8 +16,15 @@ class LeaderboardAPI(MethodView):
             leaderboard = generic_get(path, id)
             return json.dumps(leaderboard.content)
 
-    def post(self):
+    def post(self, id=None, cid=None):
         pass
 
-    def delete(self, user_id):
-        pass
+    def delete(self, id):
+        if id is None:
+            return json.dumps({'error': 'did not provide id'})
+        else:
+            r = generic_delete('/leaderboards/', user_id)
+            if r.status_code == requests.codes.ok:
+                return json.dumps({'message': 'successful deletion'})
+            else:
+                return json.dumps(r.content)

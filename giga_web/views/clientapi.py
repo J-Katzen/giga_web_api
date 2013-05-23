@@ -3,7 +3,7 @@
 from giga_web import crud_url
 from flask.views import MethodView
 from flask import request
-from helpers import generic_get
+from helpers import generic_get, generic_delete
 import requests
 import json
 import bcrypt
@@ -19,9 +19,9 @@ class ClientAPI(MethodView):
             client = generic_get(path, id)
             return json.dumps(client.content)
 
-    def post(self, id):
+    def post(self, id=None):
         if id is not None:
-            pass #patch
+            pass  # patch
         else:
             name = request.form['name']
             perma_name = request.form['perma_name']

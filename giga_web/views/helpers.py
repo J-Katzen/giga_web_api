@@ -24,5 +24,11 @@ def generic_delete(collection_path, id):
                             headers={'If-Match': res['etag']})
         return d
     else:
-        err = {'error': 'Could not find element in' + collection path + ' with id ' + id}
+        err = {'error': 'Could not find element in' +
+               collection_path + ' with id ' + id}
         return err
+
+
+def generic_patch(collection, id):
+    for key, value in request.form.iteritems():
+        print key, value

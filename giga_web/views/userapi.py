@@ -19,7 +19,7 @@ class UserAPI(MethodView):
             user = generic_get(path, id)
             return json.dumps(user.content)
 
-    def post(self, id):
+    def post(self,id=None):
         if id is not None:
             pass  # implement patching
         else:

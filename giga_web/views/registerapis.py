@@ -19,3 +19,6 @@ register_api(UserAPI, 'user_api', '/users/', pk='id')
 register_api(CampaignAPI, 'campaign_api', '/campaigns/', pk='campaign_perma')
 register_api(ProjectAPI, 'project_api', '/projects/', pk='proj_id')
 register_api(LeaderboardAPI, 'leaderboard_api', '/leaderboards/', pk='id')
+
+#gonna need to register things 
+#like /<client>/projects, /<client>/campaigns, etc
