@@ -3,7 +3,7 @@
 from giga_web import crud_url
 from flask.views import MethodView
 from flask import request
-from helpers import generic_get, generic_delete
+from helpers import generic_get, generic_delete, create_dict_from_form
 import requests
 import json
 import bcrypt
@@ -19,23 +19,21 @@ class UserAPI(MethodView):
             user = generic_get(path, id)
             return json.dumps(user.content)
 
-    def post(self,id=None):
+    def post(self, id=None):
         if id is not None:
             pass  # implement patching
         else:
-            email = (request.form['email']).lower()
-            pw = request.form['pw']
+            data = create_dict_from_form(request.form)
+            data['fb_login'] = False
+            data['t_login'] = False
             r = requests.get(crud_url + '/users/',
-                             params={'where': '{"email":"' + email + '"}'})
+                             params={'where': '{"email":"' + data['email'] + '"}'})
             if r.status_code == requests.codes.ok:
                 res = r.json()
                 if len(res['_items']) == 0:
-                    crypted = bcrypt.hashpw(pw, bcrypt.gensalt())
-                    payload = {'data': {
-                               'email': email,
-                               'pw': crypted,
-                               'fb_login': False,
-                               't_login': False}}
+                    data['pw'] = bcrypt.hashpw(data['pw'], bcrypt.gensalt())
+                    print data
+                    payload = {'data': data}
                     reg = requests.post(crud_url + '/users/',
                                         data=json.dumps(payload),
                                         headers={'Content-Type': 'application/json'})

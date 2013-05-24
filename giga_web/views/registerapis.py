@@ -15,10 +15,13 @@ def register_api(view, endpoint, url, pk='id'):
     app.add_url_rule('%s<%s>' % (url, pk), view_func=view_func,
                      methods=['GET', 'POST', 'DELETE'])
 
-register_api(UserAPI, 'user_api', '/users/', pk='id')
+register_api(UserAPI, 'user_api', '/users/')
 register_api(CampaignAPI, 'campaign_api', '/campaigns/', pk='campaign_perma')
-register_api(ProjectAPI, 'project_api', '/projects/', pk='proj_id')
-register_api(LeaderboardAPI, 'leaderboard_api', '/leaderboards/', pk='id')
+register_api(ProjectAPI, 'project_api', '/projects/')
+register_api(LeaderboardAPI, 'leaderboard_api', '/leaderboards/',)
+register_api(ClientAPI, 'client_api', '/clients/')
+register_api(ClientUserAPI, 'client_user_api', '/client_users/')
+register_api()
 
 #gonna need to register things 
 #like /<client>/projects, /<client>/campaigns, etc

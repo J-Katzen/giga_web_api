@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 
+from giga_web import crud_url
 from flask.views import MethodView
 from flask import request
-from helpers import generic_get, generic_delete
+from helpers import generic_get, generic_delete, create_dict_from_form
 import json
+import requests
 
 
 class ProjectAPI(MethodView):
 
-    def get(self, id, cid):
+    def get(self, id):
         if id is None:
             pass
         else:
@@ -16,33 +18,19 @@ class ProjectAPI(MethodView):
             proj = generic_get(path, proj_id)
             return json.dumps(proj.content)
 
-    def post(self, id=None, cid=None):
+    def post(self, id=None):
         if id is not None:
             pass  # patch
         else:
-            client_id = request.form['client_id']
-            camp_id = request.form['camp_id']
-            name = request.form['name']
-            perma_name = request.form['perma_name'].lower()
-            descript = request.form['description']
-            goal = request.form['goal']  # in cents
-            typ = request.form['type']
+            data = create_dict_from_form(request.form)
+            data['raised'] = 0
+            data['completed'] = False
             r = requests.get(crud_url + '/projects/',
-                             params={'where': '{"perma_name":"' + perma_name + '"}'})
+                             params={'where': '{"perma_name":"' + data['perma_name'] + '"}'})
             if r.status_code == requests.codes.ok:
                 res = r.json()
                 if len(res['_items']) == 0:
-                    crypted = bcrypt.hashpw(pw, bcrypt.gensalt())
-                    payload = {'data': {
-                               'client_id': client_id,
-                               'camp_id': camp_id,
-                               'name': name,
-                               'perma_name': perma_name,
-                               'raised': 0,
-                               'goal': goal,
-                               'completed': False,
-                               'descript': descript,
-                               'type': typ}}
+                    payload = {'data': data}
                     reg = requests.post(crud_url + '/projects/',
                                         data=json.dumps(payload),
                                         headers={'Content-Type': 'application/json'})

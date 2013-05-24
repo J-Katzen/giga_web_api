@@ -29,6 +29,11 @@ def generic_delete(collection_path, id):
         return err
 
 
-def generic_patch(collection, id):
-    for key, value in request.form.iteritems():
-        print key, value
+def create_dict_from_form(req_form):
+    d = {}
+    for key, value in req_form.iteritems():
+    	if (key == 'email') or (key == 'uname') or (key=='perma_name'):
+    		d[key] = value.lower()
+    	else:
+        	d[key] = value
+    return d
