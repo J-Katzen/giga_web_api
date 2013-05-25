@@ -16,6 +16,24 @@ def generic_get(collection_path, datum, projection=None):
         return err
 
 
+def generic_patch(collection_path, data_dict):
+    r = requests.get(crud_url + collection_path + data_dict['_id'])
+    if r.status_code == requests.codes.ok:
+        obj_json = r.json()
+        for key, value in data_dict.iteritems():
+            obj_json[key] = value
+        dat = {'data': obj_json}
+        upd = requests.post(crud_url + collection_path + id,
+                            data=json.dumps(dat),
+                            headers={'Content-Type': 'application/json'})
+        if upd.status_code == requests.codes.ok:
+            return upd
+        else:
+            err = {'error': 'Could not correctly patch '
+                   + collection_path + ' with the id of: ' + id}
+            return err
+
+
 def generic_delete(collection_path, id):
     r = requests.get(crud_url + collection_path + id)
     if r.status_code == requests.codes.ok:
@@ -32,8 +50,8 @@ def generic_delete(collection_path, id):
 def create_dict_from_form(req_form):
     d = {}
     for key, value in req_form.iteritems():
-    	if (key == 'email') or (key == 'uname') or (key=='perma_name'):
-    		d[key] = value.lower()
-    	else:
-        	d[key] = value
+        if (key == 'email') or (key == 'uname') or (key == 'perma_name'):
+            d[key] = value.lower()
+        else:
+            d[key] = value
     return d

@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 
+from giga_web import crud_url
 from flask.views import MethodView
 from flask import request
 from helpers import generic_get, generic_delete, create_dict_from_form
 import json
-
+import requests
 
 class DonationAPI(MethodView):
 
-    def get(self, id, cid=None):
+    def get(self, id):
         if id is None:
             pass
         else:
-            path = '/leaderboards/'
+            path = '/donations/'
             leaderboard = generic_get(path, id)
             return json.dumps(leaderboard.content)
 

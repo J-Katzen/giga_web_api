@@ -3,7 +3,7 @@
 from giga_web import crud_url
 from flask.views import MethodView
 from flask import request
-from helpers import generic_get, generic_delete, create_dict_from_form
+import helpers
 import requests
 import json
 import bcrypt
@@ -16,14 +16,14 @@ class ClientAPI(MethodView):
             pass
         else:
             path = '/clients/'
-            client = generic_get(path, id)
+            client = helpers.generic_get(path, id)
             return json.dumps(client.content)
 
     def post(self, id=None):
         if id is not None:
             pass  # patch
         else:
-            data = create_dict_from_form(request.form)
+            data = helpers.create_dict_from_form(request.form)
             r = requests.get(crud_url + '/clients/',
                              params={'where': '{"name":"' + name + '"}'})
             r2 = requests.get(crud_url + '/clients/' + perma_name)
@@ -53,8 +53,8 @@ class ClientAPI(MethodView):
         if id is None:
             return json.dumps({'error': 'did not provide id'})
         else:
-            r = requests.get(crud_url + '/clients/' + id)
-            r_json = r.json()
-            etag = r_json['etag']
-            del_req = requests.delete(crud_url + '/clients/' + id,
-                                      headers={'If-Match': etag})
+            r = helpers.generic_delete('/clients/', id)
+            if r.status_code == requests.codes.ok:
+                return json.dumps({'message': 'successful deletion'})
+            else:
+                return json.dumps(r.content)

@@ -10,7 +10,7 @@ import requests
 
 class LeaderboardAPI(MethodView):
 
-    def get(self, id, cid=None):
+    def get(self, id):
         if id is None:
             pass
         else:
@@ -29,13 +29,13 @@ class LeaderboardAPI(MethodView):
                 res = r.json()
                 if len(res['_items']) == 0:
                     payload = {'data': data}
-                    reg = requests.post(crud_url + '/client_users/',
+                    reg = requests.post(crud_url + '/leaderboards/',
                                         data=json.dumps(payload),
                                         headers={'Content-Type': 'application/json'})
 
                     return json.dumps(reg.content)
                 else:
-                    return json.dumps({'error': 'User exists'})
+                    return json.dumps({'error': 'Leaderboard exists for this campaign'})
             else:
                 return json.dumps({'error': 'Could not query DB'})
 

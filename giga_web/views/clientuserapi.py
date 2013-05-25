@@ -11,7 +11,7 @@ import bcrypt
 
 class ClientUserAPI(MethodView):
 
-    def get(self, id, cid=None):
+    def get(self, id):
         if id is None:
             return json.dumps({'error': 'no id provided'})
         else:

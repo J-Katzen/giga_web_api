@@ -3,6 +3,8 @@ from userapi import UserAPI
 from projectapi import ProjectAPI
 from campaignapi import CampaignAPI
 from leaderboardapi import LeaderboardAPI
+from clientapi import ClientAPI
+from clientuserapi import ClientUserAPI
 
 app = giga_web
 
@@ -21,7 +23,4 @@ register_api(ProjectAPI, 'project_api', '/projects/')
 register_api(LeaderboardAPI, 'leaderboard_api', '/leaderboards/',)
 register_api(ClientAPI, 'client_api', '/clients/')
 register_api(ClientUserAPI, 'client_user_api', '/client_users/')
-register_api()
-
-#gonna need to register things 
-#like /<client>/projects, /<client>/campaigns, etc
+#register_api()
