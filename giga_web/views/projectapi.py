@@ -19,10 +19,10 @@ class ProjectAPI(MethodView):
             return json.dumps(proj.content)
 
     def post(self, id=None):
+        data = helpers.create_dict_from_form(request.form)
         if id is not None:
             pass  # patch
         else:
-            data = helpers.create_dict_from_form(request.form)
             data['raised'] = 0
             data['completed'] = False
             r = requests.get(crud_url + '/projects/',

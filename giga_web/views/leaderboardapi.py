@@ -19,10 +19,10 @@ class LeaderboardAPI(MethodView):
             return json.dumps(leaderboard.content)
 
     def post(self, id=None):
+        data = create_dict_from_form(request.form)
         if id is not None:
             pass
         else:
-            data = create_dict_from_form(request.form)
             r = requests.get(crud_url + '/leaderboards/',
                              params={'where': '{"camp_id":"' + data['camp_id'] + '"}'})
             if r.status_code == requests.codes.ok:

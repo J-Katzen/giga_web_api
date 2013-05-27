@@ -19,11 +19,10 @@ class CampaignAPI(MethodView):
             return json.dumps(camp.content)
 
     def post(self, campaign_perma=None):
+        data = helpers.create_dict_from_form(request.form)
         if campaign_perma is not None:
             pass
         else:
-            #needs name, perma_name, client_id, date_start, date_end, 
-            data = helpers.create_dict_from_form(request.form)
             data['total_raised'] = 0
             print data
             r = requests.get(crud_url + '/campaigns/',

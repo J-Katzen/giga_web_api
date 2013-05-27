@@ -23,7 +23,7 @@ def generic_patch(collection_path, data_dict):
         for key, value in data_dict.iteritems():
             obj_json[key] = value
         dat = {'data': obj_json}
-        upd = requests.post(crud_url + collection_path + id,
+        upd = requests.post(crud_url + collection_path + data_dict['_id'],
                             data=json.dumps(dat),
                             headers={'Content-Type': 'application/json',
                                      'X-HTTP-Method-Override': 'PATCH',
@@ -32,7 +32,7 @@ def generic_patch(collection_path, data_dict):
             return upd
         else:
             err = {'error': 'Could not correctly patch '
-                   + collection_path + ' with the id of: ' + id}
+                   + collection_path + ' with the id of: ' + data_dict['_id']}
             return err
 
 
@@ -61,6 +61,6 @@ def create_dict_from_form(req_form):
                 d[key] = False
         elif value.isdigit():
             d[key] = int(value)
-        else:
+        elif value != '':
             d[key] = value
     return d

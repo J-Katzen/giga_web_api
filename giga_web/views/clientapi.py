@@ -20,12 +20,10 @@ class ClientAPI(MethodView):
             return json.dumps(client.content)
 
     def post(self, id=None):
+        data = helpers.create_dict_from_form(request.form)
         if id is not None:
             pass  # patch
         else:
-            print request.form
-            data = helpers.create_dict_from_form(request.form)
-            print data
             r = requests.get(crud_url + '/clients/',
                              params={'where': '{"name":"' + data['name'] + '"}'})
             r2 = requests.get(crud_url + '/clients/' + data['perma_name'])

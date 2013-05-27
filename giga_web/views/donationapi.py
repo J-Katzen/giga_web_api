@@ -19,10 +19,11 @@ class DonationAPI(MethodView):
             return json.dumps(leaderboard.content)
 
     def post(self, id=None):
+        data = create_dict_from_form(request.form)
         if id is not None:
             pass
         else:
-            data = create_dict_from_form(request.form)
+
             payload = {'data': data}
             reg = requests.post(crud_url + '/donations/',
                                 data=json.dumps(payload),

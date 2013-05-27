@@ -20,10 +20,10 @@ class UserAPI(MethodView):
             return json.dumps(user.content)
 
     def post(self, id=None):
+        data = create_dict_from_form(request.form)
         if id is not None:
             pass  # implement patching
         else:
-            data = create_dict_from_form(request.form)
             data['fb_login'] = False
             data['t_login'] = False
             r = requests.get(crud_url + '/users/',

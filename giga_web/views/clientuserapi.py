@@ -20,10 +20,10 @@ class ClientUserAPI(MethodView):
             return json.dumps(user.content)
 
     def post(self, id=None):
+        data = create_dict_from_form(request.form)
         if id is not None:
             pass
         else:
-            data = create_dict_from_form(request.form)
             r = requests.get(crud_url + '/client_users/',
                              params={'where': '{"uname":"' + data['uname'] + '"}'})
             if r.status_code == requests.codes.ok:
