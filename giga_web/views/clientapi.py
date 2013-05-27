@@ -23,10 +23,12 @@ class ClientAPI(MethodView):
         if id is not None:
             pass  # patch
         else:
+            print request.form
             data = helpers.create_dict_from_form(request.form)
+            print data
             r = requests.get(crud_url + '/clients/',
-                             params={'where': '{"name":"' + name + '"}'})
-            r2 = requests.get(crud_url + '/clients/' + perma_name)
+                             params={'where': '{"name":"' + data['name'] + '"}'})
+            r2 = requests.get(crud_url + '/clients/' + data['perma_name'])
             if (r.status_code == requests.codes.ok) and (r2.status_code == 404):
                 res = r.json()
                 if len(res['_items']) == 0:

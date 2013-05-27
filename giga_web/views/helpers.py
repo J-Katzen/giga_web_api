@@ -25,7 +25,9 @@ def generic_patch(collection_path, data_dict):
         dat = {'data': obj_json}
         upd = requests.post(crud_url + collection_path + id,
                             data=json.dumps(dat),
-                            headers={'Content-Type': 'application/json'})
+                            headers={'Content-Type': 'application/json',
+                                     'X-HTTP-Method-Override': 'PATCH',
+                                     'If-Match': obj_json['etag']})
         if upd.status_code == requests.codes.ok:
             return upd
         else:
@@ -50,8 +52,15 @@ def generic_delete(collection_path, id):
 def create_dict_from_form(req_form):
     d = {}
     for key, value in req_form.iteritems():
-        if (key == 'email') or (key == 'uname') or (key == 'perma_name'):
+        if key in ['email', 'uname', 'perma_name']:
             d[key] = value.lower()
+        elif key in ['active', 'fb_login', 't_login']:
+            if value.lower() in ['true', 'yes', 't', '1']:
+                d[key] = True
+            else:
+                d[key] = False
+        elif value.isdigit():
+            d[key] = int(value)
         else:
             d[key] = value
     return d

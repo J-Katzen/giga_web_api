@@ -25,6 +25,7 @@ class CampaignAPI(MethodView):
             #needs name, perma_name, client_id, date_start, date_end, 
             data = helpers.create_dict_from_form(request.form)
             data['total_raised'] = 0
+            print data
             r = requests.get(crud_url + '/campaigns/',
                              params={'where': '{"perma_name":"' + data['perma_name'] + '"}'})
             if r.status_code == requests.codes.ok:
@@ -49,6 +50,7 @@ class CampaignAPI(MethodView):
             res = camp.json()
             for proj in res['project_list']:
                 d = helpers.generic_delete('/projects/', proj['p_id'])
+            lead = helpers.generic_delete('/leaderboards/', res['leaderboard_id'])
             r = helpers.generic_delete('/campaigns/', user_id)
             if r.status_code == requests.codes.ok:
                 return json.dumps({'message': 'successful deletion'})
