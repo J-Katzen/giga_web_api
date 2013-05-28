@@ -9,30 +9,34 @@ import requests
 
 
 class ProjectAPI(MethodView):
+    path = '/projects/'
 
-    def get(self, id):
+    def get(self, cid, id):
         if id is None:
-            pass
+            parm = {'where': '{"client_id" : "%s"}' % cid }
+            r = requests.get(crud_url + self.path,
+                             params=parm)
+            res = r.json()
+            return json.dumps(res['_items'])
         else:
-            path = '/projects/'
             proj = helpers.generic_get(path, proj_id)
             return json.dumps(proj.content)
 
     def post(self, id=None):
         data = helpers.create_dict_from_form(request.form)
         if id is not None:
-            pass  # patch
+            pass  # patch & update
         else:
             data['raised'] = 0
             data['completed'] = False
-            r = requests.get(crud_url + '/projects/',
+            r = requests.get(crud_url + self.path,
                              params={'where': '{"perma_name":"' +
                                      data['perma_name'] + '"}'})
             if r.status_code == requests.codes.ok:
                 res = r.json()
                 if len(res['_items']) == 0:
                     payload = {'data': data}
-                    reg = requests.post(crud_url + '/projects/',
+                    reg = requests.post(crud_url + self.path,
                                         data=json.dumps(payload),
                                         headers={'Content-Type':
                                         'application/json'})
@@ -57,10 +61,10 @@ class ProjectAPI(MethodView):
         return json.dumps(patched.content)
 
     def campaign_remove_proj(self, id):
-        camp = helpers.generic_get('/projects/', id)
+        camp = helpers.generic_get(self.path, id)
         if camp.status_code == requests.codes.ok:
             cj = camp.json()
-            c = helpers.generic_get('/campaigns/' cj['camp_id'])
+            c = helpers.generic_get('/campaigns/', cj['camp_id'])
             if c.status_code == requests.codes.ok:
                 cam = c.json()
                 cam['project_list'][:] = [d for d in cam['project_list'] if d.get('p_id') != id]
@@ -75,7 +79,7 @@ class ProjectAPI(MethodView):
         else:
             c = self.campaign_remove_proj(id)
             if c['data']['status'] == 'OK':
-                r = helpers.generic_delete('/projects/', id)
+                r = helpers.generic_delete(self.path, id)
                 if r.status_code == requests.codes.ok:
                     return json.dumps({'message': 'successful deletion'})
                 else:

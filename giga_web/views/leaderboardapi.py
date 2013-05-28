@@ -3,33 +3,37 @@
 from giga_web import crud_url
 from flask.views import MethodView
 from flask import request
-from helpers import generic_get, generic_delete, create_dict_from_form
+import helpers
 import json
 import requests
 
 
 class LeaderboardAPI(MethodView):
+    path = '/leaderboards/'
 
-    def get(self, id):
+    def get(self, cid, id):
         if id is None:
-            pass
+            parm = {'where': '{"client_id" : "%s"}' % cid}
+            r = requests.get(crud_url + self.path,
+                             params=parm)
+            res = r.json()
+            return json.dumps(res['_items'])
         else:
-            path = '/leaderboards/'
-            leaderboard = generic_get(path, id)
+            leaderboard = helpers.generic_get(self.path, id)
             return json.dumps(leaderboard.content)
 
     def post(self, id=None):
-        data = create_dict_from_form(request.form)
+        data = helpers.create_dict_from_form(request.form)
         if id is not None:
             pass
         else:
-            r = requests.get(crud_url + '/leaderboards/',
+            r = requests.get(crud_url + self.path,
                              params={'where': '{"camp_id":"' + data['camp_id'] + '"}'})
             if r.status_code == requests.codes.ok:
                 res = r.json()
                 if len(res['_items']) == 0:
                     payload = {'data': data}
-                    reg = requests.post(crud_url + '/leaderboards/',
+                    reg = requests.post(crud_url + self.path,
                                         data=json.dumps(payload),
                                         headers={'Content-Type': 'application/json'})
 
@@ -43,7 +47,7 @@ class LeaderboardAPI(MethodView):
         if id is None:
             return json.dumps({'error': 'did not provide id'})
         else:
-            r = generic_delete('/leaderboards/', id)
+            r = helpers.generic_delete(self.path, id)
             if r.status_code == requests.codes.ok:
                 return json.dumps({'message': 'successful deletion'})
             else:

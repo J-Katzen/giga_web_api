@@ -10,28 +10,33 @@ import bcrypt
 
 
 class ClientAPI(MethodView):
+    path = '/clients/'
 
     def get(self, id):
         if id is None:
             pass
         else:
-            path = '/clients/'
-            client = helpers.generic_get(path, id)
+            client = helpers.generic_get(self.path, id)
             return json.dumps(client.content)
 
     def post(self, id=None):
         data = helpers.create_dict_from_form(request.form)
         if id is not None:
-            pass  # patch
+            data['_id'] = id
+            patched = helpers.generic_patch(self.path, data)
+            if 'error' in patched:
+                return patched
+            else:
+                return json.dumps(patched.content)
         else:
-            r = requests.get(crud_url + '/clients/',
+            r = requests.get(crud_url + self.path,
                              params={'where': '{"name":"' + data['name'] + '"}'})
-            r2 = requests.get(crud_url + '/clients/' + data['perma_name'])
+            r2 = requests.get(crud_url + self.path + data['perma_name'])
             if (r.status_code == requests.codes.ok) and (r2.status_code == 404):
                 res = r.json()
                 if len(res['_items']) == 0:
                     payload = {'data': data}
-                    reg = requests.post(crud_url + '/clients/',
+                    reg = requests.post(crud_url + self.path,
                                         data=json.dumps(payload),
                                         headers={'Content-Type': 'application/json'})
 
@@ -53,7 +58,7 @@ class ClientAPI(MethodView):
         if id is None:
             return json.dumps({'error': 'did not provide id'})
         else:
-            r = helpers.generic_delete('/clients/', id)
+            r = helpers.generic_delete(self.path, id)
             if r.status_code == requests.codes.ok:
                 return json.dumps({'message': 'successful deletion'})
             else:
