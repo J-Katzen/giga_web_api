@@ -40,6 +40,8 @@ class DonationAPI(MethodView):
                 if pj['raised'] >= pj['goal']:
                     pj['completed'] = True
                 upd_p = helpers.generic_patch('/projects/', pj)
+                if 'error' in upd_p:
+                    return upd_p
             # update campaign
             camp = helpers.generic_get('/campaigns/', data['camp_id'])
             camp_j = camp.json()
@@ -48,6 +50,8 @@ class DonationAPI(MethodView):
             if camp_j['total_raised'] >= camp_j['total_goal']:
                 camp_j['completed'] = True
             upd_camp = helpers.generic_patch('/campaigns/', camp_j)
+            if 'error' in upd_camp:
+                return upd_camp
             # update leaderboard
             lead = helpers.generic_get('/leaderboards/', lead_id)
             lead_j = lead.json()
@@ -64,6 +68,8 @@ class DonationAPI(MethodView):
                                      'donated': data['donated'],
                                      'ref': 0})
             upd_lead = helpers.generic_patch('/leaderboards/', lead_j)
+            if 'error' in upd_lead:
+                return upd_lead
             return reg.content
 
     def update_project(self, )
