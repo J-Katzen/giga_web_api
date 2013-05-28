@@ -13,14 +13,14 @@ class ProjectAPI(MethodView):
 
     def get(self, cid, id):
         if id is None:
-            parm = {'where': '{"client_id" : "%s"}' % cid }
+            parm = {'where': '{"client_id" : "%s"}' % cid}
             r = requests.get(crud_url + self.path,
                              params=parm)
             res = r.json()
             return json.dumps(res['_items'])
         else:
             proj = helpers.generic_get(path, proj_id)
-            return json.dumps(proj.content)
+            return proj.content
 
     def post(self, id=None):
         data = helpers.create_dict_from_form(request.form)
@@ -42,7 +42,11 @@ class ProjectAPI(MethodView):
                                         'application/json'})
                     camp_append = self.campaign_append_proj(
                         json.loads(reg.content))
-                    return json.dumps(reg.content)
+                    if json.loads(camp_append)['data']['status'] == 'OK':
+                        return reg.content
+                    else:
+                        return json.dumps({'error': 'could not append proj'
+                                           ' to campaign'})
                 else:
                     return json.dumps({'error': 'Project perma_name is'
                                        ' not unique'})
@@ -57,8 +61,9 @@ class ProjectAPI(MethodView):
                                   'votes': 0,
                                   'goal': proj_data['goal'],
                                   'description': proj_data['descript'][0:254]})
+        c['total_goal'] += proj_data['goal']
         patched = helpers.generic_patch('/campaigns/', c)
-        return json.dumps(patched.content)
+        return patched.content
 
     def campaign_remove_proj(self, id):
         camp = helpers.generic_get(self.path, id)
@@ -67,7 +72,10 @@ class ProjectAPI(MethodView):
             c = helpers.generic_get('/campaigns/', cj['camp_id'])
             if c.status_code == requests.codes.ok:
                 cam = c.json()
-                cam['project_list'][:] = [d for d in cam['project_list'] if d.get('p_id') != id]
+                proj = (d for d in cam[
+                        'project_list'] if d['p_id'] == id).next()
+                cam['total_goal'] -= proj['goal']
+                cam['project_list'].remove(proj)
                 patched = helpers.generic_patch('/campaigns/', cam)
                 return patched.json()
         else:
@@ -83,7 +91,7 @@ class ProjectAPI(MethodView):
                 if r.status_code == requests.codes.ok:
                     return json.dumps({'message': 'successful deletion'})
                 else:
-                    return json.dumps(r.content)
+                    return r.content
             else:
                 return json.dumps({'error': 'Could not remove proj'
                                    ' from campaign'})

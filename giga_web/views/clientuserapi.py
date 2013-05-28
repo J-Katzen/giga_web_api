@@ -21,7 +21,7 @@ class ClientUserAPI(MethodView):
             return json.dumps(res['_items'])
         else:
             user = helpers.generic_get(self.path, id)
-            return json.dumps(user.content)
+            return user.content
 
     def post(self, id=None):
         data = helpers.create_dict_from_form(request.form)
@@ -39,7 +39,7 @@ class ClientUserAPI(MethodView):
                                         data=json.dumps(payload),
                                         headers={'Content-Type': 'application/json'})
 
-                    return json.dumps(reg.content)
+                    return reg.content
                 else:
                     return json.dumps({'error': 'User exists'})
             else:
@@ -53,4 +53,4 @@ class ClientUserAPI(MethodView):
             if r.status_code == requests.codes.ok:
                 return json.dumps({'message': 'successful deletion'})
             else:
-                return json.dumps(r.content)
+                return r.content
