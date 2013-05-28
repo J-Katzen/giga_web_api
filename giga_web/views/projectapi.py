@@ -19,7 +19,7 @@ class ProjectAPI(MethodView):
             res = r.json()
             return json.dumps(res['_items'])
         else:
-            proj = helpers.generic_get(path, proj_id)
+            proj = helpers.generic_get(self.path, proj_id)
             return proj.content
 
     def post(self, id=None):
@@ -72,8 +72,8 @@ class ProjectAPI(MethodView):
             c = helpers.generic_get('/campaigns/', cj['camp_id'])
             if c.status_code == requests.codes.ok:
                 cam = c.json()
-                proj = (d for d in cam[
-                        'project_list'] if d['p_id'] == id).next()
+                proj = next((d for d in cam[
+                            'project_list'] if d['p_id'] == id), None)
                 cam['total_goal'] -= proj['goal']
                 cam['project_list'].remove(proj)
                 patched = helpers.generic_patch('/campaigns/', cam)
@@ -93,5 +93,4 @@ class ProjectAPI(MethodView):
                 else:
                     return r.content
             else:
-                return json.dumps({'error': 'Could not remove proj'
-                                   ' from campaign'})
+                return json.dumps({'error': 'Could not remove proj from campaign'})

@@ -28,7 +28,7 @@ def login():
         return json.dumps({'error': 'Could not query DB'})
 
 
-@app.route("<client_perma>/login/", methods=['POST'])
+@app.route("/<client_perma>/login/", methods=['POST'])
 def client_login(client_perma):
     data = helpers.create_dict_from_form(request.form)
     # get client

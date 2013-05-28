@@ -71,6 +71,8 @@ class CampaignAPI(MethodView):
                             headers={'Content-Type': 'application/json'})
         return res.json()
 
+    # should we ever really delete a campaign if it's been in motion? date
+    # restrictions
     def delete(self, campaign_perma):
         if campaign_perma is None:
             return json.dumps({'error': 'did not provide campaign_perma'})
@@ -79,7 +81,8 @@ class CampaignAPI(MethodView):
             res = camp.json()
             for proj in res['project_list']:
                 d = helpers.generic_delete('/projects/', proj['p_id'])
-            lead = helpers.generic_delete('/leaderboards/', res['leaderboard_id'])
+            lead = helpers.generic_delete(
+                '/leaderboards/', res['leaderboard_id'])
             r = helpers.generic_delete(self.path, user_id)
             if r.status_code == requests.codes.ok:
                 return json.dumps({'message': 'successful deletion'})
