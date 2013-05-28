@@ -71,16 +71,24 @@ class DonationAPI(MethodView):
         lead_j = lead.json()
         lead_j['raised'] += data['donated']
         if 'ref' in data:
-            lead_j['ref'] += data['donated']
+            lead_j['referred'] += data['donated']
             user = next((d for d in lead_j['donors'] if
                          d['email'].lower() == data['ref'].lower()), None)
             if user is not None:
+                lead_j['donors'] = [d for d in lead_j['donors'] if d['email'].lower() != data['ref'].lower()]
                 user['ref'] += data['donated']
+                lead_j['donors'].append(user)
+        # check if user donating is already in leaderboard
         user2 = next((d for d in lead_j['donors'] if
                       d['email'].lower() == data['email'].lower()), None)
-        lead_j['donors'].append({'email': data['email'],
-                                 'donated': data['donated'],
-                                 'ref': 0})
+        if user2 is not None:
+            lead_j['donors'] = [d for d in lead_j['donors'] if d['email'].lower() != data['email'].lower()]
+            user2['donated'] += data['donated']
+            lead_j['donors'].append(user2)
+        else:
+            lead_j['donors'].append({'email': data['email'].lower(),
+                                     'donated': data['donated'],
+                                     'ref': 0})
         upd_lead = helpers.generic_patch('/leaderboards/', lead_j)
         return upd_lead
 

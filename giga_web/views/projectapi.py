@@ -53,6 +53,15 @@ class ProjectAPI(MethodView):
             else:
                 return json.dumps({'error': 'Cannot reach DB'})
 
+    def campaign_update(self, proj_data):
+        camp = helpers.generic_get('/campaigns/', proj_data['camp_id'])
+        c = camp.json()
+        proj = next((d for d in c['project_list'] if
+                     d['p_id'] == proj_data['_id']), None)
+        if proj is not None:
+            for key, value in proj_data.iteritems():
+                proj[key] = value
+
     def campaign_append_proj(self, proj_data):
         camp = helpers.generic_get('/campaigns/', proj_data['camp_id'])
         c = camp.json()
