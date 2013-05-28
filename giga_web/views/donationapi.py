@@ -34,45 +34,55 @@ class DonationAPI(MethodView):
                                 headers={'Content-Type': 'application/json'})
             # update project(s)
             for proj in data['distro']:
-                p = helpers.generic_get('/projects/', proj['p_id'])
-                pj = p.json()
-                pj['raised'] += proj['amt']
-                if pj['raised'] >= pj['goal']:
-                    pj['completed'] = True
-                upd_p = helpers.generic_patch('/projects/', pj)
-                if 'error' in upd_p:
-                    return upd_p
+                up = self.update_project_post(proj)
+                if 'error' in up:
+                    return up
             # update campaign
-            camp = helpers.generic_get('/campaigns/', data['camp_id'])
-            camp_j = camp.json()
-            lead_id = camp_j['leaderboard_id']
-            camp_j['total_raised'] += data['donated']
-            if camp_j['total_raised'] >= camp_j['total_goal']:
-                camp_j['completed'] = True
-            upd_camp = helpers.generic_patch('/campaigns/', camp_j)
-            if 'error' in upd_camp:
-                return upd_camp
+            camp, leader_id = self.update_campaign_post(data)
+            if 'error' in camp:
+                return camp
             # update leaderboard
-            lead = helpers.generic_get('/leaderboards/', lead_id)
-            lead_j = lead.json()
-            lead_j['raised'] += data['donated']
-            if 'ref' in data:
-                lead_j['ref'] += data['donated']
-                user = next((d for d in lead_j['donors'] if
-                             d['email'].lower() == data['ref'].lower()), None)
-                if user is not None:
-                    user['ref'] += data['donated']
-            user2 = next((d for d in lead_j['donors'] if
-                          d['email'].lower() == data['email'].lower()), None)
-            lead_j['donors'].append({'email': data['email'],
-                                     'donated': data['donated'],
-                                     'ref': 0})
-            upd_lead = helpers.generic_patch('/leaderboards/', lead_j)
-            if 'error' in upd_lead:
-                return upd_lead
+            lead = self.update_leaderboard_post(data, leader_id)
+            if 'error' in lead:
+                return lead
             return reg.content
 
-    def update_project(self, )
+    def update_project_post(self, proj):
+        p = helpers.generic_get('/projects/', proj['p_id'])
+        pj = p.json()
+        pj['raised'] += proj['amt']
+        if pj['raised'] >= pj['goal']:
+            pj['completed'] = True
+        upd_p = helpers.generic_patch('/projects/', pj)
+        return upd_p
+
+    def update_campaign_post(self, data):
+        camp = helpers.generic_get('/campaigns/', data['camp_id'])
+        camp_j = camp.json()
+        lead_id = camp_j['leaderboard_id']
+        camp_j['total_raised'] += data['donated']
+        if camp_j['total_raised'] >= camp_j['total_goal']:
+            camp_j['completed'] = True
+        upd_camp = helpers.generic_patch('/campaigns/', camp_j)
+        return upd_camp, lead_id
+
+    def update_leaderboard_post(self, data, lead_id):
+        lead = helpers.generic_get('/leaderboards/', lead_id)
+        lead_j = lead.json()
+        lead_j['raised'] += data['donated']
+        if 'ref' in data:
+            lead_j['ref'] += data['donated']
+            user = next((d for d in lead_j['donors'] if
+                         d['email'].lower() == data['ref'].lower()), None)
+            if user is not None:
+                user['ref'] += data['donated']
+        user2 = next((d for d in lead_j['donors'] if
+                      d['email'].lower() == data['email'].lower()), None)
+        lead_j['donors'].append({'email': data['email'],
+                                 'donated': data['donated'],
+                                 'ref': 0})
+        upd_lead = helpers.generic_patch('/leaderboards/', lead_j)
+        return upd_lead
 
     def delete(self, id):
         if id is None:
