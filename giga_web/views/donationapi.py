@@ -20,22 +20,59 @@ class DonationAPI(MethodView):
             return json.dumps(res['_items'])
         else:
             leaderboard = helpers.generic_get(self.path, id)
-            return json.dumps(leaderboard.content)
+            return leaderboard.content
 
     def post(self, id=None):
         data = helpers.create_dict_from_form(request.form)
         if id is not None:
+            # wait - why do we ever patch a donation? refunds? what else?
             pass
         else:
-
             payload = {'data': data}
             reg = requests.post(crud_url + self.path,
                                 data=json.dumps(payload),
                                 headers={'Content-Type': 'application/json'})
-            # update project
+            # update project(s)
+            for proj in data['distro']:
+                p = helpers.generic_get('/projects/', proj['p_id'])
+                pj = p.json()
+                pj['raised'] += proj['amt']
+                if pj['raised'] >= pj['goal']:
+                    pj['completed'] = True
+                upd_p = helpers.generic_patch('/projects/', pj)
+                if 'error' in upd_p:
+                    return upd_p
             # update campaign
+            camp = helpers.generic_get('/campaigns/', data['camp_id'])
+            camp_j = camp.json()
+            lead_id = camp_j['leaderboard_id']
+            camp_j['total_raised'] += data['donated']
+            if camp_j['total_raised'] >= camp_j['total_goal']:
+                camp_j['completed'] = True
+            upd_camp = helpers.generic_patch('/campaigns/', camp_j)
+            if 'error' in upd_camp:
+                return upd_camp
             # update leaderboard
-            return json.dumps(reg.content)
+            lead = helpers.generic_get('/leaderboards/', lead_id)
+            lead_j = lead.json()
+            lead_j['raised'] += data['donated']
+            if 'ref' in data:
+                lead_j['ref'] += data['donated']
+                user = next((d for d in lead_j['donors'] if
+                             d['email'].lower() == data['ref'].lower()), None)
+                if user is not None:
+                    user['ref'] += data['donated']
+            user2 = next((d for d in lead_j['donors'] if
+                          d['email'].lower() == data['email'].lower()), None)
+            lead_j['donors'].append({'email': data['email'],
+                                     'donated': data['donated'],
+                                     'ref': 0})
+            upd_lead = helpers.generic_patch('/leaderboards/', lead_j)
+            if 'error' in upd_lead:
+                return upd_lead
+            return reg.content
+
+    def update_project(self, )
 
     def delete(self, id):
         if id is None:
@@ -48,4 +85,4 @@ class DonationAPI(MethodView):
             if r.status_code == requests.codes.ok:
                 return json.dumps({'message': 'successful deletion'})
             else:
-                return json.dumps(r.content)
+                return r.content

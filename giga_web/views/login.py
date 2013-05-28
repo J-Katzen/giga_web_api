@@ -2,7 +2,7 @@
 
 from flask import request
 from giga_web import giga_web, crud_url
-from helpers import create_dict_from_form
+import helpers
 import requests
 import bcrypt
 import json
@@ -11,9 +11,9 @@ app = giga_web
 
 # login
 
-@app.route("/login", methods=['POST'])
+@app.route("/login/", methods=['POST'])
 def login():
-    data = create_dict_from_form(request.form)
+    data = helpers.create_dict_from_form(request.form)
     r = requests.get(crud_url + '/users/',
                      params={'where': '{"email":"' + data['email'] + '"}'})
     if r.status_code == requests.codes.ok:

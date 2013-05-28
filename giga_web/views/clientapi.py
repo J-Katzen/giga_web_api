@@ -17,7 +17,7 @@ class ClientAPI(MethodView):
             pass
         else:
             client = helpers.generic_get(self.path, id)
-            return json.dumps(client.content)
+            return client.content
 
     def post(self, id=None):
         data = helpers.create_dict_from_form(request.form)
@@ -27,7 +27,7 @@ class ClientAPI(MethodView):
             if 'error' in patched:
                 return patched
             else:
-                return json.dumps(patched.content)
+                return patched.content
         else:
             r = requests.get(crud_url + self.path,
                              params={'where': '{"name":"' + data['name'] + '"}'})
@@ -40,7 +40,7 @@ class ClientAPI(MethodView):
                                         data=json.dumps(payload),
                                         headers={'Content-Type': 'application/json'})
 
-                    return json.dumps(reg.content)
+                    return reg.content
                 else:
                     return json.dumps({'error': 'Client name is not unique'})
             elif r.status_code == r2.status_code == 404:
@@ -62,4 +62,4 @@ class ClientAPI(MethodView):
             if r.status_code == requests.codes.ok:
                 return json.dumps({'message': 'successful deletion'})
             else:
-                return json.dumps(r.content)
+                return r.content

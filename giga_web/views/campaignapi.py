@@ -20,7 +20,7 @@ class CampaignAPI(MethodView):
             return json.dumps(res['_items'])
         else:
             camp = helpers.generic_get(self.path, campaign_perma)
-            return json.dumps(camp.content)
+            return camp.content
 
     def post(self, campaign_perma=None):
         data = helpers.create_dict_from_form(request.form)
@@ -30,10 +30,10 @@ class CampaignAPI(MethodView):
             if 'error' in patched:
                 return patched
             else:
-                return json.dumps(patched.content)
+                return patched.content
         else:
             data['total_raised'] = 0
-            print data
+            data['completed'] = False
             r = requests.get(crud_url + self.path,
                              params={'where': '{"perma_name":"' + data['perma_name'] + '"}'})
             if r.status_code == requests.codes.ok:
@@ -47,9 +47,14 @@ class CampaignAPI(MethodView):
                     lead_data = reg.json()
                     cl = create_leaderboard(lead_data)
                     if cl['data']['status'] == 'OK':
-                        return json.dumps(reg.content)
+                        lead_data['leaderboard_id'] = cl['data']['_id']
+                        p = helpers.generic_patch(self.path, lead_data)
+                        if p.json()['data']['status'] == 'OK':
+                            return reg.content
+                        else:
+                            return json.dumps({'error': 'Leaderboard created but unattached'})
                     else:
-                        return json.dumps({'error': 'did not attach leaderboard'})
+                        return json.dumps({'error': 'did not create leaderboard'})
                 else:
                     return json.dumps({'error': 'Campaign_perma exists'})
             else:
@@ -74,10 +79,9 @@ class CampaignAPI(MethodView):
             res = camp.json()
             for proj in res['project_list']:
                 d = helpers.generic_delete('/projects/', proj['p_id'])
-            lead = helpers.generic_delete(
-                '/leaderboards/', res['leaderboard_id'])
+            lead = helpers.generic_delete('/leaderboards/', res['leaderboard_id'])
             r = helpers.generic_delete(self.path, user_id)
             if r.status_code == requests.codes.ok:
                 return json.dumps({'message': 'successful deletion'})
             else:
-                return json.dumps(r.content)
+                return r.content
