@@ -11,6 +11,7 @@ app = giga_web
 
 # login
 
+
 @app.route("/login/", methods=['POST'])
 def login():
     data = helpers.create_dict_from_form(request.form)
@@ -25,3 +26,25 @@ def login():
             return json.dumps({'error': 'Invalid password'})
     else:
         return json.dumps({'error': 'Could not query DB'})
+
+
+@app.route("<client_perma>/login/", methods=['POST'])
+def client_login(client_perma):
+    data = helpers.create_dict_from_form(request.form)
+    # get client
+    client = helpers.generic_get('/clients/', client_perma)
+    # get client_user
+    if 'error' in client:
+        return json.dumps({'error': 'Could not locate client? - contact DBA'})
+    else:
+        client_user = helpers.generic_get(
+            '/client_users/', json.loads(client)['_id'])
+        if 'error' in client_user:
+            return json.dumps({'error': 'Could not get client_user'})
+        else:
+            cu_j = client_user.json()
+            hashed = cu_j['_items'][0]['pw']
+            if bcrypt.hashpw(data['pw'], hashed) == hashed:
+                return json.dumps(res['_items'][0])
+            else:
+                return json.dumps({'error': 'Invalid password'})
