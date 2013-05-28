@@ -49,7 +49,7 @@ class CampaignAPI(MethodView):
                     if cl['data']['status'] == 'OK':
                         lead_data['leaderboard_id'] = cl['data']['_id']
                         p = helpers.generic_patch(self.path, lead_data)
-                        if p.json()['data']['status'] == 'OK'
+                        if p.json()['data']['status'] == 'OK':
                             return reg.content
                         else:
                             return json.dumps({'error': 'Leaderboard created but unattached'})

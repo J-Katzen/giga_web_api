@@ -32,7 +32,7 @@ class DonationAPI(MethodView):
             reg = requests.post(crud_url + self.path,
                                 data=json.dumps(payload),
                                 headers={'Content-Type': 'application/json'})
-            # update project
+            # update project(s)
             for proj in data['distro']:
                 p = helpers.generic_get('/projects/', proj['p_id'])
                 pj = p.json()
