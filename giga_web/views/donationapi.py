@@ -8,8 +8,8 @@ import json
 import requests
 
 
-class LeaderboardAPI(MethodView):
-    path = '/leaderboards/'
+class DonationAPI(MethodView):
+    path = '/donations/'
 
     def get(self, cid, id):
         if id is None:
@@ -27,26 +27,23 @@ class LeaderboardAPI(MethodView):
         if id is not None:
             pass
         else:
-            r = requests.get(crud_url + self.path,
-                             params={'where': '{"camp_id":"' + data['camp_id'] + '"}'})
-            if r.status_code == requests.codes.ok:
-                res = r.json()
-                if len(res['_items']) == 0:
-                    payload = {'data': data}
-                    reg = requests.post(crud_url + self.path,
-                                        data=json.dumps(payload),
-                                        headers={'Content-Type': 'application/json'})
 
-                    return json.dumps(reg.content)
-                else:
-                    return json.dumps({'error': 'Leaderboard exists for this campaign'})
-            else:
-                return json.dumps({'error': 'Could not query DB'})
+            payload = {'data': data}
+            reg = requests.post(crud_url + self.path,
+                                data=json.dumps(payload),
+                                headers={'Content-Type': 'application/json'})
+            # update project
+            # update campaign
+            # update leaderboard
+            return json.dumps(reg.content)
 
     def delete(self, id):
         if id is None:
             return json.dumps({'error': 'did not provide id'})
         else:
+            # update project
+            # update campaign
+            # update leaderboard
             r = helpers.generic_delete(self.path, id)
             if r.status_code == requests.codes.ok:
                 return json.dumps({'message': 'successful deletion'})
