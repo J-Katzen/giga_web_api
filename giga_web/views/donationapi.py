@@ -56,8 +56,8 @@ class DonationAPI(MethodView):
             pj['active'] = False
                 # make a new project active:  update campaign and project
         parm = {
-            'where': '{"client_id": "%s","active": "false"}' % pj['camp_id'],
-            'sort': -1
+            'where': '{"client_id": "%s","active": false}' % pj['camp_id'],
+            'sort': '[("votes": -1)]'
         }
         popular_req = requests.get(crud_url + '/projects/', params=parm)
         pop_req_j = popular_req.json()
