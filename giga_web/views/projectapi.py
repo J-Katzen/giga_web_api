@@ -28,7 +28,9 @@ class ProjectAPI(MethodView):
             pass  # patch & update
         else:
             data['raised'] = 0
-            data['completed'] = False
+            if data['type'] == 'rolling':
+                data['completed'] = False
+            data['votes'] = 0
             r = requests.get(crud_url + self.path,
                              params={'where': '{"perma_name":"' +
                                      data['perma_name'] + '"}'})
@@ -69,7 +71,9 @@ class ProjectAPI(MethodView):
                                   'proj_name': proj_data['name'],
                                   'votes': 0,
                                   'goal': proj_data['goal'],
-                                  'description': proj_data['descript'][0:254]})
+                                  'description': proj_data['descript'][0:254],
+                                  'type': proj_data['type'],
+                                  'active': False})
         c['total_goal'] += proj_data['goal']
         patched = helpers.generic_patch('/campaigns/', c)
         return patched.content

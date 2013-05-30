@@ -51,8 +51,11 @@ class DonationAPI(MethodView):
         p = helpers.generic_get('/projects/', proj['p_id'])
         pj = p.json()
         pj['raised'] += proj['amt']
-        if pj['raised'] >= pj['goal']:
-            pj['completed'] = True
+        if pj['type'] == 'rolling':
+            if pj['raised'] >= pj['goal']:
+                pj['completed'] = True
+                pj['active'] = False
+                #make a new project active:  update campaign and project
         upd_p = helpers.generic_patch('/projects/', pj)
         return upd_p
 
