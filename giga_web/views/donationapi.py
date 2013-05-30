@@ -51,13 +51,22 @@ class DonationAPI(MethodView):
         p = helpers.generic_get('/projects/', proj['p_id'])
         pj = p.json()
         pj['raised'] += proj['amt']
-        if pj['type'] == 'rolling':
-            if pj['raised'] >= pj['goal']:
-                pj['completed'] = True
-                pj['active'] = False
-                #make a new project active:  update campaign and project
+        if (pj['type'] == 'rolling') and (pj['raised'] >= pj['goal']):
+            pj['completed'] = True
+            pj['active'] = False
+                # make a new project active:  update campaign and project
+        parm = {
+            'where': '{"client_id": "%s","active": "false"}' % pj['camp_id'],
+            'sort': -1
+        }
+        popular_req = requests.get(crud_url + '/projects/', params=parm)
+        pop_req_j = popular_req.json()
+        pop_proj = pop_req_j['_items'][0]
+        pop_proj['active'] = True
+        pop_proj_id = pop_proj['_id']
+        upd_pop = helpers.generic_patch('/projects/', pop_proj)
         upd_p = helpers.generic_patch('/projects/', pj)
-        return upd_p
+        return upd_p, pop_proj_id
 
     def update_campaign_post(self, data):
         camp = helpers.generic_get('/campaigns/', data['camp_id'])
@@ -66,6 +75,8 @@ class DonationAPI(MethodView):
         camp_j['total_raised'] += data['donated']
         if camp_j['total_raised'] >= camp_j['total_goal']:
             camp_j['completed'] = True
+        # delete project from active list
+        # add project for campaign if one isn't completed and active
         upd_camp = helpers.generic_patch('/campaigns/', camp_j)
         return upd_camp, lead_id
 
@@ -75,17 +86,21 @@ class DonationAPI(MethodView):
         lead_j['raised'] += data['donated']
         if 'ref' in data:
             lead_j['referred'] += data['donated']
+            # find out if the referral email is in the leaderboard list
             user = next((d for d in lead_j['donors'] if
                          d['email'].lower() == data['ref'].lower()), None)
+            # if so, update the stats!
             if user is not None:
-                lead_j['donors'] = [d for d in lead_j['donors'] if d['email'].lower() != data['ref'].lower()]
+                lead_j['donors'] = [d for d in lead_j['donors'] if d[
+                    'email'].lower() != data['ref'].lower()]
                 user['ref'] += data['donated']
                 lead_j['donors'].append(user)
         # check if user donating is already in leaderboard
         user2 = next((d for d in lead_j['donors'] if
                       d['email'].lower() == data['email'].lower()), None)
         if user2 is not None:
-            lead_j['donors'] = [d for d in lead_j['donors'] if d['email'].lower() != data['email'].lower()]
+            lead_j['donors'] = [d for d in lead_j['donors'] if d[
+                'email'].lower() != data['email'].lower()]
             user2['donated'] += data['donated']
             lead_j['donors'].append(user2)
         else:

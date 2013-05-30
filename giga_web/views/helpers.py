@@ -4,6 +4,7 @@ from flask import request
 from giga_web import crud_url
 import requests
 import bcrypt
+import json
 
 
 def generic_get(collection_path, datum, projection=None):
@@ -17,13 +18,15 @@ def generic_get(collection_path, datum, projection=None):
 
 
 def generic_patch(collection_path, data_dict):
+    new_data = dict()
     r = requests.get(crud_url + collection_path + data_dict['_id'])
     if r.status_code == requests.codes.ok:
         obj_json = r.json()
         for key, value in data_dict.iteritems():
-            obj_json[key] = value
-        dat = {'data': obj_json}
-        upd = requests.post(crud_url + collection_path + data_dict['_id'],
+            if obj_json[key] != value: #only specify fields that changed
+                new_data[key] = value
+        dat = {'data': new_data}
+        upd = requests.post(crud_url + collection_path + data_dict['_id']+'/',
                             data=json.dumps(dat),
                             headers={'Content-Type': 'application/json',
                                      'X-HTTP-Method-Override': 'PATCH',
@@ -61,6 +64,6 @@ def create_dict_from_form(req_form):
                 d[key] = False
         elif value.isdigit():
             d[key] = int(value)
-        elif value != '':
+        else:
             d[key] = value
     return d
