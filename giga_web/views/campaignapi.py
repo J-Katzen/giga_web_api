@@ -72,7 +72,7 @@ class CampaignAPI(MethodView):
         return res.json()
 
     # should we ever really delete a campaign if it's been in motion? date
-    # restrictions
+    # restrictions need to be applied
     def delete(self, campaign_perma):
         if campaign_perma is None:
             return json.dumps({'error': 'did not provide campaign_perma'})

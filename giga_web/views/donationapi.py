@@ -65,7 +65,10 @@ class DonationAPI(MethodView):
         pop_proj['active'] = True
         pop_proj_id = pop_proj['_id']
         upd_pop = helpers.generic_patch('/projects/', pop_proj)
-        upd_p = helpers.generic_patch('/projects/', pj)
+        if 'error' not in upd_pop:
+            upd_p = helpers.generic_patch('/projects/', pj)
+        else:
+            upd_p = {'error': 'Could not set new active project'}
         return upd_p, pop_proj_id
 
     def update_campaign_post(self, data):
@@ -76,7 +79,7 @@ class DonationAPI(MethodView):
         if camp_j['total_raised'] >= camp_j['total_goal']:
             camp_j['completed'] = True
         # delete project from active list
-        # add project for campaign if one isn't completed and active
+        # add the active, but not complete project
         upd_camp = helpers.generic_patch('/campaigns/', camp_j)
         return upd_camp, lead_id
 
