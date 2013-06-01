@@ -32,7 +32,7 @@ class UserAPI(MethodView):
             data['fb_login'] = False
             data['t_login'] = False
             r = requests.get(crud_url + self.path,
-                             params={'where': '{"email":"' + data['email'] + '"}'})
+                             params={'where': '{"email":"%s"}', data['email']})
             if r.status_code == requests.codes.ok:
                 res = r.json()
                 if len(res['_items']) == 0:

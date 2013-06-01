@@ -26,10 +26,15 @@ class ClientUserAPI(MethodView):
     def post(self, id=None):
         data = helpers.create_dict_from_form(request.form)
         if id is not None:
-            pass
+            data['_id'] = id
+            patched = helpers.generic_patch(self.path, data)
+            if 'error' in patched:
+                return patched
+            else:
+                return patched.content
         else:
             r = requests.get(crud_url + self.path,
-                             params={'where': '{"uname":"' + data['uname'] + '"}'})
+                             params={'where': '{"email":"%s"}', data['email']})
             if r.status_code == requests.codes.ok:
                 res = r.json()
                 if len(res['_items']) == 0:

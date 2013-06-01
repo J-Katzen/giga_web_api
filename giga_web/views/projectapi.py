@@ -25,7 +25,27 @@ class ProjectAPI(MethodView):
     def post(self, id=None):
         data = helpers.create_dict_from_form(request.form)
         if id is not None:
-            pass  # patch & update
+            data['_id'] = id
+            proj = helpers.generic_get(self.path, id)
+            proj_j = proj.json()
+
+            # if goal or active state changes, update campaign active list
+            if (proj_j['active'] != data['active']) or proj_j['goal'] != data['goal']:
+                c = self.campaign_remove_proj(id)
+                if c['data']['status'] != 'OK':
+                    patched = {'error': 'Could not update campaign properly'}
+                    return patched
+                a = self.campaign_append_proj(data)
+                if json.loads(a)['data']['status'] != 'OK':
+                    patched = {'error': 'Could not append to campaign properly'}
+                    return patched
+
+            # otherwise just patch project
+            patched = helpers.generic_patch(self.path, data)
+            if 'error' in patched:
+                return patched
+            else:
+                return patched.content
         else:
             data['raised'] = 0
             if data['type'] == 'rolling':
@@ -42,57 +62,52 @@ class ProjectAPI(MethodView):
                                         data=json.dumps(payload),
                                         headers={'Content-Type':
                                         'application/json'})
-                    camp_append = self.campaign_append_proj(
-                        json.loads(reg.content))
-                    if json.loads(camp_append)['data']['status'] == 'OK':
-                        return reg.content
+                    reg_j = reg.json()
+                    if (reg_j['data']['status'] == 'OK') and (data['active'] in ['True', 'true', 't', 1]):
+                        data['_id'] = reg_j['_id']
+                        camp_append = self.campaign_append_proj(data)
+                        if json.loads(camp_append)['data']['status'] == 'OK':
+                            return reg.content
+                        else:
+                            return json.dumps({'error': 'could not append proj'
+                                               ' to campaign'})
                     else:
-                        return json.dumps({'error': 'could not append proj'
-                                           ' to campaign'})
+                        return json.dumps({'error': 'Could not post project'})
                 else:
                     return json.dumps({'error': 'Project perma_name is'
                                        ' not unique'})
             else:
                 return json.dumps({'error': 'Cannot reach DB'})
 
-    def campaign_update(self, proj_data):
-        camp = helpers.generic_get('/campaigns/', proj_data['camp_id'])
-        c = camp.json()
-        proj = next((d for d in c['project_list'] if
-                     d['p_id'] == proj_data['_id']), None)
-        if proj is not None:
-            for key, value in proj_data.iteritems():
-                proj[key] = value
-
     def campaign_append_proj(self, proj_data):
         camp = helpers.generic_get('/campaigns/', proj_data['camp_id'])
         c = camp.json()
-        c['project_list'].append({'p_id': proj_data['_id'],
-                                  'proj_name': proj_data['name'],
-                                  'votes': 0,
-                                  'goal': proj_data['goal'],
-                                  'description': proj_data['descript'][0:254],
-                                  'type': proj_data['type'],
-                                  'active': False})
+        if proj_data['active']:
+            c['active_list'].append({'p_id': proj_data['_id'],
+                                     'proj_name': proj_data['name'],
+                                     'perma_name': proj_data['perma_name'],
+                                     'goal': proj_data['goal'],
+                                     'description': proj_data['description'][0:254],
+                                     'type': proj_data['type'],
+                                     'date_start': c['date_start']})
         c['total_goal'] += proj_data['goal']
         patched = helpers.generic_patch('/campaigns/', c)
         return patched.content
 
     def campaign_remove_proj(self, id):
-        camp = helpers.generic_get(self.path, id)
-        if camp.status_code == requests.codes.ok:
-            cj = camp.json()
+        proj = helpers.generic_get(self.path, id)
+        if proj.status_code == requests.codes.ok:
+            cj = proj.json()
             c = helpers.generic_get('/campaigns/', cj['camp_id'])
             if c.status_code == requests.codes.ok:
                 cam = c.json()
-                proj = next((d for d in cam[
-                            'project_list'] if d['p_id'] == id), None)
                 cam['total_goal'] -= proj['goal']
-                cam['project_list'].remove(proj)
+                cam['active_list'][:] = [d for d in cam['active_list']
+                                         if d['_id'] != cj['_id']]
                 patched = helpers.generic_patch('/campaigns/', cam)
                 return patched.json()
         else:
-            return camp.json()
+            return proj.json()
 
     def delete(self, id):
         if id is None:
