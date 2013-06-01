@@ -34,7 +34,7 @@ class ClientUserAPI(MethodView):
                 return patched.content
         else:
             r = requests.get(crud_url + self.path,
-                             params={'where': '{"email":"%s"}', data['email']})
+                             params={'where': '{"email":"%s"}' % data['email']})
             if r.status_code == requests.codes.ok:
                 res = r.json()
                 if len(res['_items']) == 0:

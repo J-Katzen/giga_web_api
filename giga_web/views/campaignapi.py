@@ -35,7 +35,7 @@ class CampaignAPI(MethodView):
             data['total_raised'] = 0
             data['completed'] = False
             r = requests.get(crud_url + self.path,
-                             params={'where': '{"perma_name":"%s"}', data['perma_name']})
+                             params={'where': '{"perma_name":"%s"}' % data['perma_name']})
             if r.status_code == requests.codes.ok:
                 res = r.json()
                 if len(res['_items']) == 0:

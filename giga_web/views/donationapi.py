@@ -100,7 +100,7 @@ class DonationAPI(MethodView):
                                'date_start': d_start}
             if active_pj['type'] != 'uncapped':
                 c_start = datetime.datetime.strptime(camp_j['date_start'], '%a, %d %b %Y %H:%M:%S UTC')
-                d_end = (c_start + datetime.timedelta(active_pj['length']))strftime('%a, %d %b %Y %H:%M:%S UTC')
+                d_end = (c_start + datetime.timedelta(active_pj['length'])).strftime('%a, %d %b %Y %H:%M:%S UTC')
                 new_active_proj['date_end'] = d_end
 
             camp_j['active_list'].append(new_active_proj)
