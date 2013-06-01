@@ -33,8 +33,8 @@ def generic_patch(collection_path, data_dict):
             crud_url + collection_path + data_dict['_id'] + '/',
             data=json.dumps(dat),
             headers={'Content-Type': 'application/json',
-                                     'X-HTTP-Method-Override': 'PATCH',
-                                     'If-Match': obj_json['etag']})
+                     'X-HTTP-Method-Override': 'PATCH',
+                     'If-Match': obj_json['etag']})
         if upd.status_code == requests.codes.ok:
             return upd
         else:

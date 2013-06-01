@@ -25,7 +25,9 @@ class CampaignAPI(MethodView):
     def post(self, campaign_perma=None):
         data = helpers.create_dict_from_form(request.form)
         if campaign_perma is not None:
-            data['_id'] = campaign_perma
+            camp = helpers.generic_get(self.path, campaign_perma)
+            camp_j = camp.json()
+            data['_id'] = camp_j['_id']
             patched = helpers.generic_patch(self.path, data)
             if 'error' in patched:
                 return patched
