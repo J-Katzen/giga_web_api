@@ -46,8 +46,10 @@ class CampaignAPI(MethodView):
                                         data=json.dumps(payload),
                                         headers={'Content-Type': 'application/json'})
                     # create and attach leaderboard
-                    lead_data = reg.json()
-                    cl = create_leaderboard(lead_data)
+                    reg_j = reg.json()
+                    c_data = helpers.generic_get(crud_url, reg_j['data']['_id'])
+                    lead_data = c_data.json()
+                    cl = self.create_leaderboard(lead_data)
                     if cl['data']['status'] == 'OK':
                         lead_data['leaderboard_id'] = cl['data']['_id']
                         p = helpers.generic_patch(self.path, lead_data)
@@ -83,8 +85,7 @@ class CampaignAPI(MethodView):
             res = camp.json()
             for proj in res['project_list']:
                 d = helpers.generic_delete('/projects/', proj['p_id'])
-            lead = helpers.generic_delete(
-                '/leaderboards/', res['leaderboard_id'])
+            lead = helpers.generic_delete('/leaderboards/', res['leaderboard_id'])
             r = helpers.generic_delete(self.path, user_id)
             if r.status_code == requests.codes.ok:
                 return json.dumps({'message': 'successful deletion'})
