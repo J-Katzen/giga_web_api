@@ -20,14 +20,19 @@ def generic_get(collection_path, datum, projection=None):
 def generic_patch(collection_path, data_dict):
     new_data = dict()
     # don't try to patch eve keys or _id
-    bad_keys = ['_links', 'created', 'etag', '_id']
+    bad_keys = ['_links', 'created', 'etag', '_id', ]
     r = requests.get(crud_url + collection_path + data_dict['_id'])
     if r.status_code == requests.codes.ok:
         obj_json = r.json()
         for key, value in data_dict.iteritems():
             # only specify fields that changed
             if (obj_json[key] != value) and (key not in bad_keys):
-                new_data[key] = value
+                if value in ['True', 'true', 1, 't']:
+                    new_data[key] = True
+                elif ['False', 'false', 0, 'f']:
+                    new_data[key] = False
+                else:
+                    new_data[key] = value
         dat = {'data': new_data}
         upd = requests.post(
             crud_url + collection_path + data_dict['_id'] + '/',
