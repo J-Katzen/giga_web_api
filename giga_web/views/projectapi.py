@@ -30,7 +30,7 @@ class ProjectAPI(MethodView):
             proj_j = proj.json()
 
             # if goal or active state changes, update campaign active list
-            if (proj_j['active'] != data['active']) or proj_j['goal'] != data['goal']:
+            if (proj_j['active'] != data['active']) or (proj_j['goal'] != data['goal']):
                 c = self.campaign_remove_proj(id)
                 if c['data']['status'] != 'OK':
                     patched = {'error': 'Could not update campaign properly'}
@@ -88,8 +88,9 @@ class ProjectAPI(MethodView):
                     'perma_name': proj_data['perma_name'],
                     'goal': proj_data['goal'],
                     'description': proj_data['description'][0:254],
-                    'type': proj_data['type'],
-                    'date_start': c['date_start']}
+                    'type': proj_data['type']}
+        if 'date_start' in c:
+            app_proj['date_start'] = c['date_start']
         if proj_data['active']:
             if 'active_list' in c:
                 c['active_list'].append(app_proj)
