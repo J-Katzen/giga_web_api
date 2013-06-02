@@ -36,7 +36,6 @@ def generic_patch(collection_path, data_dict):
                 else:
                     new_data[key] = value
         dat = {'data': new_data}
-        print dat
         upd = requests.post(
             crud_url + collection_path + data_dict['_id'] + '/',
             data=json.dumps(dat),

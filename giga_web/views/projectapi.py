@@ -51,6 +51,7 @@ class ProjectAPI(MethodView):
             if data['type'] == 'rolling':
                 data['completed'] = False
             data['votes'] = 0
+            data['completed'] = False
             r = requests.get(crud_url + self.path,
                              params={'where': '{"perma_name":"' +
                                      data['perma_name'] + '"}'})
@@ -82,14 +83,18 @@ class ProjectAPI(MethodView):
     def campaign_append_proj(self, proj_data):
         camp = helpers.generic_get('/campaigns/', proj_data['camp_id'])
         c = camp.json()
+        app_proj = {'p_id': proj_data['_id'],
+                    'proj_name': proj_data['name'],
+                    'perma_name': proj_data['perma_name'],
+                    'goal': proj_data['goal'],
+                    'description': proj_data['description'][0:254],
+                    'type': proj_data['type'],
+                    'date_start': c['date_start']}
         if proj_data['active']:
-            c['active_list'].append({'p_id': proj_data['_id'],
-                                     'proj_name': proj_data['name'],
-                                     'perma_name': proj_data['perma_name'],
-                                     'goal': proj_data['goal'],
-                                     'description': proj_data['description'][0:254],
-                                     'type': proj_data['type'],
-                                     'date_start': c['date_start']})
+            if 'active_list' in c:
+                c['active_list'].append(app_proj)
+            else:
+                c['active_list'] = [app_proj]
         c['total_goal'] += proj_data['goal']
         patched = helpers.generic_patch('/campaigns/', c)
         return patched.content
