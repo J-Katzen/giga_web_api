@@ -26,7 +26,9 @@ def generic_patch(collection_path, data_dict):
         obj_json = r.json()
         for key, value in data_dict.iteritems():
             # only specify fields that changed
-            if (obj_json[key] != value) and (key not in bad_keys):
+            if key not in obj_json.keys():
+                new_data[key] = value
+            elif (obj_json[key] != value) and (key not in bad_keys):
                 if value in ['True', 'true', 1, 't']:
                     new_data[key] = True
                 elif ['False', 'false', 0, 'f']:
@@ -34,6 +36,7 @@ def generic_patch(collection_path, data_dict):
                 else:
                     new_data[key] = value
         dat = {'data': new_data}
+        print dat
         upd = requests.post(
             crud_url + collection_path + data_dict['_id'] + '/',
             data=json.dumps(dat),

@@ -47,11 +47,12 @@ class CampaignAPI(MethodView):
                                         headers={'Content-Type': 'application/json'})
                     # create and attach leaderboard
                     reg_j = reg.json()
-                    c_data = helpers.generic_get(crud_url, reg_j['data']['_id'])
+                    c_data = helpers.generic_get(self.path, reg_j['data']['_id'])
                     lead_data = c_data.json()
                     cl = self.create_leaderboard(lead_data)
                     if cl['data']['status'] == 'OK':
                         lead_data['leaderboard_id'] = cl['data']['_id']
+                        print lead_data
                         p = helpers.generic_patch(self.path, lead_data)
                         if p.json()['data']['status'] == 'OK':
                             return reg.content
