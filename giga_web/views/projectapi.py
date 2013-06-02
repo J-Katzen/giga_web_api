@@ -11,7 +11,7 @@ import requests
 class ProjectAPI(MethodView):
     path = '/projects/'
 
-    def get(self, cid=None, id):
+    def get(self, id, cid=None):
         if id is None:
             parm = {'where': '{"client_id" : "%s"}' % cid}
             r = requests.get(crud_url + self.path,

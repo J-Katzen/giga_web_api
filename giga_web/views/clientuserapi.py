@@ -12,7 +12,7 @@ import bcrypt
 class ClientUserAPI(MethodView):
     path = '/client_users/'
 
-    def get(self, cid=None, id):
+    def get(self, id, cid=None):
         if id is None:
             parm = {'where': '{"client_id" : "%s"}' % cid}
             r = requests.get(crud_url + self.path,

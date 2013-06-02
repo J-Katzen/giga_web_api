@@ -11,7 +11,7 @@ import requests
 class CampaignAPI(MethodView):
     path = '/campaigns/'
 
-    def get(self, cid=None, campaign_perma):
+    def get(self, campaign_perma, cid=None):
         if campaign_perma is None:
             parm = {'where': '{"client_id" : "%s"}' % cid}
             r = requests.get(crud_url + self.path,
