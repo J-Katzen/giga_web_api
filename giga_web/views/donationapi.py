@@ -12,7 +12,7 @@ import datetime
 class DonationAPI(MethodView):
     path = '/donations/'
 
-    def get(self, cid, id):
+    def get(self, cid=None, id):
         if id is None:
             parm = {'where': '{"client_id" : "%s"}' % cid}
             r = requests.get(crud_url + self.path,

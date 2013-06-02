@@ -20,12 +20,8 @@ def register_api(view, endpoint, url, pk='id'):
                          view_func=view_func, methods=['GET', ])
 
     app.add_url_rule(url, view_func=view_func, methods=['POST', ])
-    if endpoint not in ['client_api', 'user_api']:
-        app.add_url_rule('%s<%s>' % (url, pk), view_func=view_func,
-                         methods=['GET', 'POST', 'DELETE'])
-    else:
-        app.add_url_rule('%s<%s>' % (url, pk),defaults={cid: None} view_func=view_func,
-                         methods=['GET', 'POST', 'DELETE'])
+    app.add_url_rule('%s<%s>' % (url, pk), view_func=view_func,
+                     methods=['GET', 'POST', 'DELETE'])
 
 register_api(UserAPI, 'user_api', '/users/')
 register_api(CampaignAPI, 'campaign_api', '/campaigns/', pk='campaign_perma')
