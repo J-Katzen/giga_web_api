@@ -36,6 +36,7 @@ class CampaignAPI(MethodView):
         else:
             data['total_raised'] = 0
             data['completed'] = False
+            data['active_list'] = []
             r = requests.get(crud_url + self.path,
                              params={'where': '{"perma_name":"%s"}' % data['perma_name']})
             if r.status_code == requests.codes.ok:

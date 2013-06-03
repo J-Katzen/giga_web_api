@@ -51,7 +51,6 @@ class ProjectAPI(MethodView):
             if data['type'] == 'rolling':
                 data['completed'] = False
             data['votes'] = 0
-            data['completed'] = False
             r = requests.get(crud_url + self.path,
                              params={'where': '{"perma_name":"' +
                                      data['perma_name'] + '"}'})
@@ -64,10 +63,10 @@ class ProjectAPI(MethodView):
                                         headers={'Content-Type':
                                         'application/json'})
                     reg_j = reg.json()
-                    if (reg_j['data']['status'] == 'OK') and (data['active'] in ['True', 'true', 't', 1]):
-                        data['_id'] = reg_j['_id']
+                    if (reg_j['data']['status'] == 'OK') and data['active']:
+                        data['_id'] = reg_j['data']['_id']
                         camp_append = self.campaign_append_proj(data)
-                        if json.loads(camp_append)['data']['status'] == 'OK':
+                        if 'error' not in camp_append:
                             return reg.content
                         else:
                             return json.dumps({'error': 'could not append proj'
@@ -88,17 +87,18 @@ class ProjectAPI(MethodView):
                     'perma_name': proj_data['perma_name'],
                     'goal': proj_data['goal'],
                     'description': proj_data['description'][0:254],
-                    'type': proj_data['type']}
+                    'type': proj_data['type'],
+                    'raised': proj_data['raised']}
         if 'date_start' in c:
             app_proj['date_start'] = c['date_start']
-        if proj_data['active']:
-            if 'active_list' in c:
-                c['active_list'].append(app_proj)
-            else:
-                c['active_list'] = [app_proj]
+        if proj_data['active'] and ('active_list' in c):
+            c['active_list'].append(app_proj)
         c['total_goal'] += proj_data['goal']
         patched = helpers.generic_patch('/campaigns/', c)
-        return patched.content
+        if 'error' in patched:
+            return patched
+        else:
+            return patched.json()
 
     def campaign_remove_proj(self, id):
         proj = helpers.generic_get(self.path, id)
@@ -107,7 +107,7 @@ class ProjectAPI(MethodView):
             c = helpers.generic_get('/campaigns/', cj['camp_id'])
             if c.status_code == requests.codes.ok:
                 cam = c.json()
-                cam['total_goal'] -= proj['goal']
+                cam['goal'] -= proj['goal']
                 cam['active_list'][:] = [d for d in cam['active_list']
                                          if d['_id'] != cj['_id']]
                 patched = helpers.generic_patch('/campaigns/', cam)

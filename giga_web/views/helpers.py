@@ -20,7 +20,7 @@ def generic_get(collection_path, datum, projection=None):
 def generic_patch(collection_path, data_dict):
     new_data = dict()
     # don't try to patch eve keys or _id
-    bad_keys = ['_links', 'created', 'etag', '_id', ]
+    bad_keys = ['_links', 'created', 'etag', '_id', 'updated']
     r = requests.get(crud_url + collection_path + data_dict['_id'])
     if r.status_code == requests.codes.ok:
         obj_json = r.json()
@@ -29,19 +29,22 @@ def generic_patch(collection_path, data_dict):
             if key not in obj_json.keys():
                 new_data[key] = value
             elif (obj_json[key] != value) and (key not in bad_keys):
-                if value in ['True', 'true', 1, 't']:
+                if value in ['True', 'true', 't']:
                     new_data[key] = True
-                elif ['False', 'false', 0, 'f']:
+                elif value in ['False', 'false', 'f']:
                     new_data[key] = False
                 else:
                     new_data[key] = value
         dat = {'data': new_data}
+        print dat
         upd = requests.post(
             crud_url + collection_path + data_dict['_id'] + '/',
             data=json.dumps(dat),
             headers={'Content-Type': 'application/json',
                      'X-HTTP-Method-Override': 'PATCH',
                      'If-Match': obj_json['etag']})
+        print upd.content
+        print upd.url
         if upd.status_code == requests.codes.ok:
             return upd
         else:
@@ -68,7 +71,7 @@ def create_dict_from_form(req_form):
     for key, value in req_form.iteritems():
         if key in ['email', 'uname', 'perma_name']:
             d[key] = value.lower()
-        elif key in ['active', 'fb_login', 't_login']:
+        elif key in ['active', 'fb_login', 't_login', 'completed']:
             if value.lower() in ['true', 'yes', 't', '1']:
                 d[key] = True
             else:
