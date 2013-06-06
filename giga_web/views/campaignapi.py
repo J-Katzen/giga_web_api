@@ -35,6 +35,7 @@ class CampaignAPI(MethodView):
                 return patched.content
         else:
             data['total_raised'] = 0
+            data['total_goal'] = 0
             data['completed'] = False
             data['active_list'] = []
             r = requests.get(crud_url + self.path,

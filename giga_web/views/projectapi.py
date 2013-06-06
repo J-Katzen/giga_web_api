@@ -19,7 +19,7 @@ class ProjectAPI(MethodView):
             res = r.json()
             return json.dumps(res['_items'])
         else:
-            proj = helpers.generic_get(self.path, proj_id)
+            proj = helpers.generic_get(self.path, id)
             return proj.content
 
     def post(self, id=None):
@@ -47,6 +47,7 @@ class ProjectAPI(MethodView):
             else:
                 return patched.content
         else:
+            print data
             data['raised'] = 0
             if data['type'] == 'rolling':
                 data['completed'] = False
@@ -63,14 +64,17 @@ class ProjectAPI(MethodView):
                                         headers={'Content-Type':
                                         'application/json'})
                     reg_j = reg.json()
-                    if (reg_j['data']['status'] == 'OK') and data['active']:
-                        data['_id'] = reg_j['data']['_id']
-                        camp_append = self.campaign_append_proj(data)
-                        if 'error' not in camp_append:
-                            return reg.content
+                    if (reg_j['data']['status'] == 'OK'):
+                        if data['active']:
+                            data['_id'] = reg_j['data']['_id']
+                            camp_append = self.campaign_append_proj(data)
+                            if 'error' not in camp_append:
+                                return reg.content
+                            else:
+                                return json.dumps({'error': 'could not append proj'
+                                                   ' to campaign'})
                         else:
-                            return json.dumps({'error': 'could not append proj'
-                                               ' to campaign'})
+                            return reg.content
                     else:
                         return json.dumps({'error': 'Could not post project'})
                 else:
@@ -107,9 +111,9 @@ class ProjectAPI(MethodView):
             c = helpers.generic_get('/campaigns/', cj['camp_id'])
             if c.status_code == requests.codes.ok:
                 cam = c.json()
-                cam['goal'] -= proj['goal']
+                cam['total_goal'] -= cj['goal']
                 cam['active_list'][:] = [d for d in cam['active_list']
-                                         if d['_id'] != cj['_id']]
+                                         if d['p_id'] != cj['_id']]
                 patched = helpers.generic_patch('/campaigns/', cam)
                 return patched.json()
         else:

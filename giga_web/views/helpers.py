@@ -21,7 +21,7 @@ def generic_patch(collection_path, data_dict):
     new_data = dict()
     # don't try to patch eve keys or _id
     bad_keys = ['_links', 'created', 'etag', '_id', 'updated']
-    r = requests.get(crud_url + collection_path + data_dict['_id'])
+    r = requests.get(crud_url + collection_path + data_dict['_id'] + '/')
     if r.status_code == requests.codes.ok:
         obj_json = r.json()
         for key, value in data_dict.iteritems():
@@ -36,15 +36,12 @@ def generic_patch(collection_path, data_dict):
                 else:
                     new_data[key] = value
         dat = {'data': new_data}
-        print dat
         upd = requests.post(
             crud_url + collection_path + data_dict['_id'] + '/',
             data=json.dumps(dat),
             headers={'Content-Type': 'application/json',
                      'X-HTTP-Method-Override': 'PATCH',
                      'If-Match': obj_json['etag']})
-        print upd.content
-        print upd.url
         if upd.status_code == requests.codes.ok:
             return upd
         else:
@@ -54,10 +51,10 @@ def generic_patch(collection_path, data_dict):
 
 
 def generic_delete(collection_path, id):
-    r = requests.get(crud_url + collection_path + id)
+    r = requests.get(crud_url + collection_path + id + '/')
     if r.status_code == requests.codes.ok:
         res = r.json()
-        d = requests.delete(crud_url + collection_path + id,
+        d = requests.delete(crud_url + collection_path + id + '/',
                             headers={'If-Match': res['etag']})
         return d
     else:
