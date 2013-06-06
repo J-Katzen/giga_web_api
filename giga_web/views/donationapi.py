@@ -71,7 +71,7 @@ class DonationAPI(MethodView):
                 else:
                     upd_p = {'error': 'Could not set new active project'}
             else:
-                pop_req_id = None
+                pop_proj_id = None
         else:
             pop_proj_id = None
         return upd_p, pop_proj_id
