@@ -86,18 +86,19 @@ class ProjectAPI(MethodView):
     def campaign_append_proj(self, proj_data):
         camp = helpers.generic_get('/campaigns/', proj_data['camp_id'])
         c = camp.json()
+        summary = proj_data['description'][0:254]
         app_proj = {'p_id': proj_data['_id'],
                     'proj_name': proj_data['name'],
                     'perma_name': proj_data['perma_name'],
                     'goal': proj_data['goal'],
-                    'description': proj_data['description'][0:254],
+                    'description': summary[:summary.rfind('.')+1],
                     'type': proj_data['type'],
                     'raised': proj_data['raised']}
         if 'date_start' in c:
             app_proj['date_start'] = c['date_start']
         if proj_data['active'] and ('active_list' in c):
             c['active_list'].append(app_proj)
-        c['total_goal'] += proj_data['goal']
+            c['total_goal'] += proj_data['goal']
         patched = helpers.generic_patch('/campaigns/', c)
         if 'error' in patched:
             return patched
@@ -111,9 +112,11 @@ class ProjectAPI(MethodView):
             c = helpers.generic_get('/campaigns/', cj['camp_id'])
             if c.status_code == requests.codes.ok:
                 cam = c.json()
-                cam['total_goal'] -= cj['goal']
+                cur_len = len(cam['active_list'])
                 cam['active_list'][:] = [d for d in cam['active_list']
                                          if d['p_id'] != cj['_id']]
+                if cur_len != len(cam['active_list']):
+                    cam['total_goal'] -= cj['goal']
                 patched = helpers.generic_patch('/campaigns/', cam)
                 return patched.json()
         else:

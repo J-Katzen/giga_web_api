@@ -19,11 +19,14 @@ def login():
                      params={'where': '{"email":"' + data['email'] + '"}'})
     if r.status_code == requests.codes.ok:
         res = r.json()
-        hashed = res['_items'][0]['pw']
-        if bcrypt.hashpw(data['pw'], hashed) == hashed:
-            return json.dumps(res['_items'][0])
+        if len(res['_items']) > 0:
+            hashed = res['_items'][0]['pw']
+            if bcrypt.hashpw(data['pw'], hashed) == hashed:
+                return json.dumps(res['_items'][0])
+            else:
+                return json.dumps({'error': 'Invalid password'})
         else:
-            return json.dumps({'error': 'Invalid password'})
+            return json.dumps({'error': 'No user registered with this email'})
     else:
         return json.dumps({'error': 'Could not query DB'})
 
@@ -37,8 +40,9 @@ def client_login(client_perma):
     if 'error' in client:
         return json.dumps({'error': 'Could not locate client? - contact DBA'})
     else:
-        client_user = helpers.generic_get(
-            '/client_users/', json.loads(client)['_id'])
+        client_pj = client.json()
+        client_user = requests.get(crud_url + '/client_users/',
+                                   params={'where': '{"email":"%s","client_id":"%s"}' % (data['email'], client_pj['_id'])})
         if 'error' in client_user:
             return json.dumps({'error': 'Could not get client_user'})
         else:

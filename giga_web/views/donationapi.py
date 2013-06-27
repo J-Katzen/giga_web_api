@@ -61,7 +61,7 @@ class DonationAPI(MethodView):
             }
             popular_req = requests.get(crud_url + '/projects/', params=parm)
             pop_req_j = popular_req.json()
-            if len(pop_req_j['items']) > 0:
+            if len(pop_req_j['_items']) > 0:
                 pop_proj = pop_req_j['_items'][0]
                 pop_proj['active'] = True
                 pop_proj_id = pop_proj['_id']
@@ -102,7 +102,8 @@ class DonationAPI(MethodView):
                 c_start = datetime.datetime.strptime(camp_j['date_start'], '%a, %d %b %Y %H:%M:%S UTC')
                 d_end = (c_start + datetime.timedelta(active_pj['length'])).strftime('%a, %d %b %Y %H:%M:%S UTC')
                 new_active_proj['date_end'] = d_end
-
+            else:
+                new_active_proj['date_end'] = camp_j['date_end']
             camp_j['active_list'].append(new_active_proj)
         upd_camp = helpers.generic_patch('/campaigns/', camp_j)
         return upd_camp, lead_id
@@ -115,23 +116,24 @@ class DonationAPI(MethodView):
             lead_j['referred'] += data['donated']
             # find out if the referral email is in the leaderboard list
             user = next((d for d in lead_j['donors'] if
-                         d['email'].lower() == data['ref'].lower()), None)
+                         d['user_id'] == data['ref']), None)
             # if so, update the stats!
             if user is not None:
                 lead_j['donors'][:] = [d for d in lead_j['donors']
-                                       if d['email'].lower() != data['ref'].lower()]
+                                       if d['user_id'] != data['ref']]
                 user['ref'] += data['donated']
                 lead_j['donors'].append(user)
         # check if user donating is already in leaderboard
         user2 = next((d for d in lead_j['donors'] if
-                      d['email'].lower() == data['email'].lower()), None)
+                      d['user_id'] == data['user_id']), None)
         if user2 is not None:
             lead_j['donors'][:] = [d for d in lead_j['donors']
-                                   if d['email'].lower() != data['email'].lower()]
+                                   if d['user_id'] != data['user_id']]
             user2['donated'] += data['donated']
             lead_j['donors'].append(user2)
         else:
-            lead_j['donors'].append({'email': data['email'].lower(),
+            lead_j['donors'].append({'name': data['name'],
+                                     'user_id': data['user_id'],
                                      'donated': data['donated'],
                                      'ref': 0})
         upd_lead = helpers.generic_patch('/leaderboards/', lead_j)
