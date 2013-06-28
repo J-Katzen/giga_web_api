@@ -21,7 +21,7 @@ def login():
         res = r.json()
         if len(res['_items']) > 0:
             hashed = res['_items'][0]['pw']
-            if bcrypt.hashpw(data['pw'], hashed) == hashed:
+            if bcrypt.hashpw(data['password'], hashed) == hashed:
                 return json.dumps(res['_items'][0])
             else:
                 return json.dumps({'error': 'Invalid password'})
@@ -48,7 +48,7 @@ def client_login(client_perma):
         else:
             cu_j = client_user.json()
             hashed = cu_j['_items'][0]['pw']
-            if bcrypt.hashpw(data['pw'], hashed) == hashed:
+            if bcrypt.hashpw(data['password'], hashed) == hashed:
                 return json.dumps(res['_items'][0])
             else:
                 return json.dumps({'error': 'Invalid password'})

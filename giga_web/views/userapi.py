@@ -29,15 +29,13 @@ class UserAPI(MethodView):
             else:
                 return patched.content
         else:
-            data['fb_login'] = False
-            data['t_login'] = False
             r = requests.get(crud_url + self.path,
                              params={'where': '{"email":"%s"}' % data['email']})
             if r.status_code == requests.codes.ok:
                 res = r.json()
                 if len(res['_items']) == 0:
-                    data['pw'] = bcrypt.hashpw(data['pw'], bcrypt.gensalt())
-                    print data
+                    data['pw'] = bcrypt.hashpw(data['password'], bcrypt.gensalt())
+                    data.pop('password')
                     payload = {'data': data}
                     reg = requests.post(crud_url + self.path,
                                         data=json.dumps(payload),
@@ -45,7 +43,7 @@ class UserAPI(MethodView):
 
                     return reg.content
                 else:
-                    return json.dumps({'error': 'User exists'})
+                    return json.dumps({'error': 'Email exists'})
             else:
                 return json.dumps({'error': 'Could not query DB'})
 
