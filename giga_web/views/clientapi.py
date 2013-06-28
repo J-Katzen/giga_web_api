@@ -14,7 +14,7 @@ class ClientAPI(MethodView):
 
     def get(self, id):
         if id is None:
-            pass
+            return json.dumps({'error':'no id or name provided'})
         else:
             client = helpers.generic_get(self.path, id)
             return client.content
