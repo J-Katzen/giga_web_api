@@ -20,7 +20,7 @@ class ClientMapAPI(MethodView):
             return user.content
 
     def post(self, id=None):
-        data = helpers.create_dict_from_form(request.form)
+        data = request.get_json(force=True, silent=False)
         if id is not None:
             data['_id'] = id
             patched = helpers.generic_patch(self.path, data)
@@ -34,8 +34,6 @@ class ClientMapAPI(MethodView):
             if r.status_code == requests.codes.ok:
                 res = r.json()
                 if len(res['_items']) == 0:
-                    data['pw'] = bcrypt.hashpw(data['password'], bcrypt.gensalt())
-                    data.pop('password')
                     payload = {'data': data}
                     reg = requests.post(crud_url + self.path,
                                         data=json.dumps(payload),

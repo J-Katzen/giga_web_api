@@ -6,6 +6,7 @@ from leaderboardapi import LeaderboardAPI
 from clientapi import ClientAPI
 from clientuserapi import ClientUserAPI
 from donationapi import DonationAPI
+from clientmapapi import ClientMapAPI
 
 app = giga_web
 

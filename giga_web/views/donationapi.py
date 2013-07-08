@@ -24,7 +24,7 @@ class DonationAPI(MethodView):
             return leaderboard.content
 
     def post(self, id=None):
-        data = helpers.create_dict_from_form(request.form)
+        data = request.get_json(force=True, silent=False)
         if id is not None:
             # wait - why do we ever patch a donation? refunds? what else?
             pass
@@ -34,18 +34,20 @@ class DonationAPI(MethodView):
                                 data=json.dumps(payload),
                                 headers={'Content-Type': 'application/json'})
             # update project(s)
-            up, active_id = self.update_project_post(data)
-            if 'error' in up:
-                return up
-            # update campaign
-            camp, leader_id = self.update_campaign_post(data, active_id)
-            if 'error' in camp:
-                return camp
-            # update leaderboard
-            lead = self.update_leaderboard_post(data, leader_id)
-            if 'error' in lead:
-                return lead
-            return reg.content
+            if data['confirmed']:
+                for proj in data['proj_list']:
+                    up, active_id[] = self.update_project_post(proj)
+                    if 'error' in up:
+                        return up
+                # update campaign
+                camp, leader_id = self.update_campaign_post(data, active_id)
+                if 'error' in camp:
+                    return camp
+                # update leaderboard
+                lead = self.update_leaderboard_post(data, leader_id)
+                if 'error' in lead:
+                    return lead
+                return reg.content
 
     def update_project_post(self, data):
         p = helpers.generic_get('/projects/', data['proj_id'])
@@ -95,7 +97,7 @@ class DonationAPI(MethodView):
                                'proj_name': active_pj['name'],
                                'perma_name': active_pj['perma_name'],
                                'goal': active_pj['goal'],
-                               'description': active_pj['description'][0:254],
+                               'description': active_pj['summary'],
                                'type': active_pj['type'],
                                'date_start': d_start}
             if active_pj['type'] != 'uncapped':
