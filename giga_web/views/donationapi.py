@@ -108,6 +108,7 @@ class DonationAPI(MethodView):
                                    'type': active_pj['type'],
                                    'raised': active_pj['raised'],
                                    'goal': active_pj['goal'],
+                                   'proj_thumb': active_pj['thumbnail'],
                                    'date_start': d_start}
 
                 if 'summary' in active_pj:
