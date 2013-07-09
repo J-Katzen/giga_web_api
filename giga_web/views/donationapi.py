@@ -130,7 +130,7 @@ class DonationAPI(MethodView):
         lead_j['raised'] += data['donated']
         if 'ref' in data:
             lead_j['referred'] += data['donated']
-            # find out if the referral email is in the leaderboard list
+            # find out if the referral id is in the leaderboard list
             user = next((d for d in lead_j['donors'] if
                          d['user_id'] == data['ref']), None)
             # if so, update the stats!
@@ -148,10 +148,17 @@ class DonationAPI(MethodView):
             user2['donated'] += data['donated']
             lead_j['donors'].append(user2)
         else:
+            n_user = helpers.generic_get('/users/', data['user_id'])
+            if 'avatar_url' in n_user:
+                data['avatar'] = n_user['avatar_url']
+            else:
+                data['avatar'] = "https://s3.amazonaws.com/media.gigawatt.co/img/johnsmith.jpg"
             lead_j['donors'].append({'name': data['name'],
                                      'user_id': data['user_id'],
                                      'donated': data['donated'],
+                                     'avatar': data['avatar'],
                                      'ref': 0})
+
         upd_lead = helpers.generic_patch('/leaderboards/', lead_j)
         return upd_lead
 
