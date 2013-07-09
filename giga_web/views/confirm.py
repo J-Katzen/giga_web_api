@@ -9,8 +9,6 @@ import json
 
 app = giga_web
 
-# login
-
 
 @app.route("/donation/confirm/", methods=['POST'])
 def confirm_donation():
