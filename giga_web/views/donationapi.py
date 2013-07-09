@@ -63,7 +63,7 @@ class DonationAPI(MethodView):
             pj['active'] = False
             # find popular voted on projects
             parm = {
-                'where': '{"client_id": "%s","active": false}' % pj['camp_id'],
+                'where': '{"camp_id": "%s","active": false, "type": { "$in": ["rolling", "uncapped"]}}' % pj['camp_id'],
                 'sort': '[("votes": -1)]'
             }
             popular_req = requests.get(crud_url + '/projects/', params=parm)

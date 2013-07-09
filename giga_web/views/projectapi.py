@@ -23,7 +23,7 @@ class ProjectAPI(MethodView):
             return proj.content
 
     def post(self, id=None):
-        data = helpers.create_dict_from_form(request.form)
+        data = request.get_json(force=True, silent=False)
         if id is not None:
             data['_id'] = id
             proj = helpers.generic_get(self.path, id)

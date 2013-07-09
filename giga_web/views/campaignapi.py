@@ -23,7 +23,7 @@ class CampaignAPI(MethodView):
             return camp.content
 
     def post(self, campaign_perma=None):
-        data = helpers.create_dict_from_form(request.form)
+        data = request.get_json(force=True, silent=False)
         if campaign_perma is not None:
             camp = helpers.generic_get(self.path, campaign_perma)
             camp_j = camp.json()
