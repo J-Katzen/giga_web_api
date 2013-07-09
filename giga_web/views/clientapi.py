@@ -20,7 +20,7 @@ class ClientAPI(MethodView):
             return client.content
 
     def post(self, id=None):
-        data = helpers.create_dict_from_form(request.form)
+        data = request.get_json(force=True, silent=False)
         if id is not None:
             data['_id'] = id
             patched = helpers.generic_patch(self.path, data)
