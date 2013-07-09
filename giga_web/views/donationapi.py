@@ -58,25 +58,28 @@ class DonationAPI(MethodView):
         p = helpers.generic_get('/projects/', data['proj_id'])
         pj = p.json()
         pj['raised'] += data['donated']
-        if (pj['type'] == 'rolling') and (pj['raised'] >= pj['goal']):
+        if pj['raised'] >= pj['goal']:
             pj['completed'] = True
-            pj['active'] = False
-            # find popular voted on projects
-            parm = {
-                'where': '{"camp_id": "%s","active": false, "type": { "$in": ["rolling", "uncapped"]}}' % pj['camp_id'],
-                'sort': '[("votes": -1)]'
-            }
-            popular_req = requests.get(crud_url + '/projects/', params=parm)
-            pop_req_j = popular_req.json()
-            if len(pop_req_j['_items']) > 0:
-                pop_proj = pop_req_j['_items'][0]
-                pop_proj['active'] = True
-                pop_proj_id = pop_proj['_id']
-                upd_pop = helpers.generic_patch('/projects/', pop_proj)
-                if 'error' not in upd_pop:
-                    upd_p = helpers.generic_patch('/projects/', pj)
+            if pj['type'] == 'rolling':
+                pj['active'] = False
+                # find popular voted on projects
+                parm = {
+                    'where': '{"camp_id": "%s","active": false, "type": { "$in": ["rolling", "uncapped"]}}' % pj['camp_id'],
+                    'sort': '[("votes": -1)]'
+                }
+                popular_req = requests.get(crud_url + '/projects/', params=parm)
+                pop_req_j = popular_req.json()
+                if len(pop_req_j['_items']) > 0:
+                    pop_proj = pop_req_j['_items'][0]
+                    pop_proj['active'] = True
+                    pop_proj_id = pop_proj['_id']
+                    upd_pop = helpers.generic_patch('/projects/', pop_proj)
+                    if 'error' not in upd_pop:
+                        upd_p = helpers.generic_patch('/projects/', pj)
+                    else:
+                        upd_p = {'error': 'Could not set new active project'}
                 else:
-                    upd_p = {'error': 'Could not set new active project'}
+                    pop_proj_id = None
             else:
                 pop_proj_id = None
         else:
