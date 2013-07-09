@@ -51,8 +51,7 @@ class ProjectAPI(MethodView):
             data['completed'] = False
             data['votes'] = 0
             r = requests.get(crud_url + self.path,
-                             params={'where': '{"perma_name":"' +
-                                     data['perma_name'] + '"}'})
+                             params={'where': '{"perma_name":"%s", "camp_id": "%s"}' % (data['perma_name'], data['camp_id'])})
             if r.status_code == requests.codes.ok:
                 res = r.json()
                 if len(res['_items']) == 0:
