@@ -41,7 +41,12 @@ class ClientMapAPI(MethodView):
 
                     return reg.content
                 else:
-                    return json.dumps({'error': 'Email exists'})
+                    data['_id'] = res['_items'][0]['_id']
+                    patched = helpers.generic_patch(self.path, data)
+                    if 'error' in patched:
+                        return patched
+                    else:
+                        return patched.content
             else:
                 return json.dumps({'error': 'Could not query DB'})
 

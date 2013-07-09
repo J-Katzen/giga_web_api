@@ -86,14 +86,17 @@ class ProjectAPI(MethodView):
     def campaign_append_proj(self, proj_data):
         camp = helpers.generic_get('/campaigns/', proj_data['camp_id'])
         c = camp.json()
-        summary = proj_data['description'][0:254]
         app_proj = {'p_id': proj_data['_id'],
                     'proj_name': proj_data['name'],
                     'perma_name': proj_data['perma_name'],
                     'goal': proj_data['goal'],
-                    'description': summary[:summary.rfind('.')+1],
                     'type': proj_data['type'],
                     'raised': proj_data['raised']}
+        if 'summary' in proj_data:
+            app_proj['description'] = proj_data['summary']
+        else:
+            summary = proj_data['description'][0:254]
+            app_proj['description'] = summary[:summary.rfind('.')+1]
         if 'date_start' in c:
             app_proj['date_start'] = c['date_start']
         if proj_data['active'] and ('active_list' in c):

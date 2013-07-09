@@ -3,10 +3,12 @@
 from giga_web import crud_url
 from flask.views import MethodView
 from flask import request
+from wsgiref.handlers import format_date_time
+from datetime import datetime, timedelta
+from time import mktime
 import helpers
 import json
 import requests
-import datetime
 
 
 class DonationAPI(MethodView):
@@ -35,12 +37,15 @@ class DonationAPI(MethodView):
                                 headers={'Content-Type': 'application/json'})
             # update project(s)
             if data['confirmed']:
+                active_ids = dict()
+                aidx = 0
                 for proj in data['proj_list']:
-                    up, active_id[] = self.update_project_post(proj)
+                    up, active_ids[aidx] = self.update_project_post(proj)
+                    aidx += 1
                     if 'error' in up:
                         return up
                 # update campaign
-                camp, leader_id = self.update_campaign_post(data, active_id)
+                camp, leader_id = self.update_campaign_post(data, active_ids)
                 if 'error' in camp:
                     return camp
                 # update leaderboard
@@ -78,35 +83,44 @@ class DonationAPI(MethodView):
             pop_proj_id = None
         return upd_p, pop_proj_id
 
-    def update_campaign_post(self, data, active_id):
+    def update_campaign_post(self, data, active_ids):
         camp = helpers.generic_get('/campaigns/', data['camp_id'])
         camp_j = camp.json()
         lead_id = camp_j['leaderboard_id']
         camp_j['total_raised'] += data['donated']
         if camp_j['total_raised'] >= camp_j['total_goal']:
             camp_j['completed'] = True
-        if active_id is not None:
-            # delete project from active list
-            # add the active, but not complete project
-            camp_j['active_list'][:] = [d for d in camp_j['active_list']
-                                        if d['p_id'] != data['proj_id']]
-            active_p = helpers.generic_get('/projects/', active_id)
-            active_pj = active_p.json()
-            d_start = datetime.datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S UTC')
-            new_active_proj = {'p_id': active_pj['_id'],
-                               'proj_name': active_pj['name'],
-                               'perma_name': active_pj['perma_name'],
-                               'goal': active_pj['goal'],
-                               'description': active_pj['summary'],
-                               'type': active_pj['type'],
-                               'date_start': d_start}
-            if active_pj['type'] != 'uncapped':
-                c_start = datetime.datetime.strptime(camp_j['date_start'], '%a, %d %b %Y %H:%M:%S UTC')
-                d_end = (c_start + datetime.timedelta(active_pj['length'])).strftime('%a, %d %b %Y %H:%M:%S UTC')
-                new_active_proj['date_end'] = d_end
-            else:
-                new_active_proj['date_end'] = camp_j['date_end']
-            camp_j['active_list'].append(new_active_proj)
+        if len(active_ids) > 0:
+            for active_id in active_ids:
+                camp_j['active_list'][:] = [d for d in camp_j['active_list']
+                                            if d['p_id'] != data['proj_id']]
+                active_p = helpers.generic_get('/projects/', active_id)
+                active_pj = active_p.json()
+                now = datetime.now()
+                stamp = mktime(now.timetuple())
+                d_start = format_date_time(stamp)
+                new_active_proj = {'p_id': active_pj['_id'],
+                                   'proj_name': active_pj['name'],
+                                   'perma_name': active_pj['perma_name'],
+                                   'goal': active_pj['goal'],
+                                   'type': active_pj['type'],
+                                   'date_start': d_start}
+                if 'summary' in active_pj:
+                    new_active_proj['description'] = active_pj['summary']
+                else:
+                    new_active_proj['description'] = active_pj['description'][0:254]
+                if active_pj['type'] != 'uncapped':
+                    c_start = datetime.strptime(camp_j['date_start'], '%a, %d %b %Y %H:%M:%S GMT')
+                    d_end = (c_start + timedelta(active_pj['length'])).strftime('%a, %d %b %Y %H:%M:%S GMT')
+                    camp_end = datetime.strptime(camp_j['date_end'], '%a, %d %b %Y %H:%M:%S GMT')
+                    dc_end = datetime.strptime(d_end, '%a, %d %b %Y %H:%M:%S GMT')
+                    if dc_end > camp_end:
+                        new_active_proj['date_end'] = camp_j['date_end']
+                    else:
+                        new_active_proj['date_end'] = d_end
+                else:
+                    new_active_proj['date_end'] = camp_j['date_end']
+                camp_j['active_list'].append(new_active_proj)
         upd_camp = helpers.generic_patch('/campaigns/', camp_j)
         return upd_camp, lead_id
 
