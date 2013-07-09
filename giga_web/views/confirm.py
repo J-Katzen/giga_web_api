@@ -13,6 +13,6 @@ app = giga_web
 
 
 @app.route("/donation/confirm/", methods=['POST'])
-def login():
+def confirm_donation():
     #data = helpers.create_dict_from_form(request.form)
     pass
