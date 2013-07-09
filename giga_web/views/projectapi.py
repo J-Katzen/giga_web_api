@@ -47,7 +47,6 @@ class ProjectAPI(MethodView):
             else:
                 return patched.content
         else:
-            print data
             data['raised'] = 0
             data['completed'] = False
             data['votes'] = 0
@@ -66,8 +65,11 @@ class ProjectAPI(MethodView):
                     if (reg_j['data']['status'] == 'OK'):
                         if data['active']:
                             data['_id'] = reg_j['data']['_id']
+                            print data
                             camp_append = self.campaign_append_proj(data)
                             if 'error' not in camp_append:
+                                if camp_append['data']['status'] != 'ERR':
+                                    return camp_append['data']['issues']
                                 return reg.content
                             else:
                                 return json.dumps({'error': 'could not append proj'

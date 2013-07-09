@@ -8,7 +8,7 @@ import json
 
 
 def generic_get(collection_path, datum, projection=None):
-    r = requests.get(crud_url + collection_path + datum,
+    r = requests.get(crud_url + collection_path + datum + '/',
                      params=projection)
     if r.status_code == requests.codes.ok:
         return r
@@ -35,6 +35,7 @@ def generic_patch(collection_path, data_dict):
                     new_data[key] = False
                 else:
                     new_data[key] = value
+        print new_data
         dat = {'data': new_data}
         upd = requests.post(
             crud_url + collection_path + data_dict['_id'] + '/',
