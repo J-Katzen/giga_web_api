@@ -14,13 +14,14 @@ class ClientAPI(MethodView):
 
     def get(self, id):
         if id is None:
-            return json.dumps({'error':'no id or name provided'})
+            return json.dumps({'error': 'no id or name provided'})
         else:
             client = helpers.generic_get(self.path, id)
             return client.content
 
     def post(self, id=None):
         data = request.get_json(force=True, silent=False)
+        print data
         if id is not None:
             data['_id'] = id
             patched = helpers.generic_patch(self.path, data)

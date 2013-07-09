@@ -95,7 +95,7 @@ class ProjectAPI(MethodView):
                     'perma_name': proj_data['perma_name'],
                     'goal': proj_data['goal'],
                     'type': proj_data['type'],
-                    'summary': proj_data['summary'],
+                    'description': proj_data['summary'],
                     'raised': proj_data['raised'],
                     'proj_thumb': proj_data['thumbnail']}
         if 'date_start' in c:

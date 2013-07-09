@@ -99,12 +99,17 @@ class DonationAPI(MethodView):
                 now = datetime.now()
                 stamp = mktime(now.timetuple())
                 d_start = format_date_time(stamp)
+                if 'thumbnail' not in active_pj:
+                    active_pj['thumbnail'] = 'https://s3.amazonaws.com/media.gigawatt.co/img/add.png'
                 new_active_proj = {'p_id': active_pj['_id'],
                                    'proj_name': active_pj['name'],
                                    'perma_name': active_pj['perma_name'],
                                    'goal': active_pj['goal'],
                                    'type': active_pj['type'],
+                                   'raised': active_pj['raised'],
+                                   'goal': active_pj['goal'],
                                    'date_start': d_start}
+
                 if 'summary' in active_pj:
                     new_active_proj['description'] = active_pj['summary']
                 else:
