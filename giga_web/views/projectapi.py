@@ -68,7 +68,7 @@ class ProjectAPI(MethodView):
                             print data
                             camp_append = self.campaign_append_proj(data)
                             if 'error' not in camp_append:
-                                if camp_append['data']['status'] != 'ERR':
+                                if camp_append['data']['status'] == 'ERR':
                                     return camp_append['data']['issues']
                                 return reg.content
                             else:
