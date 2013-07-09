@@ -49,8 +49,7 @@ class ProjectAPI(MethodView):
         else:
             print data
             data['raised'] = 0
-            if data['type'] == 'rolling':
-                data['completed'] = False
+            data['completed'] = False
             data['votes'] = 0
             r = requests.get(crud_url + self.path,
                              params={'where': '{"perma_name":"' +
