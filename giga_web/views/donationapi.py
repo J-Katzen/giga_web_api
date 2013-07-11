@@ -59,7 +59,9 @@ class DonationAPI(MethodView):
         pj = p.json()
         pj['raised'] += data['donated']
         if pj['raised'] >= pj['goal']:
-            pj['completed'] = True
+            now = datetime.now()
+            stamp = mktime(now.timetuple())
+            pj['completed'] = format_date_time(stamp)
             if pj['type'] == 'rolling':
                 pj['active'] = False
                 # find popular voted on projects

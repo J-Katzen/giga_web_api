@@ -6,18 +6,21 @@ from flask import request
 import helpers
 import requests
 import json
-import bcrypt
 
 
 class ClientMapAPI(MethodView):
     path = '/client_maps/'
 
-    def get(self, id):
+    def get(self, id, cid=None):
         if id is None:
-            return json.dumps({'error': 'no id provided'})
+            parm = {'where': '{"client_id" : "%s"}' % cid}
+            r = requests.get(crud_url + self.path,
+                             params=parm)
+            res = r.json()
+            return json.dumps(res['_items'][0])
         else:
-            user = helpers.generic_get(self.path, id)
-            return user.content
+            c_map = helpers.generic_get(self.path, id)
+            return c_map.content
 
     def post(self, id=None):
         data = request.get_json(force=True, silent=False)
@@ -41,12 +44,7 @@ class ClientMapAPI(MethodView):
 
                     return reg.content
                 else:
-                    data['_id'] = res['_items'][0]['_id']
-                    patched = helpers.generic_patch(self.path, data)
-                    if 'error' in patched:
-                        return patched
-                    else:
-                        return patched.content
+                    return json.dumps({'error': 'client_map already exist for this client_id - delete existing one first'})
             else:
                 return json.dumps({'error': 'Could not query DB'})
 

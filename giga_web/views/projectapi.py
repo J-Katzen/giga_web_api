@@ -101,7 +101,6 @@ class ProjectAPI(MethodView):
                     'proj_thumb': proj_data['thumbnail']}
         if 'date_start' in c:
             app_proj['date_start'] = c['date_start']
-
         if proj_data['type'] != 'uncapped':
             c_start = datetime.strptime(c['date_start'], '%a, %d %b %Y %H:%M:%S GMT')
             d_end = (c_start + timedelta(proj_data['length'])).strftime('%a, %d %b %Y %H:%M:%S GMT')
@@ -111,6 +110,8 @@ class ProjectAPI(MethodView):
                 app_proj['date_end'] = c['date_end']
             else:
                 app_proj['date_end'] = d_end
+        else:
+            app_proj['date_end'] = c['date_end']
         if proj_data['active'] and ('active_list' in c):
             c['active_list'].append(app_proj)
             c['total_goal'] += proj_data['goal']

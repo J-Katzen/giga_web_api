@@ -35,7 +35,6 @@ def generic_patch(collection_path, data_dict):
                     new_data[key] = False
                 else:
                     new_data[key] = value
-        print new_data
         dat = {'data': new_data}
         upd = requests.post(
             crud_url + collection_path + data_dict['_id'] + '/',
