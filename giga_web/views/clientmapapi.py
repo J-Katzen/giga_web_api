@@ -17,7 +17,7 @@ class ClientMapAPI(MethodView):
             r = requests.get(crud_url + self.path,
                              params=parm)
             res = r.json()
-            return json.dumps(res['_items'][0])
+            return json.dumps(res['_items'])
         else:
             c_map = helpers.generic_get(self.path, id)
             return c_map.content
