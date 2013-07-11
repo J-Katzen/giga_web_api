@@ -92,9 +92,7 @@ class DonationAPI(MethodView):
         camp = helpers.generic_get('/campaigns/', data['camp_id'])
         camp_j = camp.json()
         lead_id = camp_j['leaderboard_id']
-        camp_j['total_raised'] += data['donated']
-        if camp_j['total_raised'] >= camp_j['total_goal']:
-            camp_j['completed'] = True
+        camp_j['total_raised'] += data['total_donated']
         if len(active_ids) > 0:
             for active_id in active_ids:
                 camp_j['active_list'][:] = [d for d in camp_j['active_list']
@@ -132,6 +130,7 @@ class DonationAPI(MethodView):
                         new_active_proj['date_end'] = d_end
                 else:
                     new_active_proj['date_end'] = camp_j['date_end']
+                camp_j['total_goal'] += new_active_proj['goal']
                 camp_j['active_list'].append(new_active_proj)
         upd_camp = helpers.generic_patch('/campaigns/', camp_j)
         return upd_camp, lead_id

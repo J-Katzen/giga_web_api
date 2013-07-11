@@ -7,6 +7,7 @@ from clientapi import ClientAPI
 from clientuserapi import ClientUserAPI
 from donationapi import DonationAPI
 from clientmapapi import ClientMapAPI
+from verifymapapi import VerifyMapAPI
 
 app = giga_web
 
@@ -32,3 +33,4 @@ register_api(ClientAPI, 'client_api', '/clients/')
 register_api(ClientUserAPI, 'client_user_api', '/client_users/')
 register_api(DonationAPI, 'donations_api', '/donations/')
 register_api(ClientMapAPI, 'client_map_api', '/client_maps/')
+register_api(VerifyMapAPI, 'verify_map_api', '/verify_maps/')
