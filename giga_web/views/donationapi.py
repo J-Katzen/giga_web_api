@@ -117,7 +117,8 @@ class DonationAPI(MethodView):
                 if 'summary' in active_pj:
                     new_active_proj['description'] = active_pj['summary']
                 else:
-                    new_active_proj['description'] = active_pj['description'][0:254]
+                    summary = active_pj['description'][0:254]
+                    new_active_proj['description'] = summary[:summary.rfind('.')+1]
                 if active_pj['type'] != 'uncapped':
                     c_start = datetime.strptime(camp_j['date_start'], '%a, %d %b %Y %H:%M:%S GMT')
                     d_end = (c_start + timedelta(active_pj['length'])).strftime('%a, %d %b %Y %H:%M:%S GMT')
