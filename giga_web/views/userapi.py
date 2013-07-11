@@ -48,7 +48,7 @@ class UserAPI(MethodView):
                 return json.dumps({'error': 'Could not query DB'})
 
     def delete(self, user_id):
-        if id is None:
+        if user_id is None:
             return json.dumps({'error': 'did not provide id'})
         else:
             r = helpers.generic_delete(self.path, user_id)
