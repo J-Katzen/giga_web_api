@@ -7,9 +7,9 @@ import json
 app = giga_web
 
 
-@app.route("/checkout/<camp_perma>/", methods=['GET'])
-def checkout_project(camp_perma):
-    parm = {'where': '{"type": "checkout"}'}
+@app.route("/checkout/<camp_id>/", methods=['GET'])
+def checkout_project(camp_id):
+    parm = {'where': '{"type": "checkout", "camp_id": "%s"}' % camp_id}
     r = requests.get(crud_url + '/projects/', params=parm)
     res = r.json()
     if len(res['_items']) > 0:
