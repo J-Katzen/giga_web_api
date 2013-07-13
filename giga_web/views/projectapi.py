@@ -49,7 +49,6 @@ class ProjectAPI(MethodView):
                 return patched.content
         else:
             data['raised'] = 0
-            data['completed'] = False
             data['votes'] = 0
             r = requests.get(crud_url + self.path,
                              params={'where': '{"perma_name":"%s", "camp_id": "%s"}' % (data['perma_name'], data['camp_id'])})
