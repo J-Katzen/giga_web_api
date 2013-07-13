@@ -57,7 +57,8 @@ class DonationAPI(MethodView):
     def update_project_post(self, data):
         p = helpers.generic_get('/projects/', data['proj_id'])
         pj = p.json()
-        pj['raised'] += data['donated']
+        pop_proj_id = None
+        pj['raised'] += data['total_donated']
         if pj['raised'] >= pj['goal']:
             now = datetime.now()
             stamp = mktime(now.timetuple())
@@ -80,12 +81,8 @@ class DonationAPI(MethodView):
                         upd_p = helpers.generic_patch('/projects/', pj)
                     else:
                         upd_p = {'error': 'Could not set new active project'}
-                else:
-                    pop_proj_id = None
-            else:
-                pop_proj_id = None
         else:
-            pop_proj_id = None
+            upd_p = helpers.generic_patch('/projects/', pj)
         return upd_p, pop_proj_id
 
     def update_campaign_post(self, data, active_ids):
@@ -94,33 +91,32 @@ class DonationAPI(MethodView):
         lead_id = camp_j['leaderboard_id']
         camp_j['total_raised'] += data['total_donated']
         if len(active_ids) > 0:
-            for active_id in active_ids:
+            for projs in data['proj_list']:
                 camp_j['active_list'][:] = [d for d in camp_j['active_list']
-                                            if d['p_id'] != data['proj_id']]
+                                            if d['p_id'] != projs['proj_id']]
+            for active_id in active_ids:
                 active_p = helpers.generic_get('/projects/', active_id)
                 active_pj = active_p.json()
                 now = datetime.now()
                 stamp = mktime(now.timetuple())
                 d_start = format_date_time(stamp)
+                if 'sumnmary' not in active_pj:
+                    summary = active_pj['description'][0:254]
+                    active_pj['summary'] = summary[:summary.rfind('.') + 1]
                 if 'thumbnail' not in active_pj:
                     active_pj['thumbnail'] = 'https://s3.amazonaws.com/media.gigawatt.co/img/add.png'
                 new_active_proj = {'p_id': active_pj['_id'],
                                    'proj_name': active_pj['name'],
                                    'perma_name': active_pj['perma_name'],
-                                   'goal': active_pj['goal'],
                                    'type': active_pj['type'],
                                    'raised': active_pj['raised'],
+                                   'description': active_pj['summary'],
                                    'goal': active_pj['goal'],
                                    'proj_thumb': active_pj['thumbnail'],
                                    'date_start': d_start}
 
-                if 'summary' in active_pj:
-                    new_active_proj['description'] = active_pj['summary']
-                else:
-                    summary = active_pj['description'][0:254]
-                    new_active_proj['description'] = summary[:summary.rfind('.')+1]
                 if active_pj['type'] != 'uncapped':
-                    c_start = datetime.strptime(camp_j['date_start'], '%a, %d %b %Y %H:%M:%S GMT')
+                    c_start = datetime.strptime(d_start, '%a, %d %b %Y %H:%M:%S GMT')
                     d_end = (c_start + timedelta(active_pj['length'])).strftime('%a, %d %b %Y %H:%M:%S GMT')
                     camp_end = datetime.strptime(camp_j['date_end'], '%a, %d %b %Y %H:%M:%S GMT')
                     dc_end = datetime.strptime(d_end, '%a, %d %b %Y %H:%M:%S GMT')
@@ -160,6 +156,14 @@ class DonationAPI(MethodView):
             lead_j['donors'].append(user2)
         else:
             n_user = helpers.generic_get('/users/', data['user_id'])
+
+            if ('first_name' in data) and ('last_name') in data:
+                data['name'] = data['first_name'] + ' ' + data['last_name']
+            elif ('firstname' in n_user) and ('lastname' in n_user):
+                data['name'] = n_user['firstname'] + ' ' + n_user['lastname']
+            else:
+                data['name'] = data['email']
+
             if 'avatar_url' in n_user:
                 data['avatar'] = n_user['avatar_url']
             else:
