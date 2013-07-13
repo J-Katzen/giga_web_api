@@ -10,3 +10,4 @@ from verifymapapi import VerifyMapAPI
 import registerapis
 import login
 import confirm
+import checkout
