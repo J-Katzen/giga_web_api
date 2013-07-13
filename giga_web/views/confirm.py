@@ -10,7 +10,7 @@ import json
 app = giga_web
 
 
-@app.route("<client_perma>/donation/confirm/", methods=['POST'])
+@app.route("/<client_perma>/donation/confirm/", methods=['POST'])
 def confirm_donation(client_perma):
     if client_perma.lower() == 'moravian':
         cash_data = helpers.create_dict_from_form(request.form)
