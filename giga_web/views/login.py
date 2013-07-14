@@ -15,6 +15,7 @@ app = giga_web
 @app.route("/login/", methods=['POST'])
 def login():
     data = helpers.create_dict_from_form(request.form)
+    print data
     r = requests.get(crud_url + '/users/',
                      params={'where': '{"email":"' + data['email'] + '"}'})
     if r.status_code == requests.codes.ok:
@@ -49,6 +50,6 @@ def client_login(client_perma):
             cu_j = client_user.json()
             hashed = cu_j['_items'][0]['pw']
             if bcrypt.hashpw(data['password'], hashed) == hashed:
-                return json.dumps(res['_items'][0])
+                return json.dumps(cu_j['_items'][0])
             else:
                 return json.dumps({'error': 'Invalid password'})
