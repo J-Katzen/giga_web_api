@@ -34,8 +34,7 @@ class UserAPI(MethodView):
             if r.status_code == requests.codes.ok:
                 res = r.json()
                 if len(res['_items']) == 0:
-                    data['pw'] = bcrypt.hashpw(data['password'], bcrypt.gensalt())
-                    data.pop('password')
+                    data['pw'] = bcrypt.hashpw(data['pw'], bcrypt.gensalt())
                     payload = {'data': data}
                     reg = requests.post(crud_url + self.path,
                                         data=json.dumps(payload),
