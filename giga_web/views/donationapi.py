@@ -52,7 +52,7 @@ class DonationAPI(MethodView):
                 lead = self.update_leaderboard_post(data, leader_id)
                 if 'error' in lead:
                     return lead
-                return reg.content
+            return reg.content
 
     def update_project_post(self, data):
         p = helpers.generic_get('/projects/', data['proj_id'])
