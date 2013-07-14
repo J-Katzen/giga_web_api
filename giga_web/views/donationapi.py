@@ -40,10 +40,12 @@ class DonationAPI(MethodView):
                 active_ids = dict()
                 aidx = 0
                 for proj in data['proj_list']:
-                    up, active_ids[aidx] = self.update_project_post(proj)
-                    aidx += 1
+                    up, project_id = self.update_project_post(proj)
                     if 'error' in up:
                         return up
+                    if project_id is not None:
+                        active_ids[aidx] = project_id
+                        aidx += 1
                 # update campaign
                 camp, leader_id = self.update_campaign_post(data, active_ids)
                 if 'error' in camp:
@@ -58,7 +60,7 @@ class DonationAPI(MethodView):
         p = helpers.generic_get('/projects/', data['proj_id'])
         pj = p.json()
         pop_proj_id = None
-        pj['raised'] += data['total_donated']
+        pj['raised'] += data['donated']
         if pj['raised'] >= pj['goal']:
             now = datetime.now()
             stamp = mktime(now.timetuple())
@@ -66,10 +68,10 @@ class DonationAPI(MethodView):
             if pj['type'] == 'rolling':
                 pj['active'] = False
                 # find popular voted on projects
-                parm = {
-                    'where': '{"camp_id": "%s","active": false, "type": { "$in": ["rolling", "uncapped"]}}' % pj['camp_id'],
-                    'sort': '[("votes": -1)]'
-                }
+                parm = dict()
+                parm['where'] = '{"camp_id": "%s","active": false, "type": { "$in": ["rolling", "uncapped"]}}' % pj['camp_id']
+                parm['sort'] = '[("votes",-1)]'
+                parm['max_results'] = 1
                 popular_req = requests.get(crud_url + '/projects/', params=parm)
                 pop_req_j = popular_req.json()
                 if len(pop_req_j['_items']) > 0:
@@ -134,9 +136,9 @@ class DonationAPI(MethodView):
     def update_leaderboard_post(self, data, lead_id):
         lead = helpers.generic_get('/leaderboards/', lead_id)
         lead_j = lead.json()
-        lead_j['raised'] += data['donated']
+        lead_j['raised'] += data['total_donated']
         if 'ref' in data:
-            lead_j['referred'] += data['donated']
+            lead_j['referred'] += data['total_donated']
             # find out if the referral id is in the leaderboard list
             user = next((d for d in lead_j['donors'] if
                          d['user_id'] == data['ref']), None)
