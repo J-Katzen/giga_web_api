@@ -12,13 +12,21 @@ import requests
 class ProjectAPI(MethodView):
     path = '/projects/'
 
-    def get(self, id, cid=None):
+    def get(self, id, cid=None, camp_id=None, proj_perma=None):
         if id is None:
-            parm = {'where': '{"client_id" : "%s"}' % cid}
-            r = requests.get(crud_url + self.path,
-                             params=parm)
-            res = r.json()
-            return json.dumps(res['_items'])
+            if cid is not None:
+                parm = {'where': '{"client_id" : "%s"}' % cid}
+                r = requests.get(crud_url + self.path,
+                                 params=parm)
+                res = r.json()
+                return json.dumps(res['_items'])
+            elif (camp_id is not None) and (proj_perma is not None):
+                parm = {'where': '{"camp_id": "%s", "perma_name": "%s"}'
+                        % (camp_id, proj_perma)}
+                r = requests.get(crud_url + self.path, params=parm)
+                res = r.json()
+                return json.dumps(res['_items'])
+
         else:
             proj = helpers.generic_get(self.path, id)
             return proj.content
@@ -88,7 +96,7 @@ class ProjectAPI(MethodView):
         c = camp.json()
         if 'summary' not in proj_data:
             summary = proj_data['description'][0:254]
-            proj_data['summary'] = summary[:summary.rfind('.')+1]
+            proj_data['summary'] = summary[:summary.rfind('.') + 1]
 
         app_proj = {'p_id': proj_data['_id'],
                     'proj_name': proj_data['name'],
