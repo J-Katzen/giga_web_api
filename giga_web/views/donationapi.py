@@ -162,7 +162,7 @@ class DonationAPI(MethodView):
         if user2 is not None:
             lead_j['donors'][:] = [d for d in lead_j['donors']
                                    if d['user_id'] != data['user_id']]
-            user2['donated'] += data['donated']
+            user2['donated'] += data['total_donated']
             lead_j['donors'].append(user2)
         else:
             n_user = helpers.generic_get('/users/', data['user_id'])
