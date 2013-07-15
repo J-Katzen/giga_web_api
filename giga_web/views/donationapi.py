@@ -92,6 +92,14 @@ class DonationAPI(MethodView):
         camp_j = camp.json()
         lead_id = camp_j['leaderboard_id']
         camp_j['total_raised'] += data['total_donated']
+        for projs in data['proj_list']:
+            activelist_proj = next((d for d in camp_j['active_list'] if
+                                    d['p_id'] == projs['proj_id']), None)
+            if activelist_proj is not None:
+                activelist_proj['raised'] += projs['donated']
+                camp_j['active_list'][:] = [d for d in camp_j['active_list']
+                                            if d['p_id'] != projs['proj_id']]
+                camp_j['active_list'].append(activelist_proj)
         if len(active_ids) > 0:
             for projs in data['proj_list']:
                 camp_j['active_list'][:] = [d for d in camp_j['active_list']
@@ -146,7 +154,7 @@ class DonationAPI(MethodView):
             if user is not None:
                 lead_j['donors'][:] = [d for d in lead_j['donors']
                                        if d['user_id'] != data['ref']]
-                user['ref'] += data['donated']
+                user['ref'] += data['total_donated']
                 lead_j['donors'].append(user)
         # check if user donating is already in leaderboard
         user2 = next((d for d in lead_j['donors'] if
@@ -172,7 +180,7 @@ class DonationAPI(MethodView):
                 data['avatar'] = "https://s3.amazonaws.com/media.gigawatt.co/img/johnsmith.jpg"
             lead_j['donors'].append({'name': data['name'],
                                      'user_id': data['user_id'],
-                                     'donated': data['donated'],
+                                     'donated': data['total_donated'],
                                      'avatar': data['avatar'],
                                      'ref': 0})
 
