@@ -25,7 +25,7 @@ class ProjectAPI(MethodView):
                         % (camp_id, proj_perma)}
                 r = requests.get(crud_url + self.path, params=parm)
                 res = r.json()
-                return json.dumps(res['_items'])
+                return json.dumps(res['_items'][0])
 
         else:
             proj = helpers.generic_get(self.path, id)
