@@ -25,7 +25,12 @@ class LeaderboardAPI(MethodView):
     def post(self, id=None):
         data = request.get_json(force=True, silent=False)
         if id is not None:
-            pass
+            data['_id'] = id
+            patched = helpers.generic_patch(self.path, data)
+            if 'error' in patched:
+                return patched
+            else:
+                return patched.content
         else:
             r = requests.get(crud_url + self.path,
                              params={'where': '{"camp_id":"' + data['camp_id'] + '"}'})
