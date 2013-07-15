@@ -158,6 +158,8 @@ class DonationAPI(MethodView):
                 user['combined'] += data['total_donated']
                 lead_j['donors'].append(user)
         # check if user donating is already in leaderboard
+        if 'user_id' not in data:
+            data['user_id'] = "51e3b7ac855d9179965bda38"
         user2 = next((d for d in lead_j['donors'] if
                       d['user_id'] == data['user_id']), None)
         if user2 is not None:
