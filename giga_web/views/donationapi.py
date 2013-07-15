@@ -155,6 +155,7 @@ class DonationAPI(MethodView):
                 lead_j['donors'][:] = [d for d in lead_j['donors']
                                        if d['user_id'] != data['ref']]
                 user['ref'] += data['total_donated']
+                user['combined'] += data['total_donated']
                 lead_j['donors'].append(user)
         # check if user donating is already in leaderboard
         user2 = next((d for d in lead_j['donors'] if
@@ -163,6 +164,7 @@ class DonationAPI(MethodView):
             lead_j['donors'][:] = [d for d in lead_j['donors']
                                    if d['user_id'] != data['user_id']]
             user2['donated'] += data['total_donated']
+            user2['combined'] += data['total_donated']
             lead_j['donors'].append(user2)
         else:
             n_user = helpers.generic_get('/users/', data['user_id'])
@@ -182,7 +184,8 @@ class DonationAPI(MethodView):
                                      'user_id': data['user_id'],
                                      'donated': data['total_donated'],
                                      'avatar': data['avatar'],
-                                     'ref': 0})
+                                     'ref': 0,
+                                     'combined': data['total_donated']})
 
         upd_lead = helpers.generic_patch('/leaderboards/', lead_j)
         return upd_lead
