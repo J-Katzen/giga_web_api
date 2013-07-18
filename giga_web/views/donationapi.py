@@ -171,7 +171,7 @@ class DonationAPI(MethodView):
         else:
             n_user = helpers.generic_get('/users/', data['user_id'])
             n_user = n_user.json()
-            if ('first_name' in data) and ('last_name') in data:
+            if ('first_name' in data) and ('last_name' in data):
                 data['name'] = data['first_name'] + ' ' + data['last_name']
             elif ('firstname' in n_user) and ('lastname' in n_user):
                 data['name'] = n_user['firstname'] + ' ' + n_user['lastname']
