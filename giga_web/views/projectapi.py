@@ -26,6 +26,9 @@ class ProjectAPI(MethodView):
                 r = requests.get(crud_url + self.path, params=parm)
                 res = r.json()
                 return json.dumps(res['_items'][0])
+        else:
+            project = helpers.generic_get(self.path, id)
+            return project.content
 
         else:
             proj = helpers.generic_get(self.path, id)
