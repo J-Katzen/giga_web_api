@@ -43,16 +43,15 @@ class ProjectAPI(MethodView):
                 c = self.campaign_remove_proj(id)
                 if c['data']['status'] != 'OK':
                     patched = {'error': 'Could not update campaign properly'}
-                    return patched
+                    return json.dumps(patched)
                 a = self.campaign_append_proj(data)
                 if json.loads(a)['data']['status'] != 'OK':
                     patched = {'error': 'Could not append to campaign properly'}
-                    return patched
-
+                    return json.dumps(patched)
             # otherwise just patch project
-            patched = helpers.generic_patch(self.path, data)
+            patched = helpers.generic_patch(self.path, data, data['etag'])
             if 'error' in patched:
-                return patched
+                return json.dumps(patched)
             else:
                 return patched.content
         else:
@@ -122,7 +121,7 @@ class ProjectAPI(MethodView):
         if proj_data['active'] and ('active_list' in c):
             c['active_list'].append(app_proj)
             c['total_goal'] += proj_data['goal']
-        patched = helpers.generic_patch('/campaigns/', c)
+        patched = helpers.generic_patch('/campaigns/', c, c['etag'])
         if 'error' in patched:
             return patched
         else:
@@ -140,7 +139,7 @@ class ProjectAPI(MethodView):
                                          if d['p_id'] != cj['_id']]
                 if cur_len != len(cam['active_list']):
                     cam['total_goal'] -= cj['goal']
-                patched = helpers.generic_patch('/campaigns/', cam)
+                patched = helpers.generic_patch('/campaigns/', cam, cam['etag'])
                 return patched.json()
         else:
             return proj.json()

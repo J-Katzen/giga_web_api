@@ -17,7 +17,7 @@ def generic_get(collection_path, datum, projection=None):
         return err
 
 
-def generic_patch(collection_path, data_dict):
+def generic_patch(collection_path, data_dict, etag):
     new_data = dict()
     # don't try to patch eve keys or _id
     bad_keys = ['_links', 'created', 'etag', '_id', 'updated']
@@ -36,18 +36,25 @@ def generic_patch(collection_path, data_dict):
                 else:
                     new_data[key] = value
         dat = {'data': new_data}
+        data_dict['_id'] = obj_json['_id']
         upd = requests.post(
             crud_url + collection_path + data_dict['_id'] + '/',
             data=json.dumps(dat),
             headers={'Content-Type': 'application/json',
                      'X-HTTP-Method-Override': 'PATCH',
-                     'If-Match': obj_json['etag']})
+                     'If-Match': etag})
         if upd.status_code == requests.codes.ok:
             return upd
         else:
-            err = {'error': 'Could not correctly patch '
-                   + collection_path + ' with the id of: ' + data_dict['_id']}
+            err = {'error': 'Could not correctly patch %s with the id of: %s' % (collection_path, data_dict['_id'])}
             return err
+    else:
+        err = {'error': 'Could not verify the data against the database'}
+        return err
+
+
+def get_index(seq, attr, value):
+    return next((index for (index, d) in enumerate(seq) if d[attr] == value), None)
 
 
 def generic_delete(collection_path, id):

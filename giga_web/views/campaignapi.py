@@ -25,12 +25,10 @@ class CampaignAPI(MethodView):
     def post(self, campaign_perma=None):
         data = request.get_json(force=True, silent=False)
         if campaign_perma is not None:
-            camp = helpers.generic_get(self.path, campaign_perma)
-            camp_j = camp.json()
-            data['_id'] = camp_j['_id']
-            patched = helpers.generic_patch(self.path, data)
+            data['_id'] = campaign_perma
+            patched = helpers.generic_patch(self.path, data, data['etag'])
             if 'error' in patched:
-                return patched
+                return json.dumps(patched)
             else:
                 return patched.content
         else:
@@ -49,13 +47,12 @@ class CampaignAPI(MethodView):
                                         headers={'Content-Type': 'application/json'})
                     # create and attach leaderboard
                     reg_j = reg.json()
-                    c_data = helpers.generic_get(self.path, reg_j['data']['_id'])
-                    lead_data = c_data.json()
+                    lead_data = {'client_id': reg_j['client_id'],
+                                 'camp_id': reg_j['_id']}
                     cl = self.create_leaderboard(lead_data)
                     if cl['data']['status'] == 'OK':
                         lead_data['leaderboard_id'] = cl['data']['_id']
-                        print lead_data
-                        p = helpers.generic_patch(self.path, lead_data)
+                        p = helpers.generic_patch(self.path, lead_data, reg_j['etag'])
                         if p.json()['data']['status'] == 'OK':
                             return reg.content
                         else:

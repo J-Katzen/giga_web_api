@@ -26,9 +26,9 @@ class LeaderboardAPI(MethodView):
         data = request.get_json(force=True, silent=False)
         if id is not None:
             data['_id'] = id
-            patched = helpers.generic_patch(self.path, data)
+            patched = helpers.generic_patch(self.path, data, data['etag'])
             if 'error' in patched:
-                return patched
+                return json.dumps(patched)
             else:
                 return patched.content
         else:

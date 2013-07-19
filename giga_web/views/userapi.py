@@ -22,10 +22,12 @@ class UserAPI(MethodView):
     def post(self, id=None):
         data = helpers.create_dict_from_form(request.form)
         if id is not None:
+            user = helpers.generic_get(self.path, id)
+            user_j = user.json()
             data['_id'] = id
-            patched = helpers.generic_patch(self.path, data)
+            patched = helpers.generic_patch(self.path, data, user_j['etag'])
             if 'error' in patched:
-                return patched
+                return json.dumps(patched)
             else:
                 return patched.content
         else:

@@ -1,13 +1,13 @@
 from giga_web import giga_web
-from userapi import UserAPI
-from projectapi import ProjectAPI
-from campaignapi import CampaignAPI
-from leaderboardapi import LeaderboardAPI
-from clientapi import ClientAPI
-from clientuserapi import ClientUserAPI
-from donationapi import DonationAPI
-from clientmapapi import ClientMapAPI
-from verifymapapi import VerifyMapAPI
+from .userapi import UserAPI
+from .projectapi import ProjectAPI
+from .campaignapi import CampaignAPI
+from .leaderboardapi import LeaderboardAPI
+from .clientapi import ClientAPI
+from .clientuserapi import ClientUserAPI
+from .donationapi import DonationAPI
+from .clientmapapi import ClientMapAPI
+from .verifymapapi import VerifyMapAPI
 
 app = giga_web
 

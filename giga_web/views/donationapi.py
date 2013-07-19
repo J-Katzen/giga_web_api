@@ -6,6 +6,7 @@ from flask import request
 from wsgiref.handlers import format_date_time
 from datetime import datetime, timedelta
 from time import mktime
+from operator import itemgetter
 import helpers
 import json
 import requests
@@ -37,24 +38,27 @@ class DonationAPI(MethodView):
                                 headers={'Content-Type': 'application/json'})
             # update project(s)
             if data['confirmed']:
-                active_ids = dict()
-                aidx = 0
-                for proj in data['proj_list']:
-                    up, project_id = self.update_project_post(proj)
-                    if 'error' in up:
-                        return up
-                    if project_id is not None:
-                        active_ids[aidx] = project_id
-                        aidx += 1
-                # update campaign
-                camp, leader_id = self.update_campaign_post(data, active_ids)
-                if 'error' in camp:
-                    return camp
-                # update leaderboard
-                lead = self.update_leaderboard_post(data, leader_id)
-                if 'error' in lead:
-                    return lead
+                self.confirm_donation(data)
             return reg.content
+
+    def confirm_donation(self, data):
+        active_ids = dict()
+        aidx = 0
+        for proj in data['proj_list']:
+            up, project_id = self.update_project_post(proj)
+            if 'error' in up:
+                return up
+            if project_id is not None:
+                active_ids[aidx] = project_id
+                aidx += 1
+        # update campaign
+        camp, leader_id = self.update_campaign_post(data, active_ids)
+        if 'error' in camp:
+            return camp
+        # update leaderboard
+        lead = self.update_leaderboard_post(data, leader_id)
+        if 'error' in lead:
+            return lead
 
     def update_project_post(self, data):
         p = helpers.generic_get('/projects/', data['proj_id'])
@@ -78,13 +82,13 @@ class DonationAPI(MethodView):
                     pop_proj = pop_req_j['_items'][0]
                     pop_proj['active'] = True
                     pop_proj_id = pop_proj['_id']
-                    upd_pop = helpers.generic_patch('/projects/', pop_proj)
+                    upd_pop = helpers.generic_patch('/projects/', pop_proj, pop_proj['etag'])
                     if 'error' not in upd_pop:
-                        upd_p = helpers.generic_patch('/projects/', pj)
+                        upd_p = helpers.generic_patch('/projects/', pj, pj['etag'])
                     else:
                         upd_p = {'error': 'Could not set new active project'}
         else:
-            upd_p = helpers.generic_patch('/projects/', pj)
+            upd_p = helpers.generic_patch('/projects/', pj, pj['etag'])
         return upd_p, pop_proj_id
 
     def update_campaign_post(self, data, active_ids):
@@ -138,7 +142,7 @@ class DonationAPI(MethodView):
                     new_active_proj['date_end'] = camp_j['date_end']
                 camp_j['total_goal'] += new_active_proj['goal']
                 camp_j['active_list'].append(new_active_proj)
-        upd_camp = helpers.generic_patch('/campaigns/', camp_j)
+        upd_camp = helpers.generic_patch('/campaigns/', camp_j, camp_j['etag'])
         return upd_camp, lead_id
 
     def update_leaderboard_post(self, data, lead_id):
@@ -189,7 +193,7 @@ class DonationAPI(MethodView):
                                      'ref': 0,
                                      'combined': data['total_donated']})
 
-        upd_lead = helpers.generic_patch('/leaderboards/', lead_j)
+        upd_lead = helpers.generic_patch('/leaderboards/', lead_j, lead_j['etag'])
         return upd_lead
 
     def delete(self, id):
