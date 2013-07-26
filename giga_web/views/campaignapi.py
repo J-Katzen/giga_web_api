@@ -81,7 +81,7 @@ class CampaignAPI(MethodView):
         if campaign_perma is None:
             return json.dumps({'error': 'did not provide campaign_perma'})
         else:
-            camp = helpers.generic_get(path, campaign_perma)
+            camp = helpers.generic_get(self.path, campaign_perma)
             res = camp.json()
             for proj in res['project_list']:
                 d = helpers.generic_delete('/projects/', proj['p_id'])
