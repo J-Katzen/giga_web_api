@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from giga_web import crud_url
+from giga_web import crud_url, helpers
+from giga_web.tasks import confirm_donation
 from flask.views import MethodView
 from flask import request
 from operator import itemgetter
-import helpers
 import json
 import requests
 
@@ -30,15 +30,14 @@ class DonationAPI(MethodView):
             pass
         else:
             payload = {'data': data}
-            #reg = requests.post(crud_url + self.path,
-            #                    data=json.dumps(payload),
-            #                    headers={'Content-Type': 'application/json'})
+            reg = requests.post(crud_url + self.path,
+                                data=json.dumps(payload),
+                                headers={'Content-Type': 'application/json'})
             # update project(s)
-            if data['confirmed']:
+            if 'confirmed' in data:
                 confirm_donation.delay(data)
             return reg.content
 
-    
 
     def delete(self, id):
         if id is None:

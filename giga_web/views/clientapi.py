@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from giga_web import crud_url
+from giga_web import crud_url, helpers
 from flask.views import MethodView
 from flask import request
-import helpers
 import requests
 import json
 import bcrypt

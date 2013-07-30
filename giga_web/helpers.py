@@ -54,7 +54,8 @@ def generic_patch(collection_path, data_dict, etag):
 
 
 def get_index(seq, attr, value):
-    return next((index for (index, d) in enumerate(seq) if d[attr] == value), None)
+    test = next((index for (index, d) in enumerate(seq) if d[attr] == value), None)
+    return test
 
 
 def generic_delete(collection_path, id):

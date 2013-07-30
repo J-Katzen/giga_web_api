@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from flask import request
-from giga_web import giga_web, crud_url
+from giga_web import giga_web, crud_url, helpers
 from giga_web.views import DonationAPI
-import helpers
 import requests
 import json
 
