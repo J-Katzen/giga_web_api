@@ -20,6 +20,7 @@ def confirm_donation(client_perma, campaign_perma):
 
 
 def confirm_moravian(client_perma, cashnet_data):
+    print cashnet_data
     if cashnet_data['result'] == 0:
         client = helpers.generic_get('/clients/', client_perma)
         client_json = client.json()
