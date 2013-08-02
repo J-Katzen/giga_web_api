@@ -9,13 +9,21 @@ import json
 app = giga_web
 
 
-@app.route("/<client_perma>/donation/confirm/", methods=['POST'])
-def confirm_donation(client_perma):
+@app.route("/confirm/<client_perma>/<campaign_perma>", methods=['POST'])
+def confirm_donation(client_perma, campaign_perma):
     if client_perma.lower() == 'moravian':
         cash_data = helpers.create_dict_from_form(request.form)
         res = confirm_moravian(client_perma, cash_data)
-    return res
+    else:
+        res = {'error': 'could not get client'}
+    return json.dumps(res)
 
 
 def confirm_moravian(client_perma, cashnet_data):
-    pass
+    if cashnet_data['result'] == 0:
+        client = helpers.generic_get('/clients/', client_perma)
+        client_json = client.json()
+        print cashnet_data
+        return cashnet_data
+    else:
+        return {'error': 'bad transaction'}
