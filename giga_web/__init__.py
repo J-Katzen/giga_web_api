@@ -15,6 +15,6 @@ celery = make_celery(giga_web)
 #running celery requires this command:
 #celery worker -A giga_web.celery --autoscale=4,2 -Q test_queue
 
-
+from redis_lock import Lock, LockTimeout
 import helpers
 from giga_web import views, tasks

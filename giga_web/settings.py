@@ -16,6 +16,9 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     DEBUG = True
+    REDIS = 'ec2-54-226-128-157.compute-1.amazonaws.com'
+    REDIS_PORT = 6379
+    REDIS_DB = 1
 
 
 class TestingConfig(Config):
