@@ -37,6 +37,7 @@ def update_project_post(data):
             upd_p = helpers.generic_patch('/projects/', pj, pj['etag'])
             if 'error' in upd_p:
                 update_project_post.delay(data)
+            return
     except LockTimeout:
         update_project_post.delay(data)
 
@@ -56,6 +57,7 @@ def update_campaign_post(data):
             upd_camp = helpers.generic_patch('/campaigns/', camp_j, camp_j['etag'])
             if 'error' in upd_camp:
                 update_campaign_post.delay(data)
+            return
     except LockTimeout:
         update_project_post.delay(data)
 
@@ -108,5 +110,6 @@ def update_leaderboard_post(data):
             upd_lead = helpers.generic_patch('/leaderboards/', lead_j, lead_j['etag'])
             if 'error' in upd_lead:
                 update_leaderboard_post.delay(data)
+            return
     except LockTimeout:
         update_leaderboard_post.delay(data)
