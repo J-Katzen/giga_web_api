@@ -83,6 +83,8 @@ def update_leaderboard_post(data):
                     lead_j['donors'][user_idx]['combined'] += data['total_donated']
             # check if user donating is already in leaderboard
             user2_idx = helpers.get_index(lead_j['donors'], 'user_id', data['user_id'])
+            if data['user_id'] == '51e3b7ac855d9179965bda38':
+                user2_idx = helpers.get_index(lead_j['donors'], 'name', (data['first_name'] + ' ' + data['last_name']))
             if user2_idx is not None:
                 lead_j['donors'][user2_idx]['donated'] += data['total_donated']
                 lead_j['donors'][user2_idx]['combined'] += data['total_donated']
