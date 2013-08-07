@@ -14,7 +14,7 @@ app = giga_web
 
 
 @app.route("/confirm/<client_perma>/<campaign_perma>", methods=['POST'])
-def confirm_donation(client_perma, campaign_perma):
+def confirm_client(client_perma, campaign_perma):
     if client_perma.lower() == 'moravian':
         cash_data = helpers.create_dict_from_form(request.form)
         res = confirm_moravian(client_perma, cash_data)
