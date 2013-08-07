@@ -35,7 +35,7 @@ def confirm_moravian(client_perma, cashnet_data):
         email = cashnet_data['ref1val1']
         trans_id = cashnet_data['ref2val1']
         date = cashnet_data['effdate']
-        total = int(cashnet_data['amount1']) * 100
+        total = int(float(cashnet_data['amount1'])) * 100
         today = format_date_time(mktime(datetime.utcnow().date().timetuple()))
         tmr = format_date_time(mktime((datetime.utcnow().date() + timedelta(days=1)).timetuple()))
         parm = {}
