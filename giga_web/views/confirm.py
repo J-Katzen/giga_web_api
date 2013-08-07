@@ -3,6 +3,7 @@
 from flask import request
 from giga_web import giga_web, crud_url, helpers
 from giga_web.views import DonationAPI
+from giga_web.tasks import confirm_donation
 from wsgiref.handlers import format_date_time
 from datetime import datetime, timedelta
 from time import mktime
@@ -35,7 +36,6 @@ def confirm_moravian(client_perma, cashnet_data):
         trans_id = cashnet_data['ref2val1']
         date = cashnet_data['effdate']
         total = cashnet_data['amount1'] * 100
-        confirm_source = cashnet
         today = format_date_time(mktime(datetime.utcnow().date().timetuple()))
         tmr = format_date_time(mktime((datetime.utcnow().date() + timedelta(days=1)).timetuple()))
         parm = {}
@@ -47,6 +47,8 @@ def confirm_moravian(client_perma, cashnet_data):
             donation = rj['_items'][0]
             donation['processor_trans_id'] = trans_id
             donation['confirmed'] = format_date_time(mktime(datetime.utcnow().timetuple()))
+            donation['confirm_source'] = 'cashnet'
+            confirm_donation.delay(donation)
         return cashnet_data
     else:
         return {'error': 'bad transaction'}
