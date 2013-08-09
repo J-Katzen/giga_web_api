@@ -44,7 +44,8 @@ class ProjectAPI(MethodView):
                     patched = {'error': 'Could not update campaign properly'}
                     return json.dumps(patched)
                 a = self.campaign_append_proj(data)
-                if json.loads(a)['data']['status'] != 'OK':
+                print a
+                if a['data']['status'] != 'OK':
                     patched = {'error': 'Could not append to campaign properly'}
                     return json.dumps(patched)
             # otherwise just patch project
