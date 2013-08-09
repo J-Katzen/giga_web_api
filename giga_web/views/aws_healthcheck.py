@@ -7,4 +7,4 @@ app = giga_web
 
 @app.route("/_hostmanager/healthcheck", methods=['GET'])
 def aws_healthcheck():
-    return
+    return 'Pong!'
