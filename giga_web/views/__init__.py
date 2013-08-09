@@ -8,6 +8,7 @@ from .donationapi import DonationAPI
 from .clientmapapi import ClientMapAPI
 from .verifymapapi import VerifyMapAPI
 import registerapis
+import aws_healthcheck
 import login
 import confirm
 import checkout
