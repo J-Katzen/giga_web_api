@@ -40,7 +40,7 @@ def confirm_moravian(client_perma, cashnet_data):
         today = format_date_time(mktime(datetime.utcnow().date().timetuple()))
         tmr = format_date_time(mktime((datetime.utcnow().date() + timedelta(days=1)).timetuple()))
         parm = {}
-        parm = {'where': '{"email":"%s", "client_id": "%s", "total_donated": %d, "created": {"$gte": "%s", "$lte": "%s"}}' %
+        parm = {'where': '{"email":"%s", "client_id": "%s", "total_donated": %d, "confirmed": {"$exists": false }, "created": {"$gte": "%s", "$lte": "%s"}}' %
                 (email, client_id, total, today, tmr)}
         r = requests.get(crud_url + '/donations/', params=parm)
         rj = r.json()
