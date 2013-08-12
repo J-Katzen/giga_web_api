@@ -24,6 +24,7 @@ def confirm_client(client_perma, campaign_perma):
 
 
 def confirm_moravian(client_perma, cashnet_data):
+    print cashnet_data
     if 'result' in cashnet_data:
         res = cashnet_data['result']
     elif '&result' in cashnet_data:
