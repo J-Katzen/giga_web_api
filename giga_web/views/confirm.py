@@ -49,6 +49,7 @@ def confirm_moravian(client_perma, cashnet_data):
             donation['processor_trans_id'] = trans_id
             donation['confirmed'] = format_date_time(mktime(datetime.utcnow().timetuple()))
             donation['confirm_source'] = 'cashnet'
+            patched = helpers.generic_patch('/donations/', donation, donation['etag'])
             confirm_donation.delay(donation)
         return cashnet_data
     else:
