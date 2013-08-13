@@ -45,12 +45,10 @@ def confirm_moravian(client_perma, cashnet_data):
         rj = r.json()
         if len(rj['_items']) > 0:
             donation = rj['_items'][0]
-            donation['processor_trans_id'] = trans_id
+            donation['processor_trans_id'] = str(trans_id)
             donation['confirmed'] = format_date_time(mktime(datetime.utcnow().timetuple()))
             donation['confirm_source'] = 'cashnet'
-            print donation
             patched = helpers.generic_patch('/donations/', donation, donation['etag'])
-            print patched
             confirm_donation.delay(donation)
         return cashnet_data
     else:
