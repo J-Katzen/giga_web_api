@@ -24,7 +24,6 @@ def confirm_client(client_perma, campaign_perma):
 
 
 def confirm_moravian(client_perma, cashnet_data):
-    print cashnet_data
     if 'result' in cashnet_data:
         res = cashnet_data['result']
     elif '&result' in cashnet_data:
@@ -49,7 +48,9 @@ def confirm_moravian(client_perma, cashnet_data):
             donation['processor_trans_id'] = trans_id
             donation['confirmed'] = format_date_time(mktime(datetime.utcnow().timetuple()))
             donation['confirm_source'] = 'cashnet'
+            print donation
             patched = helpers.generic_patch('/donations/', donation, donation['etag'])
+            print patched
             confirm_donation.delay(donation)
         return cashnet_data
     else:
