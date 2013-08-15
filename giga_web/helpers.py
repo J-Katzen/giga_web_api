@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from flask import request
+from flask import current_app
 from giga_web import crud_url
 import requests
-import bcrypt
 import json
+import hashlib
+import base64
 
 
 def generic_get(collection_path, datum, projection=None):
@@ -86,3 +87,8 @@ def create_dict_from_form(req_form):
         else:
             d[key] = value
     return d
+
+def b64_hash_url(email):
+    t_sha = hashlib.sha512()
+    t_sha.update(email+current_app.config.get('GIGA_VERIFY_HASH_SALT'))
+    return base64.urlsafe_b64encode(t_sha.digest())

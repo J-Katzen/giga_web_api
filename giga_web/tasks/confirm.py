@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-from giga_web import celery, crud_url, helpers, celery_logger
+from giga_web import celery, helpers, celery_logger
 from giga_web import Lock, LockTimeout
 from wsgiref.handlers import format_date_time
-from datetime import datetime, timedelta
+from datetime import datetime
 from time import mktime
-from celery.utils.log import get_task_logger
-import requests
 
 logger = celery_logger
 

@@ -31,6 +31,22 @@ def login():
         return json.dumps({'error': 'Could not query DB'})
 
 
+@app.route("/unique_email/", methods=['GET'])
+def account_email_check():
+    email = request.args['email']
+    r = requests.get(crud_url + '/users/',
+                     params={'where': '{"email":"' + email + '"}'})
+    if r.status_code == requests.codes.ok:
+        res = r.json()
+        if len(res['_items']) > 0:
+            return 1
+        else:
+            return 0
+    else:
+        return -1
+
+
+
 @app.route("/<client_perma>/login/", methods=['POST'])
 def client_login(client_perma):
     data = helpers.create_dict_from_form(request.form)

@@ -33,6 +33,7 @@ def confirm_moravian(client_perma, cashnet_data):
         client_id = cl_j['_id']
         email = cashnet_data['ref1val1']
         trans_id = cashnet_data['tx']
+        client_trans_id = cashnet_data['ref2val1']
         date = cashnet_data['effdate']
         total = int(float(cashnet_data['amount1'])) * 100
         today = format_date_time(mktime(datetime.utcnow().date().timetuple()))
@@ -45,6 +46,7 @@ def confirm_moravian(client_perma, cashnet_data):
         if len(rj['_items']) > 0:
             donation = rj['_items'][0]
             donation['processor_trans_id'] = str(trans_id)
+            donation['client_trans_id'] = str(client_trans_id)
             donation['confirmed'] = format_date_time(mktime(datetime.utcnow().timetuple()))
             donation['confirm_source'] = 'cashnet'
             patched = helpers.generic_patch('/donations/', donation, donation['etag'])
