@@ -2,7 +2,6 @@
 
 from flask import request
 from giga_web import giga_web, crud_url, helpers
-from giga_web.views import DonationAPI
 from giga_web.tasks import confirm_donation
 from wsgiref.handlers import format_date_time
 from datetime import datetime, timedelta
@@ -33,7 +32,7 @@ def confirm_moravian(client_perma, cashnet_data):
         cl_j = cl.json()
         client_id = cl_j['_id']
         email = cashnet_data['ref1val1']
-        trans_id = cashnet_data['ref2val1']
+        trans_id = cashnet_data['tx']
         date = cashnet_data['effdate']
         total = int(float(cashnet_data['amount1'])) * 100
         today = format_date_time(mktime(datetime.utcnow().date().timetuple()))

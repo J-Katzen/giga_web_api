@@ -17,4 +17,4 @@ celery = make_celery(giga_web)
 
 from redis_lock import Lock, LockTimeout
 import helpers
-from giga_web import views, tasks
+from giga_web import views, tasks, ext
