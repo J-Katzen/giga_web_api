@@ -31,7 +31,7 @@ class DevelopmentConfig(Config):
     )
     CELERY_DEFAULT_EXCHANGE = 'test'
     CELERY_DEFAULT_ROUTING_KEY = 'test.default'
-    CELERY_ROUTES = {'giga_web.tasks.confirm.conirm_donation': {'queue': 'test-donation_confirms', 'routing_key': 'test.confirm'},
+    CELERY_ROUTES = {'giga_web.tasks.confirm.confirm_donation': {'queue': 'test-donation_confirms', 'routing_key': 'test.confirm'},
                      'giga_web.tasks.confirm.update_project_post': {'queue': 'test-update_project', 'routing_key': 'test.project'},
                      'giga_web.tasks.confirm.update_campaign_post': {'queue': 'test-update_campaign', 'routing_key': 'test.campaign'},
                      'giga_web.tasks.confirm.update_leaderboard_post': {'queue': 'test-update_leaderboard', 'routing_key': 'test.leaderboard'}
