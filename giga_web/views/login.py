@@ -34,16 +34,17 @@ def login():
 @app.route("/unique_email/", methods=['GET'])
 def account_email_check():
     email = request.args['email']
+    print email
     r = requests.get(crud_url + '/users/',
-                     params={'where': '{"email":"' + email + '"}'})
+                     params={'where': '{"email":"' + str(email) + '"}'})
     if r.status_code == requests.codes.ok:
         res = r.json()
         if len(res['_items']) > 0:
-            return 1
+            return '1'
         else:
-            return 0
+            return '0'
     else:
-        return -1
+        return '-1'
 
 
 
