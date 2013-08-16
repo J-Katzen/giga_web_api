@@ -41,6 +41,7 @@ class UserAPI(MethodView):
                 verified_mail.delay(user_j['email'], name)
                 return patched.content
         else:
+            print data
             r = requests.get(crud_url + self.path,
                              params={'where': '{"email":"%s"}' % data['email']})
             if r.status_code == requests.codes.ok:

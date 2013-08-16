@@ -95,7 +95,9 @@ class ProjectAPI(MethodView):
         if 'summary' not in proj_data:
             summary = proj_data['description'][0:254]
             proj_data['summary'] = summary[:summary.rfind('.') + 1]
-
+        else:
+            proj_data['summary'] = proj_data['summary'][0:254]
+            proj_data['summary'] = proj_data['summary'][:proj_data['summary'].rfind('.') + 1]
         app_proj = {'p_id': proj_data['_id'],
                     'proj_name': proj_data['name'],
                     'perma_name': proj_data['perma_name'],
