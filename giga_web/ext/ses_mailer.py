@@ -1,7 +1,9 @@
 import boto.ses
 import sys, os
 from flask import current_app, render_template
+from giga_web import celery_logger
 
+logger = celery_logger
 
 class SES_Mailer(object):
 
@@ -36,7 +38,7 @@ class SES_Mailer(object):
             except Exception:
                 exc_type, exc_obj, exc_tb = sys.exc_info()
                 fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                print(exc_type, fname, exc_tb.tb_lineno)
+                logger.info("%s\n%s\n%s" % (exc_type, fname, exc_tb.tb_lineno))
                 return {'error': 'could not send'}
         else:
             return {'error': 'over-rate-limit'}
