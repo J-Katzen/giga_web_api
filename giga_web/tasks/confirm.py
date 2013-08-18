@@ -11,6 +11,8 @@ logger = celery_logger
 @celery.task
 def confirm_donation(data):
     logger.info('task confirm_donation called. args: %s', str(data))
+    # update user
+    update_user_post.delay(data)
     for proj in data['proj_list']:
         update_project_post.delay(proj)
     # update campaign
@@ -18,6 +20,34 @@ def confirm_donation(data):
     # update leaderboard
     update_leaderboard_post.delay(data)
     return
+
+
+@celery.task
+def update_user_post(data):
+    try:
+        with Lock('u_' + data['user_id']):
+            logger.info('task update_user_post. args: %s', str(data))
+            p = helpers.generic_get('/users/', data['user_id'])
+            pj = p.json()
+            new_donated = {}
+            new_donated['client_id'] = data['client_id']
+            new_donated['amt'] = data['total_donated']
+            if 'class_year' in data:
+                new_donated['class_year'] = data['class_year']
+            if 'donated' not in pj:
+                pj['donated'] = [new_donated]
+            else:
+                client_list_idx = helpers.get_index(pj['donated'], 'client_id', data['client_id'])
+                if client_list_idx is None:
+                    pj['donated'].append(new_donated)
+                else:
+                    pj['donated'][client_list_idx]['amt'] += data['total_donated']
+            upd_p = helpers.generic_patch('/users/', pj, pj['etag'])
+            if 'error' in upd_p:
+                update_user_post.delay(data)
+            return
+    except LockTimeout:
+        update_user_post.delay(data)
 
 
 @celery.task
