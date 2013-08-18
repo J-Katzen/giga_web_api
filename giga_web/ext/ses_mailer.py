@@ -1,4 +1,5 @@
 import boto.ses
+import sys
 from flask import current_app, render_template
 
 
@@ -33,6 +34,7 @@ class SES_Mailer(object):
                     [email, 'jacob.katzen@gigawatt.co'])
                 return res
             except:
+                print "Unexpected error:", sys.exc_info()[0]
                 return {'error': 'could not send'}
         else:
             return {'error': 'over-rate-limit'}
