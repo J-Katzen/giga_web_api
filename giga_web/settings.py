@@ -12,7 +12,7 @@ class Config(object):
     CELERY_TIMEZONE = 'America/New_York'
     BOTO_REGION = 'us-east-1'
     GIGA_NO_REPLY = 'no-reply@gigawatt.co'
-    GIGA_VERIFY_HASH_SALT = '\xf6\x0c\xbbL\xd7\\J\xc3\xa8$\x17\xb5\x03\x90\x14X'
+    GIGA_VERIFY_HASH_SALT = 'BjunHqx3TnyscBxVfyW0wA=='
     AWS_ACCESS_KEY_ID = 'AKIAIK3ONM7NVRHJXINA'
     AWS_SECRET_ACCESS_KEY = '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'
 
