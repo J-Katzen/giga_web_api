@@ -13,8 +13,7 @@ app = giga_web
 
 @app.route("/login/", methods=['POST'])
 def login():
-    data = helpers.create_dict_from_form(request.form)
-    print data
+    data = request.get_json(force=True, silent=False)
     r = requests.get(crud_url + '/users/',
                      params={'where': '{"email":"' + data['email'] + '"}'})
     if r.status_code == requests.codes.ok:
@@ -49,7 +48,7 @@ def account_email_check():
 
 @app.route("/<client_perma>/login/", methods=['POST'])
 def client_login(client_perma):
-    data = helpers.create_dict_from_form(request.form)
+    data = request.get_json(force=True, silent=False)
     # get client
     client = helpers.generic_get('/clients/', client_perma)
     # get client_user

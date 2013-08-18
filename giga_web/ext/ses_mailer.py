@@ -24,7 +24,7 @@ class SES_Mailer(object):
             return False
         return True
 
-    def _send(self, template, email, title, task_func, **args):
+    def _send(self, template, email, title, **args):
         if self._check_limit():
             try:
                 res = self.conn.send_email(
@@ -42,7 +42,6 @@ class SES_Mailer(object):
         return self._send('new_user.html',
                           email,
                           'Verify Your Account!',
-                          new_user_mail,
                           hash=hash,
                           name=name)
 
@@ -50,5 +49,4 @@ class SES_Mailer(object):
         return self._send('verified_user.html',
                           email,
                           'Thanks for verifying!',
-                          verified_email,
                           name=name)

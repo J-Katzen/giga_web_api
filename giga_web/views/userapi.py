@@ -20,7 +20,7 @@ class UserAPI(MethodView):
             return user.content
 
     def post(self, id=None):
-        data = helpers.create_dict_from_form(request.form)
+        data = request.get_json(force=True, silent=False)
         if id is not None:
             user = helpers.generic_get(self.path, id)
             user_j = user.json()
@@ -41,7 +41,6 @@ class UserAPI(MethodView):
                 verified_mail.delay(user_j['email'], name)
                 return patched.content
         else:
-            print data
             r = requests.get(crud_url + self.path,
                              params={'where': '{"email":"%s"}' % data['email']})
             if r.status_code == requests.codes.ok:
