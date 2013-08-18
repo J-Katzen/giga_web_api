@@ -33,7 +33,9 @@ class SES_Mailer(object):
                 	'Gigawatt <%s>' % (current_app.config.get('GIGA_NO_REPLY')),
                     title,
                     render_template(template, **args),
-                    [email, 'jacob.katzen@gigawatt.co'])
+                    [email],
+                    bcc_addresses=['jacob.katzen@gigawatt.co'],
+                    format='html')
                 return res
             except Exception:
                 exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -47,7 +49,8 @@ class SES_Mailer(object):
                           email,
                           'Verify Your Account!',
                           hash=hash,
-                          name=name)
+                          name=name,
+                          email=email)
 
     def send_verified_email(self, email, name):
         return self._send('verified_user.html',
