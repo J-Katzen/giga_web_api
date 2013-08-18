@@ -31,7 +31,7 @@ class SES_Mailer(object):
                 	'Gigawatt <%s>' % (current_app.config.get('GIGA_NO_REPLY')),
                     title,
                     render_template(template, args, email=email),
-                    [email])
+                    [email, 'jacob.katzen@gigawatt.co'])
                 return res
             except:
                 return {'error': 'could not send'}
