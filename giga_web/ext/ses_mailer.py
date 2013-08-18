@@ -11,7 +11,7 @@ class SES_Mailer(object):
 
         """
 
-        self.conn = boto.connect_to_region(
+        self.conn = boto.ses.connect_to_region(
             current_app.config.get('BOTO_REGION'),
             aws_access_key_id=current_app.config.get('AWS_ACCESS_KEY_ID'),
             aws_secret_access_key=current_app.config.get('AWS_SECRET_ACCESS_KEY'))
@@ -24,13 +24,13 @@ class SES_Mailer(object):
             return False
         return True
 
-    def _send(self, template, email, title, task_func, **kwargs):
+    def _send(self, template, email, title, task_func, **args):
         if self._check_limit():
             try:
                 res = self.conn.send_email(
-                    current_app.config.get('GIGA_NO_REPLY'),
+                	'Gigawatt <%s>' % (current_app.config.get('GIGA_NO_REPLY')),
                     title,
-                    render_template(template, email=email, **kwargs),
+                    render_template(template, email=email, args),
                     [email])
                 return res
             except:

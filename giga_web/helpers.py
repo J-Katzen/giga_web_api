@@ -75,7 +75,7 @@ def generic_delete(collection_path, id):
 def create_dict_from_form(req_form):
     d = {}
     for key, value in req_form.iteritems():
-        if key in ['email', 'uname', 'perma_name']:
+        if key in ['email', 'uname', 'perma_name', 'firstname', 'lastname']:
             d[key] = value.lower()
         elif key in ['active', 'fb_login', 't_login', 'completed']:
             if value.lower() in ['true', 'yes', 't', '1']:

@@ -71,6 +71,13 @@ def update_leaderboard_post(data):
             lead = helpers.generic_get('/leaderboards/', lead_id)
             lead_j = lead.json()
             lead_j['raised'] += data['total_donated']
+            if data['class_year'] != '':
+                class_yr_idx = helpers.get_index(lead_j['class_yr_totals'], 'year', data['class_year'])
+                if class_yr_idx is not None:
+                    lead_j['class_yr_totals'][class_yr_idx]['amount'] += data['total_donated']
+                else:
+                    lead_j['class_yr_totals'].append({'year': data['class_year'],
+                                                      'amount': data['total_donated']})
             if 'ref' in data:
                 lead_j['referred'] += data['total_donated']
                 # find out if the referral id is in the leaderboard list
