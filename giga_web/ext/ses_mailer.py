@@ -22,7 +22,7 @@ class SES_Mailer(object):
         quota = self.conn.get_send_quota()
         max24 = quota['GetSendQuotaResponse']['GetSendQuotaResult']['Max24HourSend']
         sent24 = quota['GetSendQuotaResponse']['GetSendQuotaResult']['SentLast24Hours']
-        if sent24 >= max24:
+        if int(float(sent24)) >= int(float(max24)):
             return False
         return True
 
