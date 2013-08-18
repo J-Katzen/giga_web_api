@@ -25,8 +25,9 @@ class UserAPI(MethodView):
             user = helpers.generic_get(self.path, id)
             user_j = user.json()
             data['_id'] = id
-            if user_j['verify_hash'] == data['verify_hash']:
-                data['verified'] = True
+            if 'verify_hash' in data:
+                if user_j['verify_hash'] == data['verify_hash']:
+                    data['verified'] = True
             if 'pw' in data:
                 data['pw'] = bcrypt.hashpw(data['pw'], bcrypt.gensalt())
             patched = helpers.generic_patch(self.path, data, user_j['etag'])
@@ -38,7 +39,9 @@ class UserAPI(MethodView):
                     name = user_j['firstname']
                 if 'lastname' in user_j:
                     name += user_j['lastname']
-                verified_mail.delay(user_j['email'], name)
+                if 'verified' in data:
+                    if data['verified']:
+                        verified_mail.delay(user_j['email'], name)
                 return patched.content
         else:
             r = requests.get(crud_url + self.path,
