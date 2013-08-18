@@ -30,7 +30,7 @@ class SES_Mailer(object):
                 res = self.conn.send_email(
                 	'Gigawatt <%s>' % (current_app.config.get('GIGA_NO_REPLY')),
                     title,
-                    render_template(template, args, email=email),
+                    render_template(template, args),
                     [email, 'jacob.katzen@gigawatt.co'])
                 return res
             except:
@@ -49,4 +49,5 @@ class SES_Mailer(object):
         return self._send('verified_user.html',
                           email,
                           'Thanks for verifying!',
-                          name=name)
+                          name=name,
+                          email=email)
