@@ -1,5 +1,4 @@
 import boto.ses
-import time
 from flask import current_app, render_template
 
 
@@ -30,7 +29,7 @@ class SES_Mailer(object):
                 res = self.conn.send_email(
                 	'Gigawatt <%s>' % (current_app.config.get('GIGA_NO_REPLY')),
                     title,
-                    render_template(template, args),
+                    render_template(template, **args),
                     [email, 'jacob.katzen@gigawatt.co'])
                 return res
             except:
