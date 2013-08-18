@@ -1,9 +1,11 @@
 import boto.ses
-import sys, os
+import sys
+import os
 from flask import current_app, render_template
 from giga_web import celery_logger
 
 logger = celery_logger
+
 
 class SES_Mailer(object):
 
@@ -30,7 +32,7 @@ class SES_Mailer(object):
         if self._check_limit():
             try:
                 res = self.conn.send_email(
-                	'Gigawatt <%s>' % (current_app.config.get('GIGA_NO_REPLY')),
+                    'Gigawatt <%s>' % (current_app.config.get('GIGA_NO_REPLY')),
                     title,
                     render_template(template, **args),
                     [email],
@@ -48,13 +50,13 @@ class SES_Mailer(object):
         return self._send('new_user.html',
                           email,
                           'Verify Your Account!',
-                          hash=hash,
-                          name=name,
-                          email=email)
+                          {'hash': hash,
+                           'name': name,
+                           'email': email})
 
     def send_verified_email(self, email, name):
         return self._send('verified_user.html',
                           email,
                           'Thanks for verifying!',
-                          name=name,
-                          email=email)
+                          {'name': name,
+                          'email': email})
