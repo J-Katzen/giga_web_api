@@ -30,7 +30,7 @@ class SES_Mailer(object):
                 res = self.conn.send_email(
                 	'Gigawatt <%s>' % (current_app.config.get('GIGA_NO_REPLY')),
                     title,
-                    render_template(template, email=email, args),
+                    render_template(template, args, email=email),
                     [email])
                 return res
             except:
