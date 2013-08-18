@@ -49,7 +49,7 @@ class SES_Mailer(object):
     def send_new_user(self, email, hash, name):
         context = {'hash': hash,
                    'name': name,
-                   'email': email}
+                   'user_email': email}
         return self._send('new_user.html',
                           email,
                           'Verify Your Account!',
@@ -57,7 +57,7 @@ class SES_Mailer(object):
 
     def send_verified_email(self, email, name):
         context = {'name': name,
-                   'email': email}
+                   'user_email': email}
         return self._send('verified_user.html',
                           email,
                           'Thanks for verifying!',
