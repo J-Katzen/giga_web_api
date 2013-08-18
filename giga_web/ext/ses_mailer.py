@@ -38,8 +38,7 @@ class SES_Mailer(object):
             except Exception:
                 exc_type, exc_obj, exc_tb = sys.exc_info()
                 fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                logger.info("%s\n%s\n%s" % (exc_type, fname, exc_tb.tb_lineno))
-                return {'error': 'could not send'}
+                return {'error': 'could not send', 'other_1': exc_type, 'other_2': fname, 'other_3': exc_tb.tb_lineno}
         else:
             return {'error': 'over-rate-limit'}
 

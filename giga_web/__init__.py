@@ -7,10 +7,10 @@ from celery.utils.log import get_task_logger
 crud_url = 'http://giga_crud_test.gigawatt.co'
 
 
-giga_web = Flask(__name__)
+giga_web = Flask('giga_web')
 giga_web.config.from_object(DevelopmentConfig)
 giga_web.url_map.converters['objectid'] = ObjectIDConverter
-celery_logger = get_task_logger(__name__)
+celery_logger = get_task_logger('giga_web')
 celery = make_celery(giga_web)
 #running celery requires this command:
 #celery worker -A giga_web.celery --autoscale=4,2 -Q test_queue
