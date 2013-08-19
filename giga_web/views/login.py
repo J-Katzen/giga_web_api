@@ -21,6 +21,7 @@ def login():
         if len(res['_items']) > 0:
             hashed = res['_items'][0]['pw']
             if bcrypt.hashpw(data['password'], hashed) == hashed:
+                res['_items'][0]['share_id'] =  helpers.baseconvert(res['_items'][0]['_id'], helpers.BASE16, helpers.BASE62)
                 return json.dumps(res['_items'][0])
             else:
                 return json.dumps({'error': 'Invalid password'})
