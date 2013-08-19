@@ -114,6 +114,10 @@ def update_leaderboard_post(data):
                                                   'amount': data['total_donated']}]
             if 'ref' in data:
                 lead_j['referred'] += data['total_donated']
+                data2 = data
+                data2['user_id'] = data['ref']
+                data2.pop('class_year', None)
+                update_user_post.delay(data)
                 # find out if the referral id is in the leaderboard list
                 user_idx = helpers.get_index(lead_j['donors'], 'user_id', data['ref'])
                 # if so, update the stats!
