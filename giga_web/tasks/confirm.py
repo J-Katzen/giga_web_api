@@ -117,7 +117,7 @@ def update_leaderboard_post(data):
                 data2 = data
                 data2['user_id'] = data['ref']
                 data2.pop('class_year', None)
-                update_user_post.delay(data)
+                update_user_post.delay(data2)
                 # find out if the referral id is in the leaderboard list
                 user_idx = helpers.get_index(lead_j['donors'], 'user_id', data['ref'])
                 # if so, update the stats!
