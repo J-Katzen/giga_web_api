@@ -36,7 +36,7 @@ class SES_Mailer(object):
                     title,
                     render_template(template, **args),
                     [email],
-                    bcc_addresses=['jacob.katzen@gigawatt.co'],
+                    bcc_addresses=[],
                     format='html')
                 return res
             except Exception:
