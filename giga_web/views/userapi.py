@@ -43,7 +43,7 @@ class UserAPI(MethodView):
                 if 'firstname' in user_j:
                     name = user_j['firstname']
                 if 'lastname' in user_j:
-                    name += user_j['lastname']
+                    name += ' ' + user_j['lastname']
                 if 'verified' in data:
                     if data['verified']:
                         verified_mail.delay(user_j['email'], name)
