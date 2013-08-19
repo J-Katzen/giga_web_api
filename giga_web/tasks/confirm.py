@@ -101,7 +101,7 @@ def update_leaderboard_post(data):
             lead = helpers.generic_get('/leaderboards/', lead_id)
             lead_j = lead.json()
             lead_j['raised'] += data['total_donated']
-            if data['class_year'] != '':
+            if 'class_year' in data:
                 if 'class_yr_totals' in lead_j:
                     class_yr_idx = helpers.get_index(lead_j['class_yr_totals'], 'year', data['class_year'])
                     if class_yr_idx is not None:
