@@ -5,13 +5,13 @@ from giga_web.ext import SES_Mailer
 logger = celery_logger
 
 @celery.task
-def new_user_mail(email, hash, name=''):
+def new_user_mail(email, hash, id, name=''):
     mailer = SES_Mailer()
-    logger.info('task new_user_mail called: args: %s %s %s' % (email, hash, name))
-    res = mailer.send_new_user(email, hash, name)
+    logger.info('task new_user_mail called: args: %s %s %s %s' % (email, hash, name, id))
+    res = mailer.send_new_user(email, hash, id, name)
     if 'error' in res:
         print res
-    	new_user_mail.delay(email, hash, name)
+    	new_user_mail.delay(email, hash, id, name)
     return
 
 

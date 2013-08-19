@@ -113,6 +113,7 @@ def update_leaderboard_post(data):
                     lead_j['class_yr_totals'] = [{'year': data['class_year'],
                                                   'amount': data['total_donated']}]
             if 'ref' in data:
+                data['ref'] = helpers.baseconvert(data['ref'], helpers.BASE62, helpers.BASE16)
                 lead_j['referred'] += data['total_donated']
                 data2 = data
                 data2['user_id'] = data['ref']

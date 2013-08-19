@@ -46,10 +46,10 @@ class SES_Mailer(object):
         else:
             return {'error': 'over-rate-limit'}
 
-    def send_new_user(self, email, hash, name):
+    def send_new_user(self, email, hash, id, name):
         context = {'hash': hash,
                    'name': name,
-                   'user_email': email}
+                   'user_id': id}
         return self._send('new_user.html',
                           email,
                           'Verify Your Account!',

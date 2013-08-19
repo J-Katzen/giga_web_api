@@ -17,7 +17,12 @@ class UserAPI(MethodView):
             return json.dumps({'error': 'no id provided'})
         else:
             user = helpers.generic_get(self.path, id)
-            return user.content
+            if user.status_code == requests.codes.ok:
+                user_j = user.json()
+                user_j['share_id'] = helpers.baseconvert(user_j['_id'], helpers.BASE16, helpers.BASE62)
+                return json.dumps(user_j)
+            else:
+                return user
 
     def post(self, id=None):
         data = request.get_json(force=True, silent=False)
@@ -63,7 +68,8 @@ class UserAPI(MethodView):
                             name = data['firstname']
                         if 'lastname' in data:
                             name += ' ' + data['lastname']
-                        new_user_mail.delay(data['email'], data['verify_hash'], name)
+                        reg_j = reg.json()
+                        new_user_mail.delay(data['email'], data['verify_hash'], reg_j['data']['_id'], name)
                     return reg.content
                 else:
                     return json.dumps({'error': 'Email exists'})
