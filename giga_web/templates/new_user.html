@@ -1,9 +1,11 @@
-Greetings {% if name %}{{name}}{% endif %},<br>
+{% if name %}{{name}}{% endif %},<br>
 <br>
-Please click the verification link and set a password!<br>
-<a href='https://test.gigawatt.co/verify_email/?id={{user_id}}&hash={{hash}}'>Verify!
+A user requested a registration under this email address.<br>
+<br>
+If this was you, please click the verification link and set a password.<br>
+<br>
+<a href='https://test.gigawatt.co/verify_email/?id={{user_id}}&hash={{hash}}'>Click here to verify.
 </a><br>
-Thank you!<br>
 <br>
-Sincerely,<br>
+Thanks!<br>
 The Gigawatt Team!<br>
