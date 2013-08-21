@@ -55,12 +55,13 @@ class SES_Mailer(object):
                           'Verify Your MoCoMotion Account!',
                           **context)
 
-    def send_verified_email(self, email, name):
+    def send_verified_email(self, email, share, name):
         context = {'name': name,
-                   'user_email': email}
+                   'user_email': email,
+                   'share': share}
         return self._send('verified_user.html',
                           [email],
-                          'Thanks for verifying!',
+                          'Thanks for verifying with MoCoMotion!',
                           **context)
 
     def send_feedback_mail(self, email, name, message):

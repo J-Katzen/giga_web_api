@@ -46,7 +46,8 @@ class UserAPI(MethodView):
                     name += ' ' + user_j['lastname']
                 if 'verified' in data:
                     if data['verified']:
-                        verified_mail.delay(user_j['email'], name)
+                        share = helpers.baseconvert(id, helpers.BASE16, helpers.BASE62)
+                        verified_mail.delay(user_j['email'], share, name)
                 return patched.content
         else:
             r = requests.get(crud_url + self.path,

@@ -27,10 +27,10 @@ def new_user_mail(email, hash, id, name=''):
 
 
 @celery.task
-def verified_mail(email, name=''):
+def verified_mail(email, share, name=''):
     mailer = SES_Mailer()
-    logger.info('task verified_email called: args: %s %s' % (email, name))
-    res = mailer.send_verified_email(email, name)
+    logger.info('task verified_email called: args: %s %s %s' % (email, name, share))
+    res = mailer.send_verified_email(email, share, name)
     if 'error' in res:
-        verified_mail.delay(email, name)
+        verified_mail.delay(email, share, name)
     return
