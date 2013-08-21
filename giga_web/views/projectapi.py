@@ -67,6 +67,7 @@ class ProjectAPI(MethodView):
                                         headers={'Content-Type':
                                         'application/json'})
                     reg_j = reg.json()
+                    print reg_j
                     if (reg_j['data']['status'] == 'OK'):
                         if data['active']:
                             data['_id'] = reg_j['data']['_id']
