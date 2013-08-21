@@ -4,6 +4,17 @@ from giga_web.ext import SES_Mailer
 
 logger = celery_logger
 
+
+@celery.task
+def feedback_mail(name, email, message):
+    mailer = SES_Mailer()
+    logger.info('task feedback_mail called: args: %s %s %s' % (name, email, message))
+    res = mailer.send_feedback_mail(email, name, message)
+    if 'error' in res:
+        feedback_mail.delay(name, email, message)
+    return
+
+
 @celery.task
 def new_user_mail(email, hash, id, name=''):
     mailer = SES_Mailer()
@@ -11,7 +22,7 @@ def new_user_mail(email, hash, id, name=''):
     res = mailer.send_new_user(email, hash, id, name)
     if 'error' in res:
         print res
-    	new_user_mail.delay(email, hash, id, name)
+        new_user_mail.delay(email, hash, id, name)
     return
 
 
@@ -21,5 +32,5 @@ def verified_mail(email, name=''):
     logger.info('task verified_email called: args: %s %s' % (email, name))
     res = mailer.send_verified_email(email, name)
     if 'error' in res:
-    	verified_mail.delay(email, name)
+        verified_mail.delay(email, name)
     return

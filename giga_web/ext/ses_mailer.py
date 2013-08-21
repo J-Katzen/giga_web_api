@@ -62,3 +62,12 @@ class SES_Mailer(object):
                           email,
                           'Thanks for verifying!',
                           **context)
+
+    def send_feedback_mail(self, email, name, message):
+        context = {'name': name,
+                   'user_mail': email,
+                   'message': message}
+        return self._send('feedback_email.html',
+                          email,
+                          'Feedback from %s' % (name),
+                          **context)
