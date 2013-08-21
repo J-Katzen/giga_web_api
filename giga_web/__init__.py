@@ -4,7 +4,7 @@ from converter import ObjectIDConverter
 from settings import ProductionConfig, DevelopmentConfig, TestingConfig
 from celery.utils.log import get_task_logger
 
-crud_url = 'https://crud.gigawatt.co'
+crud_url = 'http://crud.gigawatt.co'
 
 
 giga_web = Flask('giga_web')
