@@ -52,7 +52,7 @@ class SES_Mailer(object):
                    'user_id': id}
         return self._send('new_user.html',
                           [email],
-                          'Verify Your Account!',
+                          'Verify Your MoCoMotion Account!',
                           **context)
 
     def send_verified_email(self, email, name):
