@@ -42,11 +42,16 @@ def update_user_post(data):
                     pj['donated'].append(new_donated)
                 else:
                     pj['donated'][client_list_idx]['amt'] += data['total_donated']
-            upd_p = helpers.generic_patch('/users/', pj, pj['etag'])
+            try:
+                upd_p = helpers.generic_patch('/users/', pj, pj['etag'])
+            except:
+                update_user_post.delay(data)
+                return
             if 'error' in upd_p:
                 update_user_post.delay(data)
+                return
             return
-    except LockTimeout:
+    except:
         update_user_post.delay(data)
 
 
@@ -62,11 +67,16 @@ def update_project_post(data):
                 now = datetime.now()
                 stamp = mktime(now.timetuple())
                 pj['completed'] = format_date_time(stamp)
-            upd_p = helpers.generic_patch('/projects/', pj, pj['etag'])
+            try:
+                upd_p = helpers.generic_patch('/projects/', pj, pj['etag'])
+            except:
+                update_project_post.delay(data)
+                return
             if 'error' in upd_p:
                 update_project_post.delay(data)
+                return
             return
-    except LockTimeout:
+    except:
         update_project_post.delay(data)
 
 
@@ -82,11 +92,16 @@ def update_campaign_post(data):
                 activelist_proj = helpers.get_index(camp_j['active_list'], 'p_id', projs['proj_id'])
                 if activelist_proj is not None:
                     camp_j['active_list'][activelist_proj]['raised'] += projs['donated']
-            upd_camp = helpers.generic_patch('/campaigns/', camp_j, camp_j['etag'])
+            try:
+                upd_camp = helpers.generic_patch('/campaigns/', camp_j, camp_j['etag'])
+            except:
+                update_campaign_post.delay(data)
+                return
             if 'error' in upd_camp:
                 update_campaign_post.delay(data)
+                return
             return
-    except LockTimeout:
+    except:
         update_project_post.delay(data)
 
 
@@ -153,10 +168,14 @@ def update_leaderboard_post(data):
                                          'avatar': data['avatar'],
                                          'ref': 0,
                                          'combined': data['total_donated']})
-
-            upd_lead = helpers.generic_patch('/leaderboards/', lead_j, lead_j['etag'])
+            try:
+                upd_lead = helpers.generic_patch('/leaderboards/', lead_j, lead_j['etag'])
+            except:
+                update_leaderboard_post.delay(data)
+                return
             if 'error' in upd_lead:
                 update_leaderboard_post.delay(data)
+                return
             return
-    except LockTimeout:
+    except:
         update_leaderboard_post.delay(data)
