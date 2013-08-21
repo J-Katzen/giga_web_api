@@ -54,7 +54,8 @@ def confirm_moravian(client_perma, cashnet_data):
             donation['denied'] = format_date_time(mktime(datetime.utcnow().timetuple()))
         donation['confirm_source'] = 'cashnet'
         patched = helpers.generic_patch('/donations/', donation, donation['etag'])
-        confirm_donation.delay(donation)
+        if 'confirmed' in donation:
+            confirm_donation.delay(donation)
         return cashnet_data
     else:
         return {'error': 'bad transaction'}
