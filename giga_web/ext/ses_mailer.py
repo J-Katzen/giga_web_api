@@ -35,7 +35,7 @@ class SES_Mailer(object):
                     'Gigawatt <%s>' % (current_app.config.get('GIGA_NO_REPLY')),
                     title,
                     render_template(template, **args),
-                    [email],
+                    email,
                     bcc_addresses=[],
                     format='html')
                 return res
@@ -51,7 +51,7 @@ class SES_Mailer(object):
                    'name': name,
                    'user_id': id}
         return self._send('new_user.html',
-                          email,
+                          [email],
                           'Verify Your Account!',
                           **context)
 
@@ -59,7 +59,7 @@ class SES_Mailer(object):
         context = {'name': name,
                    'user_email': email}
         return self._send('verified_user.html',
-                          email,
+                          [email],
                           'Thanks for verifying!',
                           **context)
 
@@ -68,6 +68,7 @@ class SES_Mailer(object):
                    'user_mail': email,
                    'message': message}
         return self._send('feedback_email.html',
-                          email,
+                          ['jacob.katzen@gigawatt.co', 'greg@gigawatt.co', 
+                          'jake@gigawatt.co', 'roger@gigawatt.co', 'tedbrooks2@gmail.com'],
                           'Feedback from %s' % (name),
                           **context)
