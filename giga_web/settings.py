@@ -18,7 +18,7 @@ class Config(object):
 
 class ProductionConfig(Config):
     DEBUG = False
-    REDIS = 'ec2-54-226-128-157.compute-1.amazonaws.com'
+    REDIS = 'ec2-54-227-124-243.compute-1.amazonaws.com'
     REDIS_PORT = 6379
     REDIS_DB = 1
     CELERY_DEFAULT_QUEUE = 'prod'
