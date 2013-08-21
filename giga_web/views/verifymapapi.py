@@ -5,18 +5,21 @@ from flask.views import MethodView
 from flask import request
 import requests
 import json
-import bcrypt
 
 
-class ClientAPI(MethodView):
-    path = '/clients/'
+class VerifyMapAPI(MethodView):
+    path = '/verify_maps/'
 
-    def get(self, id):
+    def get(self, id, cid=None):
         if id is None:
-            return json.dumps({'error': 'no id or name provided'})
+            parm = {'where': '{"client_id" : "%s"}' % cid}
+            r = requests.get(crud_url + self.path,
+                             params=parm)
+            res = r.json()
+            return json.dumps(res['_items'])
         else:
-            client = helpers.generic_get(self.path, id)
-            return client.content
+            c_map = helpers.generic_get(self.path, id)
+            return c_map.content
 
     def post(self, id=None):
         data = request.get_json(force=True, silent=False)
@@ -24,14 +27,13 @@ class ClientAPI(MethodView):
             data['_id'] = id
             patched = helpers.generic_patch(self.path, data, data['etag'])
             if 'error' in patched:
-                return json.dumps(patched)
+                return patched
             else:
                 return patched.content
         else:
             r = requests.get(crud_url + self.path,
-                             params={'where': '{"name":"' + data['name'] + '"}'})
-            r2 = requests.get(crud_url + self.path + data['perma_name'])
-            if (r.status_code == requests.codes.ok) and (r2.status_code == 404):
+                             params={'where': '{"client_id":"%s"}' % data['client_id']})
+            if r.status_code == requests.codes.ok:
                 res = r.json()
                 if len(res['_items']) == 0:
                     payload = {'data': data}
@@ -41,17 +43,9 @@ class ClientAPI(MethodView):
 
                     return reg.content
                 else:
-                    return json.dumps({'error': 'Client name is not unique'})
-            elif r.status_code == r2.status_code == 404:
-                return json.dumps({'error': 'Could not query DB'})
-            elif r.status_code == r2.status_code == requests.codes.ok:
-                res = r.json()
-                if len(res['_items']) == 0:
-                    return json.dumps({'error': 'perma_name not unique'})
-                else:
-                    return json.dumps({'error': 'name and perma_name not unique'})
+                    return json.dumps({'error': 'verify_map already exist for this client_id - delete existing one first'})
             else:
-                return json.dumps({'error': 'perma_name not unique'})
+                return json.dumps({'error': 'Could not query DB'})
 
     def delete(self, id):
         if id is None:

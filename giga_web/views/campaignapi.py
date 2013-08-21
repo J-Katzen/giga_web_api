@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 
-from giga_web import crud_url
+from giga_web import crud_url, helpers
 from flask.views import MethodView
 from flask import request
 import json
-import helpers
 import requests
 
 
 class CampaignAPI(MethodView):
     path = '/campaigns/'
 
-    def get(self, cid, campaign_perma):
+    def get(self, campaign_perma, cid=None):
         if campaign_perma is None:
             parm = {'where': '{"client_id" : "%s"}' % cid}
             r = requests.get(crud_url + self.path,
@@ -23,19 +22,21 @@ class CampaignAPI(MethodView):
             return camp.content
 
     def post(self, campaign_perma=None):
-        data = helpers.create_dict_from_form(request.form)
+        data = request.get_json(force=True, silent=False)
         if campaign_perma is not None:
             data['_id'] = campaign_perma
-            patched = helpers.generic_patch(self.path, data)
+            patched = helpers.generic_patch(self.path, data, data['etag'])
             if 'error' in patched:
-                return patched
+                return json.dumps(patched)
             else:
                 return patched.content
         else:
             data['total_raised'] = 0
+            data['total_goal'] = 0
             data['completed'] = False
+            data['active_list'] = []
             r = requests.get(crud_url + self.path,
-                             params={'where': '{"perma_name":"' + data['perma_name'] + '"}'})
+                             params={'where': '{"perma_name":"%s"}' % data['perma_name']})
             if r.status_code == requests.codes.ok:
                 res = r.json()
                 if len(res['_items']) == 0:
@@ -44,11 +45,13 @@ class CampaignAPI(MethodView):
                                         data=json.dumps(payload),
                                         headers={'Content-Type': 'application/json'})
                     # create and attach leaderboard
-                    lead_data = reg.json()
-                    cl = create_leaderboard(lead_data)
+                    reg_j = reg.json()
+                    lead_data = {'client_id': reg_j['client_id'],
+                                 'camp_id': reg_j['_id']}
+                    cl = self.create_leaderboard(lead_data)
                     if cl['data']['status'] == 'OK':
                         lead_data['leaderboard_id'] = cl['data']['_id']
-                        p = helpers.generic_patch(self.path, lead_data)
+                        p = helpers.generic_patch(self.path, lead_data, reg_j['etag'])
                         if p.json()['data']['status'] == 'OK':
                             return reg.content
                         else:
@@ -71,11 +74,13 @@ class CampaignAPI(MethodView):
                             headers={'Content-Type': 'application/json'})
         return res.json()
 
+    # should we ever really delete a campaign if it's been in motion? date
+    # restrictions need to be applied
     def delete(self, campaign_perma):
         if campaign_perma is None:
             return json.dumps({'error': 'did not provide campaign_perma'})
         else:
-            camp = helpers.generic_get(path, campaign_perma)
+            camp = helpers.generic_get(self.path, campaign_perma)
             res = camp.json()
             for proj in res['project_list']:
                 d = helpers.generic_delete('/projects/', proj['p_id'])

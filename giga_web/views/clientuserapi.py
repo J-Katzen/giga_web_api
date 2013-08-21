@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from giga_web import crud_url
+from giga_web import crud_url, helpers
 from flask.views import MethodView
 from flask import request
-import helpers
 import requests
 import json
 import bcrypt
@@ -12,7 +11,7 @@ import bcrypt
 class ClientUserAPI(MethodView):
     path = '/client_users/'
 
-    def get(self, cid, id):
+    def get(self, id, cid=None):
         if id is None:
             parm = {'where': '{"client_id" : "%s"}' % cid}
             r = requests.get(crud_url + self.path,
@@ -26,10 +25,17 @@ class ClientUserAPI(MethodView):
     def post(self, id=None):
         data = helpers.create_dict_from_form(request.form)
         if id is not None:
-            pass
+            user = helpers.generic_get(self.path, id)
+            user_j = user.json()
+            data['_id'] = id
+            patched = helpers.generic_patch(self.path, data, user_j['etag'])
+            if 'error' in patched:
+                return patched
+            else:
+                return patched.content
         else:
             r = requests.get(crud_url + self.path,
-                             params={'where': '{"uname":"' + data['uname'] + '"}'})
+                             params={'where': '{"email":"%s"}' % data['email']})
             if r.status_code == requests.codes.ok:
                 res = r.json()
                 if len(res['_items']) == 0:

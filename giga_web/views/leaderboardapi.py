@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from giga_web import crud_url
+from giga_web import crud_url, helpers
 from flask.views import MethodView
 from flask import request
-import helpers
 import json
 import requests
 
@@ -11,7 +10,7 @@ import requests
 class LeaderboardAPI(MethodView):
     path = '/leaderboards/'
 
-    def get(self, cid, id):
+    def get(self, id, cid=None):
         if id is None:
             parm = {'where': '{"client_id" : "%s"}' % cid}
             r = requests.get(crud_url + self.path,
@@ -23,9 +22,14 @@ class LeaderboardAPI(MethodView):
             return leaderboard.content
 
     def post(self, id=None):
-        data = helpers.create_dict_from_form(request.form)
+        data = request.get_json(force=True, silent=False)
         if id is not None:
-            pass
+            data['_id'] = id
+            patched = helpers.generic_patch(self.path, data, data['etag'])
+            if 'error' in patched:
+                return json.dumps(patched)
+            else:
+                return patched.content
         else:
             r = requests.get(crud_url + self.path,
                              params={'where': '{"camp_id":"' + data['camp_id'] + '"}'})

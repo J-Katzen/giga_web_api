@@ -1,6 +1,7 @@
 from giga_web import giga_web
 
-if __name__ == '__main__':
-    port = 5001
+application = giga_web
 
-    giga_web.run(host='0.0.0.0', port=port, debug=True)
+if __name__ == '__main__':
+    port = 80
+    application.run(host='0.0.0.0', port=port, debug=True)
