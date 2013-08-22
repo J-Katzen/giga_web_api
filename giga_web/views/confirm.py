@@ -23,7 +23,7 @@ def confirm_client(client_perma, campaign_perma):
 
 
 def confirm_moravian(client_perma, cashnet_data):
-    cl = helpers.generic_get('/clients/', client_perma)
+    cl = helpers.generic_get('/clients/', client_perma.lower())
     print cashnet_data
     cl_j = cl.json()
     client_id = cl_j['_id']
