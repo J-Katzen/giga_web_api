@@ -19,7 +19,12 @@ class CampaignAPI(MethodView):
             return json.dumps(res['_items'])
         else:
             camp = helpers.generic_get(self.path, campaign_perma)
-            return camp.content
+            if 'error' not in camp:
+                camp = camp.json()
+                camp['active_list'] = sorted(camp['active_list'],
+                                             key=lambda k: k['raised'],
+                                             reverse=True)
+            return json.dumps(camp)
 
     def post(self, campaign_perma=None):
         data = request.get_json(force=True, silent=False)
