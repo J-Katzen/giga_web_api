@@ -30,6 +30,7 @@ class DonationAPI(MethodView):
             pass
         else:
             payload = {'data': data}
+
             reg = requests.post(crud_url + self.path,
                                 data=json.dumps(payload),
                                 headers={'Content-Type': 'application/json'})

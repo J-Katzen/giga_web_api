@@ -29,11 +29,14 @@ def confirm_moravian(client_perma, cashnet_data):
     email = cashnet_data['ref1val1']
     trans_id = cashnet_data['tx']
     client_trans_id = cashnet_data['ref2val1']
-    #date = cashnet_data['effdate']
+    #date = cashnet_data['effdate'] -- not accurate enough
+    #using own timestamps with a short time diff in between 
+    #as the check
     total = int(float(cashnet_data['amount1'])) * 100
-    #created before now, but after yesterday
+    #created before now, but after 15 minutes ago
     now = format_date_time(mktime(datetime.utcnow().timetuple()))
-    yesterday = format_date_time(mktime((datetime.utcnow() - timedelta(days=1)).timetuple()))
+    #yesterday was way too long...
+    yesterday = format_date_time(mktime((datetime.utcnow() - timedelta(minutes=15)).timetuple()))
     parm = {}
     parm = {'where': '{"email":"%s", "client_id": "%s", "total_donated": %d, "confirmed": {"$exists": false }, "created": {"$gte": "%s", "$lte": "%s"}}' %
             (email, client_id, total, yesterday, now)}
