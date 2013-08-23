@@ -35,7 +35,7 @@ def login():
 def account_email_check():
     email = request.args['email']
     r = requests.get(crud_url + '/users/',
-                     params={'where': '{"email":"' + str(email) + '"}'})
+                     params={'where': '{"email":"' + str(email).lower() + '"}'})
     if r.status_code == requests.codes.ok:
         res = r.json()
         if len(res['_items']) > 0:
