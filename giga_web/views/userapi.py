@@ -50,7 +50,7 @@ class UserAPI(MethodView):
                         verified_mail.delay(user_j['email'], share, name)
                 return patched.content
         else:
-            data['email'] = data['email'].lower()   
+            data['email'] = data['email'].lower()
             r = requests.get(crud_url + self.path,
                              params={'where': '{"email":"%s"}' % data['email']})
             if r.status_code == requests.codes.ok:
