@@ -15,7 +15,7 @@ app = giga_web
 def login():
     data = request.get_json(force=True, silent=False)
     r = requests.get(crud_url + '/users/',
-                     params={'where': '{"email":"' + data['email'] + '"}'})
+                     params={'where': '{"email":"' + data['email'].lower() + '"}'})
     if r.status_code == requests.codes.ok:
         res = r.json()
         if len(res['_items']) > 0:
