@@ -40,6 +40,7 @@ def confirm_moravian(client_perma, cashnet_data):
     parm = {}
     parm = {'where': '{"email":"%s", "client_id": "%s", "total_donated": %d, "confirmed": {"$exists": false }, "created": {"$gte": "%s", "$lte": "%s"}}' %
             (email, client_id, total, yesterday, now)}
+    parm['sort'] = '[("created",-1)]'
     r = requests.get(crud_url + '/donations/', params=parm)
     rj = r.json()
     if len(rj['_items']) > 0:
