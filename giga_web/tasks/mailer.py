@@ -38,7 +38,7 @@ def verified_mail(email, share, name=''):
 def info_mail(form_info, email):
     mailer = SES_Mailer()
     logger.info('task info_email called: args: %s' % (email))
-    res = mailer.send_info_email(form_info)
+    res = mailer.send_info_mail(form_info)
     if 'error' in res:
         info_mail.delay(form_info)
     return
