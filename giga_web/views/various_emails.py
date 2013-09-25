@@ -6,7 +6,7 @@ from giga_web.tasks import info_mail
 
 app = giga_web
 
-app.route('/info_email/', methods=['POST'])
+@app.route('/info_email/', methods=['POST'])
 def informational_email():
 	form_data = request.get_json(force=True, silent=False)
 	info_mail.delay(form_data)
