@@ -10,5 +10,5 @@ app = giga_web
 def informational_email():
 	form_data = request.get_json(force=True, silent=False)
 	print form_data
-	info_mail.delay(form_data)
+	info_mail.delay(form_data, form_data['email'])
 	return '0'

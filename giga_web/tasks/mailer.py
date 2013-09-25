@@ -35,9 +35,9 @@ def verified_mail(email, share, name=''):
     return
 
 @celery.task
-def info_mail(form_info):
+def info_mail(form_info, email):
     mailer = SES_Mailer()
-    logger.info('task info_email called: args: %s' (form_info['email']))
+    logger.info('task info_email called: args: %s' (email))
     res = mailer.send_info_email(form_info)
     if 'error' in res:
         info_mail.delay(form_info)
