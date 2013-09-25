@@ -41,7 +41,7 @@ class ProductionConfig(Config):
                      'giga_web.tasks.confirm.update_user_post': {'queue': 'prod-update_user', 'routing_key': 'prod.user'},
                      'giga_web.tasks.mailer.new_user_mail': {'queue': 'prod-new_user_mail', 'routing_key': 'prod.mail.new_user'},
                      'giga_web.tasks.mailer.verified_mail': {'queue': 'prod-verified_mail', 'routing_key': 'prod.mail.verified_user'},
-                     'giga_web.tasks.mailer.info_email': {'queue': 'prod-info_mail', 'routing_key': 'prod.mail.info_mail'} 
+                     'giga_web.tasks.mailer.info_mail': {'queue': 'prod-info_mail', 'routing_key': 'prod.mail.info_mail'} 
                     }
 
 
