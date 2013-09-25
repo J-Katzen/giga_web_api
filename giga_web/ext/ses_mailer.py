@@ -66,6 +66,8 @@ class SES_Mailer(object):
 
     def send_info_mail(self, form_info):
         form_info['uemail'] = form_info['email']
+        form_info['personType'] = form_info['person-type']
+        form_info.pop('person-type', None)
         form_info.pop('email', None)
         return self._send('info_email.html',
                           ['jacob.katzen@gigawatt.co', 'greg@gigawatt.co', 
