@@ -13,3 +13,4 @@ import login
 import confirm
 import checkout
 import user_transactions
+import various_emails

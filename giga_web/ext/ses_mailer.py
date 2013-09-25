@@ -64,12 +64,9 @@ class SES_Mailer(object):
                           'Thanks for verifying with MoCoMotion!',
                           **context)
 
-    def send_feedback_mail(self, email, name, message):
-        context = {'name': name,
-                   'user_mail': email,
-                   'message': message}
-        return self._send('feedback_email.html',
+    def send_info_mail(self, form_info):
+        return self._send('info_email.html',
                           ['jacob.katzen@gigawatt.co', 'greg@gigawatt.co', 
                           'jake@gigawatt.co', 'roger@gigawatt.co', 'tedbrooks2@gmail.com'],
-                          'Feedback from %s' % (name),
-                          **context)
+                          'Info Request from %s' % (form_info['name']),
+                          **form_info)

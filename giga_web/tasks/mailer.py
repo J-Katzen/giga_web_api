@@ -21,7 +21,6 @@ def new_user_mail(email, hash, id, name=''):
     logger.info('task new_user_mail called: args: %s %s %s %s' % (email, hash, name, id))
     res = mailer.send_new_user(email, hash, id, name)
     if 'error' in res:
-        print res
         new_user_mail.delay(email, hash, id, name)
     return
 
@@ -33,4 +32,13 @@ def verified_mail(email, share, name=''):
     res = mailer.send_verified_email(email, share, name)
     if 'error' in res:
         verified_mail.delay(email, share, name)
+    return
+
+@celery.task
+def info_mail(form_info):
+    mailer = SES_Mailer()
+    logger.info('task info_email called: args: %s' (form_info['email']))
+    res = mailer.send_info_email(form_info)
+    if 'error' in res:
+        info_mail.delay(form_info)
     return
