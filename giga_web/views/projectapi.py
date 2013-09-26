@@ -105,8 +105,9 @@ class ProjectAPI(MethodView):
                     'goal': proj_data['goal'],
                     'type': proj_data['type'],
                     'description': proj_data['summary'],
-                    'raised': proj_data['raised'],
-                    'proj_thumb': proj_data['thumbnail']}
+                    'raised': proj_data['raised']}
+        if 'thumbnail' in proj_data:
+            app_proj['proj_thumb'] = proj_data['thumbnail']
         if 'date_start' in c:
             app_proj['date_start'] = c['date_start']
         if proj_data['type'] != 'uncapped':
