@@ -8,13 +8,14 @@ from .clientuserapi import ClientUserAPI
 from .donationapi import DonationAPI
 from .clientmapapi import ClientMapAPI
 from .verifymapapi import VerifyMapAPI
+from .emaillistapi import EmailListAPI
 
 app = giga_web
 
 
 def register_api(view, endpoint, url, pk='id'):
     view_func = view.as_view(endpoint)
-    if endpoint in ['client_api', 'user_api']:
+    if endpoint in ['client_api', 'user_api', 'email_list_api']:
         app.add_url_rule(url, defaults={pk: None},
                          view_func=view_func, methods=['GET', ])
     else:
@@ -37,3 +38,4 @@ register_api(ClientUserAPI, 'client_user_api', '/client_users/')
 register_api(DonationAPI, 'donations_api', '/donations/')
 register_api(ClientMapAPI, 'client_map_api', '/client_maps/')
 register_api(VerifyMapAPI, 'verify_map_api', '/verify_maps/')
+register_api(EmailListAPI, 'email_list_api', '/email_lists/')
