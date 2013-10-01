@@ -51,12 +51,12 @@ class CampaignAPI(MethodView):
                                         headers={'Content-Type': 'application/json'})
                     # create and attach leaderboard
                     reg_j = reg.json()
-                    lead_data = {'client_id': reg_j['client_id'],
-                                 'camp_id': reg_j['_id']}
+                    lead_data = {'client_id': data['client_id'],
+                                 '_id': reg_j['data']['_id']}
                     cl = self.create_leaderboard(lead_data)
                     if cl['data']['status'] == 'OK':
                         lead_data['leaderboard_id'] = cl['data']['_id']
-                        p = helpers.generic_patch(self.path, lead_data, reg_j['etag'])
+                        p = helpers.generic_patch(self.path, lead_data, reg_j['data']['etag'])
                         if p.json()['data']['status'] == 'OK':
                             return reg.content
                         else:
@@ -87,10 +87,11 @@ class CampaignAPI(MethodView):
         else:
             camp = helpers.generic_get(self.path, campaign_perma)
             res = camp.json()
-            for proj in res['project_list']:
+            for proj in res['active_list']:
                 d = helpers.generic_delete('/projects/', proj['p_id'])
-            lead = helpers.generic_delete('/leaderboards/', res['leaderboard_id'])
-            r = helpers.generic_delete(self.path, user_id)
+            if 'leaderboard_id' in res:
+                lead = helpers.generic_delete('/leaderboards/', res['leaderboard_id'])
+            r = helpers.generic_delete(self.path, res['_id'])
             if r.status_code == requests.codes.ok:
                 return json.dumps({'message': 'successful deletion'})
             else:
