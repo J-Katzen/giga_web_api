@@ -2,7 +2,7 @@
 
 from flask import request
 from giga_web import giga_web
-from giga_web.tasks import info_mail
+from giga_web.tasks import info_mail, mail_list_reg
 
 app = giga_web
 
@@ -10,4 +10,10 @@ app = giga_web
 def informational_email():
 	form_data = request.get_json(force=True, silent=False)
 	info_mail.delay(form_data, form_data['email'])
+	return '0'
+
+@app.route('/mailing_list/<email_list_id>', methods=['POST'])
+def reg_email_list(email_list_id):
+	form_data = request.get_json(force=True, silent=False)
+	mail_list_reg.delay(email_list_id, form_data['email'])
 	return '0'
