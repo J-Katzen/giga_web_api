@@ -70,7 +70,14 @@ class SES_Mailer(object):
         form_info.pop('person-type', None)
         form_info.pop('email', None)
         return self._send('info_email.html',
-                          ['jacob.katzen@gigawatt.co', 'greg@gigawatt.co', 
+                          ['jacob.katzen@gigawatt.co', 'greg@gigawatt.co',
                           'jake@gigawatt.co', 'roger@gigawatt.co', 'tedbrooks2@gmail.com'],
                           'Info Request from %s' % (form_info['name']),
                           **form_info)
+
+    def confirm_subscription(self, email):
+        context = {}
+        return self._send('subscription_confirm.html',
+                          [email],
+                          'Get Excited for Muhlenberg\'s Day of Giving Campaign!',
+                          **context)

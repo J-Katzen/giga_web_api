@@ -62,6 +62,9 @@ def mail_list_reg(email_list_id, email_address):
                 return
             if 'error' in upd_list:
                 mail_list_reg.delay(email_list_id, email_address)
-            return
     except:
         mail_list_reg.delay(email_list_id, email_address)
+    res = mailer.confirm_subscription(email_address)
+    if 'error' in res:
+        mail_list_reg.delay(email_list_id, email_address)
+    return
