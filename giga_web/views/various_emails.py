@@ -15,5 +15,6 @@ def informational_email():
 @app.route('/mailing_list/<email_list_id>', methods=['POST'])
 def reg_email_list(email_list_id):
 	form_data = request.get_json(force=True, silent=False)
+	print form_data
 	mail_list_reg.delay(email_list_id, form_data['email'])
 	return '0'
