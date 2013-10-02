@@ -55,16 +55,18 @@ def mail_list_reg(email_list_id, email_address):
             email_idx = helpers.get_index(pj['emails'], 'address', email_address)
             if email_idx is None:
                 pj['emails'].append({'address': email_address})
-            try:
-                upd_list = helpers.generic_patch('/email_lists/', pj, pj['etag'])
-            except:
-                mail_list_reg.delay(email_list_id, email_address)
+                try:
+                    upd_list = helpers.generic_patch('/email_lists/', pj, pj['etag'])
+                except:
+                    mail_list_reg.delay(email_list_id, email_address)
+                    return
+                if 'error' in upd_list:
+                    mail_list_reg.delay(email_list_id, email_address)
+                    return
+                res = mailer.confirm_subscription(email_address)
+                if 'error' in res:
+                    mail_list_reg.delay(email_list_id, email_address)
                 return
-            if 'error' in upd_list:
-                mail_list_reg.delay(email_list_id, email_address)
     except:
-        mail_list_reg.delay(email_list_id, email_address)
-    res = mailer.confirm_subscription(email_address)
-    if 'error' in res:
         mail_list_reg.delay(email_list_id, email_address)
     return
