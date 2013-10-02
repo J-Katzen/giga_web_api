@@ -31,6 +31,7 @@ class LeaderboardAPI(MethodView):
             else:
                 return patched.content
         else:
+            data['class_yr_totals'] = []
             r = requests.get(crud_url + self.path,
                              params={'where': '{"camp_id":"' + data['camp_id'] + '"}'})
             if r.status_code == requests.codes.ok:
