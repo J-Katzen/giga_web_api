@@ -63,6 +63,10 @@ def update_project_post(data):
             p = helpers.generic_get('/projects/', data['proj_id'])
             pj = p.json()
             pj['raised'] += data['donated']
+            if 'donor_count' in pj:
+                pj['donor_count'] += 1
+            else:
+                pj['donor_count'] = 1
             if (pj['raised'] >= pj['goal']) and ('completed' not in pj):
                 now = datetime.now()
                 stamp = mktime(now.timetuple())

@@ -55,7 +55,7 @@ class ProjectAPI(MethodView):
                 return patched.content
         else:
             data['raised'] = 0
-            data['votes'] = 0
+            data['donor_count'] = 0
             r = requests.get(crud_url + self.path,
                              params={'where': '{"perma_name":"%s", "camp_id": "%s"}' % (data['perma_name'], data['camp_id'])})
             if r.status_code == requests.codes.ok:
@@ -67,11 +67,9 @@ class ProjectAPI(MethodView):
                                         headers={'Content-Type':
                                         'application/json'})
                     reg_j = reg.json()
-                    print reg_j
                     if (reg_j['data']['status'] == 'OK'):
                         if data['active']:
                             data['_id'] = reg_j['data']['_id']
-                            print data
                             camp_append = self.campaign_append_proj(data)
                             if 'error' not in camp_append:
                                 if camp_append['data']['status'] == 'ERR':
@@ -98,14 +96,16 @@ class ProjectAPI(MethodView):
             proj_data['summary'] = summary[:summary.rfind('.') + 1]
         else:
             proj_data['summary'] = proj_data['summary'][0:254]
-            proj_data['summary'] = proj_data['summary'][:proj_data['summary'].rfind('.') + 1]
+            if len(proj_data['summary']) >= 255:
+                proj_data['summary'] = proj_data['summary'][:proj_data['summary'].rfind('.') + 1]
         app_proj = {'p_id': proj_data['_id'],
                     'proj_name': proj_data['name'],
                     'perma_name': proj_data['perma_name'],
                     'goal': proj_data['goal'],
                     'type': proj_data['type'],
                     'description': proj_data['summary'],
-                    'raised': proj_data['raised']}
+                    'raised': proj_data['raised'],
+                    'donor_count': proj_data['donor_count']}
         if 'thumbnail' in proj_data:
             app_proj['proj_thumb'] = proj_data['thumbnail']
         if 'date_start' in c:
@@ -120,7 +120,8 @@ class ProjectAPI(MethodView):
             else:
                 app_proj['date_end'] = d_end
         else:
-            app_proj['date_end'] = c['date_end']
+            if 'date_end' in c:
+                app_proj['date_end'] = c['date_end']
         if proj_data['active'] and ('active_list' in c):
             c['active_list'].append(app_proj)
             c['total_goal'] += proj_data['goal']
