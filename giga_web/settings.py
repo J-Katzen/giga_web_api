@@ -46,6 +46,13 @@ class ProductionConfig(Config):
                      'giga_web.tasks.mailer.mail_list_reg': {'queue': 'prod-mail_list_reg', 'routing_key': 'prod.mail.list_reg'}
                     }
 
+    #STRIPE_LIVE_SECRECT = 'sk_live_dlcNxJyn9yftBbiUTZDk98oZ'
+    #STRIPE_LIVE_PUBLISHABLE = 'pk_live_MnOBDFHMlwZ5dy41gfHhIybN'
+    #STRIPE_PROD_CLIENTID = 'ca_1tCskwf0RADJ30qwFpoKXrtpnQMcJLQL'
+    #app.config['SITE'] = 'https://connect.stripe.com'
+    #app.config['AUTHORIZE_URI'] = '/oauth/authorize'
+    #app.config['TOKEN_URI'] = '/oauth/token'
+
 
 class DevelopmentConfig(Config):
     DEBUG = True
@@ -74,6 +81,9 @@ class DevelopmentConfig(Config):
                      'giga_web.tasks.mailer.verified_mail': {'queue': 'test-verified_mail', 'routing_key': 'test.mail.verified_user'}
                      }
 
+    STRIPE_TEST_SECRECT = 'sk_live_dlcNxJyn9yftBbiUTZDk98oZ'
+    STRIPE_TEST_PUBLISHABLE = 'pk_live_MnOBDFHMlwZ5dy41gfHhIybN'
+    STRIPE_TEST_CLIENTID = 'ca_1tCsIDALJsiS8xJPZMa0ZSTQkluerdOO'
 
 class TestingConfig(Config):
     TESTING = True

@@ -15,10 +15,10 @@ app = giga_web
 
 def register_api(view, endpoint, url, pk='id'):
     view_func = view.as_view(endpoint)
-    if endpoint in ['client_api', 'user_api', 'email_list_api']:
-        app.add_url_rule(url, defaults={pk: None},
+    #if endpoint in ['client_api', 'user_api', 'email_list_api']:
+    app.add_url_rule(url, defaults={pk: None},
                          view_func=view_func, methods=['GET', ])
-    else:
+    if endpoint not in ['client_api', 'user_api', 'email_list_api']:
         app.add_url_rule('/<cid>' + url, defaults={pk: None},
                          view_func=view_func, methods=['GET', ])
     if endpoint == 'project_api':
