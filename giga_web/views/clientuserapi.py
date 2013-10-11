@@ -28,23 +28,38 @@ class ClientUserAPI(MethodView):
             user = helpers.generic_get(self.path, id)
             user_j = user.json()
             data['_id'] = id
+            if 'verify_hash' in data:
+                if user_j['verify_hash'] == data['verify_hash']:
+                    data['verified'] = True
+            if 'pw' in data:
+                data['pw'] = bcrypt.hashpw(data['pw'], bcrypt.gensalt())
             patched = helpers.generic_patch(self.path, data, user_j['etag'])
             if 'error' in patched:
-                return patched
+                return json.dumps(patched)
             else:
+                if 'verified' in data:
+                    if data['verified']:
+                        #send out verified email or password change email
+                        pass
                 return patched.content
         else:
+            data['email'] = data['email'].lower()
             r = requests.get(crud_url + self.path,
                              params={'where': '{"email":"%s"}' % data['email']})
             if r.status_code == requests.codes.ok:
                 res = r.json()
                 if len(res['_items']) == 0:
-                    data['pw'] = bcrypt.hashpw(data['pw'], bcrypt.gensalt())
+                    if 'pw' in data:
+                        data['pw'] = bcrypt.hashpw(data['pw'], bcrypt.gensalt())
+                    data['verified'] = False
+                    data['verify_hash'] = helpers.b64_hash_url(data['email'])
                     payload = {'data': data}
                     reg = requests.post(crud_url + self.path,
                                         data=json.dumps(payload),
                                         headers={'Content-Type': 'application/json'})
-
+                    if reg.status_code == requests.codes.ok:
+                        # send new user email
+                        pass
                     return reg.content
                 else:
                     return json.dumps({'error': 'User exists'})
