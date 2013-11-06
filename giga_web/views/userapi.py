@@ -65,13 +65,14 @@ class UserAPI(MethodView):
                                         data=json.dumps(payload),
                                         headers={'Content-Type': 'application/json'})
                     if reg.status_code == requests.codes.ok:
-                        name = ''
-                        if 'firstname' in data:
-                            name = data['firstname']
-                        if 'lastname' in data:
-                            name += ' ' + data['lastname']
-                        reg_j = reg.json()
-                        new_user_mail.delay(data['email'], data['verify_hash'], reg_j['data']['_id'], name)
+                        pass
+                        # name = ''
+                        # if 'firstname' in data:
+                        #     name = data['firstname']
+                        # if 'lastname' in data:
+                        #     name += ' ' + data['lastname']
+                        # reg_j = reg.json()
+                        # new_user_mail.delay(data['email'], data['verify_hash'], reg_j['data']['_id'], name)
                     return reg.content
                 else:
                     return json.dumps({'error': 'Email exists'})
