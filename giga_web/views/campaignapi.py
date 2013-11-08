@@ -40,6 +40,7 @@ class CampaignAPI(MethodView):
             data['total_goal'] = 0
             data['completed'] = False
             data['active_list'] = []
+            data['total_donor_ct'] = 0
             r = requests.get(crud_url + self.path,
                              params={'where': '{"perma_name":"%s"}' % data['perma_name']})
             if r.status_code == requests.codes.ok:

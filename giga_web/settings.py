@@ -81,9 +81,5 @@ class DevelopmentConfig(Config):
                      'giga_web.tasks.mailer.verified_mail': {'queue': 'test-verified_mail', 'routing_key': 'test.mail.verified_user'}
                      }
 
-    STRIPE_TEST_SECRECT = 'sk_live_dlcNxJyn9yftBbiUTZDk98oZ'
-    STRIPE_TEST_PUBLISHABLE = 'pk_live_MnOBDFHMlwZ5dy41gfHhIybN'
-    STRIPE_TEST_CLIENTID = 'ca_1tCsIDALJsiS8xJPZMa0ZSTQkluerdOO'
-
 class TestingConfig(Config):
     TESTING = True

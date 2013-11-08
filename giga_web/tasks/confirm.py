@@ -13,6 +13,12 @@ def confirm_donation(data):
     logger.info('task confirm_donation called. args: %s', str(data))
     # update user
     update_user_post.delay(data)
+    # update referring user if available
+    if 'ref' in data:
+        if data['ref'] == data['user_id']:
+            data.pop('ref', None)
+        else:
+            data['ref'] = helpers.baseconvert(data['ref'], helpers.BASE62, helpers.BASE16)
     for proj in data['proj_list']:
         update_project_post.delay(proj)
     # update campaign
@@ -31,13 +37,17 @@ def update_user_post(data):
             pj = p.json()
             new_donated = {}
             new_donated['client_id'] = data['client_id']
+            new_donated['camp_id'] = data['camp_id']
             new_donated['amt'] = data['total_donated']
+            new_donated['amt_ref'] = 0
+            new_donated['people_ref_ct'] = 0
+            new_donated['people_ref_names'] = {}
             if 'class_year' in data:
                 new_donated['class_year'] = data['class_year']
             if 'donated' not in pj:
                 pj['donated'] = [new_donated]
             else:
-                client_list_idx = helpers.get_index(pj['donated'], 'client_id', data['client_id'])
+                client_list_idx = helpers.get_index(pj['donated'], 'camp_id', data['camp_id'])
                 if client_list_idx is None:
                     pj['donated'].append(new_donated)
                 else:
@@ -63,10 +73,7 @@ def update_project_post(data):
             p = helpers.generic_get('/projects/', data['proj_id'])
             pj = p.json()
             pj['raised'] += data['donated']
-            if 'donor_count' in pj:
-                pj['donor_count'] += 1
-            else:
-                pj['donor_count'] = 1
+            pj['donor_count'] += 1
             if (pj['raised'] >= pj['goal']) and ('completed' not in pj):
                 now = datetime.now()
                 stamp = mktime(now.timetuple())
@@ -92,10 +99,12 @@ def update_campaign_post(data):
             camp = helpers.generic_get('/campaigns/', data['camp_id'])
             camp_j = camp.json()
             camp_j['total_raised'] += data['total_donated']
+            camp_j['total_donor_ct'] += 1
             for projs in data['proj_list']:
                 activelist_proj = helpers.get_index(camp_j['active_list'], 'p_id', projs['proj_id'])
                 if activelist_proj is not None:
                     camp_j['active_list'][activelist_proj]['raised'] += projs['donated']
+                    camp_j['active_list'][activelist_proj]['donor_count'] += 1
             try:
                 upd_camp = helpers.generic_patch('/campaigns/', camp_j, camp_j['etag'])
             except:
@@ -132,21 +141,13 @@ def update_leaderboard_post(data):
                     lead_j['class_yr_totals'] = [{'year': data['class_year'],
                                                   'amount': data['total_donated']}]
             if 'ref' in data:
-                data['ref'] = helpers.baseconvert(data['ref'], helpers.BASE62, helpers.BASE16)
-                if data['ref'] == data['user_id']:
-                    data.pop('ref', None)
-                else:
-                    lead_j['referred'] += data['total_donated']
-                    data2 = data.copy()
-                    data2['user_id'] = data['ref']
-                    data2.pop('class_year', None)
-                    update_user_post.delay(data2)
-                    # find out if the referral id is in the leaderboard list
-                    user_idx = helpers.get_index(lead_j['donors'], 'user_id', data['ref'])
-                    # if so, update the stats!
-                    if user_idx is not None:
-                        lead_j['donors'][user_idx]['ref'] += data['total_donated']
-                        lead_j['donors'][user_idx]['combined'] += data['total_donated']
+                lead_j['referred'] += data['total_donated']
+                # find out if the referral id is in the leaderboard list
+                user_idx = helpers.get_index(lead_j['donors'], 'user_id', data['ref'])
+                # if so, update the stats!
+                if user_idx is not None:
+                    lead_j['donors'][user_idx]['ref'] += data['total_donated']
+                    lead_j['donors'][user_idx]['combined'] += data['total_donated']
             # check if user donating is already in leaderboard
             user2_idx = helpers.get_index(lead_j['donors'], 'user_id', data['user_id'])
             if user2_idx is not None:
@@ -161,7 +162,6 @@ def update_leaderboard_post(data):
                     data['name'] = n_user['firstname'] + ' ' + n_user['lastname']
                 else:
                     data['name'] = data['email']
-
                 if 'avatar_url' in n_user:
                     data['avatar'] = n_user['avatar_url']
                 else:
@@ -171,6 +171,7 @@ def update_leaderboard_post(data):
                                          'donated': data['total_donated'],
                                          'avatar': data['avatar'],
                                          'ref': 0,
+                                         'people_ref': 0,
                                          'combined': data['total_donated']})
             try:
                 upd_lead = helpers.generic_patch('/leaderboards/', lead_j, lead_j['etag'])
