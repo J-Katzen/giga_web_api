@@ -19,6 +19,7 @@ def confirm_donation(data):
             data.pop('ref', None)
         else:
             data['ref'] = helpers.baseconvert(data['ref'], helpers.BASE62, helpers.BASE16)
+            # update the referring user with donation data :D
     for proj in data['proj_list']:
         update_project_post.delay(proj)
     # update campaign
@@ -41,7 +42,7 @@ def update_user_post(data):
             new_donated['amt'] = data['total_donated']
             new_donated['amt_ref'] = 0
             new_donated['people_ref_ct'] = 0
-            new_donated['people_ref_names'] = {}
+            new_donated['people_ref_names'] = []
             if 'class_year' in data:
                 new_donated['class_year'] = data['class_year']
             if 'donated' not in pj:
