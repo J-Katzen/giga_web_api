@@ -74,6 +74,8 @@ def update_project_post(data):
             p = helpers.generic_get('/projects/', data['proj_id'])
             pj = p.json()
             pj['raised'] += data['donated']
+            if ('second_class_year' in data) and ('second_fullname' in data):
+                pj['donor_count'] += 1
             pj['donor_count'] += 1
             if (pj['raised'] >= pj['goal']) and ('completed' not in pj):
                 now = datetime.now()
@@ -100,6 +102,8 @@ def update_campaign_post(data):
             camp = helpers.generic_get('/campaigns/', data['camp_id'])
             camp_j = camp.json()
             camp_j['total_raised'] += data['total_donated']
+            if ('second_class_year' in data) and ('second_fullname' in data):
+                camp_j['total_donor_count'] += 1
             camp_j['total_donor_ct'] += 1
             for projs in data['proj_list']:
                 activelist_proj = helpers.get_index(camp_j['active_list'], 'p_id', projs['proj_id'])
