@@ -81,7 +81,7 @@ def update_ref_user_post(data):
                 else:
                     pj['donated'][client_list_idx]['amt_ref'] += data['total_donated']
                     pj['donated'][client_list_idx]['people_ref_ct'] += 1
-                    if ('second_class_year' in data) and ('second_fullname' in data):
+                    if 'second_fullname' in data:
                         pj['donated'][client_list_idx]['people_ref_ct'] += 1
                     pj['donated'][client_list_idx]['people_ref_names'].append({'uid': data['user_id'], 'email': data['email']})
             try:
@@ -132,7 +132,7 @@ def update_campaign_post(data):
             camp = helpers.generic_get('/campaigns/', data['camp_id'])
             camp_j = camp.json()
             camp_j['total_raised'] += data['total_donated']
-            if ('second_class_year' in data) and ('second_fullname' in data):
+            if 'second_fullname' in data:
                 camp_j['total_donor_ct'] += 1
             camp_j['total_donor_ct'] += 1
             for projs in data['proj_list']:
