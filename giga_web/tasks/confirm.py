@@ -93,7 +93,7 @@ def update_ref_user_post(data):
                         mailer = SES_Mailer()
                         share = helpers.baseconvert(data['user_id'], helpers.BASE16, helpers.BASE62)
                         if pj['donated'][client_list_idx]['people_ref_ct'] < 10:
-                            res = mailer.mule_initial_gift(data, share, pj['donated'][client_list_idx]['people_ref_ct'])
+                            res = mailer.mule_referral_update(data, share, pj['donated'][client_list_idx]['people_ref_ct'])
                         else:
                             res = mailer.mule_ref_winner(data, share, pj['donated'][client_list_idx]['people_ref_ct'])
             try:

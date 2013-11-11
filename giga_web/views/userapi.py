@@ -47,7 +47,7 @@ class UserAPI(MethodView):
                 if 'verified' in data:
                     if data['verified']:
                         share = helpers.baseconvert(id, helpers.BASE16, helpers.BASE62)
-                        verified_mail.delay(user_j['email'], share, name)
+                        #verified_mail.delay(user_j['email'], share, name)
                 return patched.content
         else:
             data['email'] = data['email'].lower()
