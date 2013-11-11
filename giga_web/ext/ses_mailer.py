@@ -89,25 +89,25 @@ class SES_Mailer(object):
                         'Thanks for your gift to MuleMentum!',
                         **context)
 
-    def mule_referral_update(self, donation, share, count):
+    def mule_referral_update(self, ref_user, share, count):
       context = {'share_id': share,
                  'ref_count': count}
       return self._send('mule_ref_update.html',
-                        [donation['email']],
+                        [ref_user['email']],
                         'Someone used your MuleMentum link!',
                         **context)
 
-    def mule_referral_winner(self, donation, share, count):
+    def mule_referral_winner(self, ref_user, share, count):
       context = {'share_id': share,
                  'ref_count': count,
-                 'donor_email': donation['email'],
-                 'donor_name': donation['fullname']}
+                 'donor_email': ref_user['email'],
+                 'donor_name': ref_user['fullname']}
       self._send('share_winner.html',
                  ['jacob.katzen@gigawatt.co'],
                  'A winner based on shares has been made!',
                  **context)
       return self._send('mule_ref_winner.html',
-                        [donation['email']],
+                        [ref_user['email']],
                         'Hooray! You are getting a \'Berg Prize from MuleMentum!',
                         **context)
 
