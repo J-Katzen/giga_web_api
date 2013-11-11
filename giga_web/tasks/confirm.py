@@ -7,7 +7,6 @@ from time import mktime
 
 logger = celery_logger
 
-
 @celery.task
 def confirm_donation(data):
     logger.info('task confirm_donation called. args: %s', str(data))
@@ -65,6 +64,34 @@ def update_user_post(data):
     except:
         update_user_post.delay(data)
 
+@celery.task
+def update_ref_user_post(data):
+    try:
+        with Lock('u_' + data['ref']):
+            logger.info('task update_ref_user_post. args: %s', str(data))
+            p = helpers.generic_get('/users/', data['ref'])
+            pj = p.json()
+            if 'donated' not in pj:
+                return
+            else:
+                client_list_idx = helpers.get_index(pj['donated'], 'camp_id', data['camp_id'])
+                if client_list_idx is None:
+                    return
+                else:
+                    pj['donated'][client_list_idx]['amt_ref'] += data['total_donated']
+                    pj['donated'][client_list_idx]['people_ref_ct'] += 1
+                    pj['donated'][client_list_idx]['people_ref_names'].append({'uid': data['user_id'], 'email': data['email']})
+            try:
+                upd_p = helpers.generic_patch('/users/', pj, pj['etag'])
+            except:
+                update_user_post.delay(data)
+                return
+            if 'error' in upd_p:
+                update_user_post.delay(data)
+                return
+            return
+    except:
+        update_user_post.delay(data)
 
 @celery.task
 def update_project_post(data):
@@ -103,7 +130,7 @@ def update_campaign_post(data):
             camp_j = camp.json()
             camp_j['total_raised'] += data['total_donated']
             if ('second_class_year' in data) and ('second_fullname' in data):
-                camp_j['total_donor_count'] += 1
+                camp_j['total_donor_ct'] += 1
             camp_j['total_donor_ct'] += 1
             for projs in data['proj_list']:
                 activelist_proj = helpers.get_index(camp_j['active_list'], 'p_id', projs['proj_id'])
