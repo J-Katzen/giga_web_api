@@ -18,6 +18,7 @@ def confirm_donation(data):
             data.pop('ref', None)
         else:
             data['ref'] = helpers.baseconvert(data['ref'], helpers.BASE62, helpers.BASE16)
+            update_ref_user_post.delay(data)
             # update the referring user with donation data :D
     for proj in data['proj_list']:
         update_project_post.delay(proj)
@@ -84,14 +85,14 @@ def update_ref_user_post(data):
             try:
                 upd_p = helpers.generic_patch('/users/', pj, pj['etag'])
             except:
-                update_user_post.delay(data)
+                update_ref_user_post.delay(data)
                 return
             if 'error' in upd_p:
-                update_user_post.delay(data)
+                update_ref_user_post.delay(data)
                 return
             return
     except:
-        update_user_post.delay(data)
+        update_ref_user_post.delay(data)
 
 @celery.task
 def update_project_post(data):
