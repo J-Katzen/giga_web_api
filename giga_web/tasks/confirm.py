@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from giga_web import celery, helpers, celery_logger
 from giga_web import Lock, LockTimeout
+from giga_web.ext import SES_Mailer
 from wsgiref.handlers import format_date_time
 from datetime import datetime
 from time import mktime
@@ -61,6 +62,10 @@ def update_user_post(data):
             if 'error' in upd_p:
                 update_user_post.delay(data)
                 return
+            if data['client_id'] == '5249d6ab718ae03c6435c357':
+                mailer = SES_Mailer()
+                share = helpers.baseconvert(data['user_id'], helpers.BASE16, helpers.BASE62)
+                res = mailer.mule_initial_gift(data, share)
             return
     except:
         update_user_post.delay(data)
@@ -84,6 +89,13 @@ def update_ref_user_post(data):
                     if 'second_fullname' in data:
                         pj['donated'][client_list_idx]['people_ref_ct'] += 1
                     pj['donated'][client_list_idx]['people_ref_names'].append({'uid': data['user_id'], 'email': data['email']})
+                    if data['client_id'] == '5249d6ab718ae03c6435c357':
+                        mailer = SES_Mailer()
+                        share = helpers.baseconvert(data['user_id'], helpers.BASE16, helpers.BASE62)
+                        if pj['donated'][client_list_idx]['people_ref_ct'] < 10:
+                            res = mailer.mule_initial_gift(data, share, pj['donated'][client_list_idx]['people_ref_ct'])
+                        else:
+                            res = mailer.mule_ref_winner(data, share, pj['donated'][client_list_idx]['people_ref_ct'])
             try:
                 upd_p = helpers.generic_patch('/users/', pj, pj['etag'])
             except:
@@ -132,9 +144,15 @@ def update_campaign_post(data):
             camp = helpers.generic_get('/campaigns/', data['camp_id'])
             camp_j = camp.json()
             camp_j['total_raised'] += data['total_donated']
+            camp_j['total_donor_ct'] += 1
+            if data['client_id'] == '5249d6ab718ae03c6435c357':
+                if (camp_j['total_donor_ct'] == 1) or (camp_j['total_donor_ct'] == 330) \
+                or (camp_j['total_donor_ct'] == 580) or (camp_j['total_donor_ct'] == 910):
+                    mailer = SES_Mailer()
+                    res = mailer.mule_num_winner(data,camp_j['total_donor_ct'])
             if 'second_fullname' in data:
                 camp_j['total_donor_ct'] += 1
-            camp_j['total_donor_ct'] += 1
+
             for projs in data['proj_list']:
                 activelist_proj = helpers.get_index(camp_j['active_list'], 'p_id', projs['proj_id'])
                 if activelist_proj is not None:

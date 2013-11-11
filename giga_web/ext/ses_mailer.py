@@ -81,3 +81,42 @@ class SES_Mailer(object):
                           [email],
                           'Get Excited for Muhlenberg\'s Day of Giving Campaign!',
                           **context)
+
+    def mule_initial_gift(self, donation, share):
+      context = {'share_id': share}
+      return self._send('mule_initial_gift.html',
+                        [donation['email']],
+                        'Thanks for your gift to MuleMentum!',
+                        **context)
+
+    def mule_referral_update(self, donation, share, count):
+      context = {'share_id': share,
+                 'ref_count': count}
+      return self._send('mule_ref_update.html',
+                        [donation['email']],
+                        'Someone used your MuleMentum link!',
+                        **context)
+
+    def mule_referral_winner(self, donation, share, count):
+      context = {'share_id': share,
+                 'ref_count': count,
+                 'donor_email': donation['email'],
+                 'donor_name': donation['fullname']}
+      self._send('share_winner.html',
+                 ['jacob.katzen@gigawatt.co'],
+                 'A winner based on shares has been made!',
+                 **context)
+      return self._send('mule_ref_winner.html',
+                        [donation['email']],
+                        'Hooray! You are getting a \'Berg Prize from MuleMentum!',
+                        **context)
+
+    def mule_num_winner(self, donation, count):
+      context = {'donor_email': donation['email'],
+                 'donor_name': donation['fullname'],
+                 'donor_count': count}
+      self._send('numeric_winner.html',
+                 ['jacob.katzen@gigawatt.co'],
+                 'A winner for a milestone has been made!',
+                 **context)
+                 #Maurice.Rapp@gw.muhlenberg.edu, Kim.Anderson@gw.muhlenberg.edu
