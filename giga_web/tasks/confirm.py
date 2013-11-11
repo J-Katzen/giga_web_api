@@ -81,6 +81,8 @@ def update_ref_user_post(data):
                 else:
                     pj['donated'][client_list_idx]['amt_ref'] += data['total_donated']
                     pj['donated'][client_list_idx]['people_ref_ct'] += 1
+                    if ('second_class_year' in data) and ('second_fullname' in data):
+                        pj['donated'][client_list_idx]['people_ref_ct'] += 1
                     pj['donated'][client_list_idx]['people_ref_names'].append({'uid': data['user_id'], 'email': data['email']})
             try:
                 upd_p = helpers.generic_patch('/users/', pj, pj['etag'])
