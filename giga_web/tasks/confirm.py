@@ -93,15 +93,16 @@ def update_ref_user_post(data):
                         mailer = SES_Mailer()
                         share = helpers.baseconvert(pj['_id'], helpers.BASE16, helpers.BASE62)
                         if pj['donated'][client_list_idx]['people_ref_ct'] < 10:
-                            res = mailer.mule_referral_update(pj, share, pj['donated'][client_list_idx]['people_ref_ct'])
+                            res = mailer.mule_update(pj, share, pj['donated'][client_list_idx]['people_ref_ct'])
                         else:
-                            res = mailer.mule_referral_winner(pj, share, pj['donated'][client_list_idx]['people_ref_ct'])
+                            res = mailer.mule_winner(pj, share, pj['donated'][client_list_idx]['people_ref_ct'])
             try:
                 upd_p = helpers.generic_patch('/users/', pj, pj['etag'])
             except:
                 update_ref_user_post.delay(data)
                 return
             if 'error' in upd_p:
+                print upd_p
                 update_ref_user_post.delay(data)
                 return
             return
