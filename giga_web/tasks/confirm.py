@@ -117,7 +117,7 @@ def update_project_post(data):
             p = helpers.generic_get('/projects/', data['proj_id'])
             pj = p.json()
             pj['raised'] += data['donated']
-            if ('second_class_year' in data) and ('second_fullname' in data):
+            if 'second_fullname' in data:
                 pj['donor_count'] += 1
             pj['donor_count'] += 1
             if (pj['raised'] >= pj['goal']) and ('completed' not in pj):
@@ -148,7 +148,8 @@ def update_campaign_post(data):
             camp_j['total_donor_ct'] += 1
             if data['client_id'] == '5249d6ab718ae03c6435c357':
                 if (camp_j['total_donor_ct'] == 1) or (camp_j['total_donor_ct'] == 330) \
-                or (camp_j['total_donor_ct'] == 580) or (camp_j['total_donor_ct'] == 910):
+                or (camp_j['total_donor_ct'] == 580) or (camp_j['total_donor_ct'] == 910) \
+                or (camp_j['total_donor_ct'] == 455):
                     mailer = SES_Mailer()
                     res = mailer.mule_num_winner(data,camp_j['total_donor_ct'])
             if 'second_fullname' in data:
