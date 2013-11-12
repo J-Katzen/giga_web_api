@@ -103,7 +103,8 @@ class SES_Mailer(object):
                  'donor_email': ref_user['email'],
                  'donor_name': ref_user['fullname']}
       self._send('share_winner.html',
-                 ['jacob.katzen@gigawatt.co'],
+                 ['jacob.katzen@gigawatt.co','jake@gigawatt.co','greg@gigawatt.co',
+                 'Maurice.Rapp@gw.muhlenberg.edu', 'Kim.Anderson@gw.muhlenberg.edu','hlavin@muhlenberg.edu'],
                  'A winner based on shares has been made!',
                  **context)
       return self._send('mule_ref_winner.html',
@@ -116,7 +117,7 @@ class SES_Mailer(object):
                  'donor_name': donation['fullname'],
                  'donor_count': count}
       self._send('numeric_winner.html',
-                 ['jacob.katzen@gigawatt.co'],
+                 ['jacob.katzen@gigawatt.co','jake@gigawatt.co','greg@gigawatt.co',
+                 'Maurice.Rapp@gw.muhlenberg.edu', 'Kim.Anderson@gw.muhlenberg.edu','hlavin@muhlenberg.edu'],
                  'A winner for a milestone has been made!',
                  **context)
-                 #Maurice.Rapp@gw.muhlenberg.edu, Kim.Anderson@gw.muhlenberg.edu
