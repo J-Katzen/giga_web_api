@@ -149,7 +149,10 @@ def update_campaign_post(data):
             if data['client_id'] == '5249d6ab718ae03c6435c357':
                 if (camp_j['total_donor_ct'] == 1) or (camp_j['total_donor_ct'] == 330) \
                 or (camp_j['total_donor_ct'] == 580) or (camp_j['total_donor_ct'] == 910) \
-                or (camp_j['total_donor_ct'] == 455):
+                or (camp_j['total_donor_ct'] == 600) or (camp_j['total_donor_ct'] == 683) \
+                or (camp_j['total_donor_ct'] == 700) or (camp_j['total_donor_ct'] == 800) \
+                or (camp_j['total_donor_ct'] == 810) or (camp_j['total_donor_ct'] == 860) \
+                or (camp_j['total_donor_ct'] == 900):
                     mailer = SES_Mailer()
                     res = mailer.mule_num_winner(data,camp_j['total_donor_ct'])
             if 'second_fullname' in data:
