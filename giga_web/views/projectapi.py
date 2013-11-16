@@ -108,26 +108,14 @@ class ProjectAPI(MethodView):
         if 'thumbnail' in proj_data:
             app_proj['proj_thumb'] = proj_data['thumbnail']
         if 'rewards' in proj_data:
-            print 'hi'
             app_proj['items_sold'] = []
             for reward in proj_data['rewards']:
-                print 'whoa'
                 app_proj['items_sold'].append({'reward_name': reward['reward_name'], 
                                                 'amt_sold': 0})
         if 'date_start' in c:
             app_proj['date_start'] = c['date_start']
-        if proj_data['type'] != 'uncapped':
-            c_start = datetime.strptime(c['date_start'], '%a, %d %b %Y %H:%M:%S GMT')
-            d_end = (c_start + timedelta(proj_data['length'])).strftime('%a, %d %b %Y %H:%M:%S GMT')
-            camp_end = datetime.strptime(c['date_end'], '%a, %d %b %Y %H:%M:%S GMT')
-            dc_end = datetime.strptime(d_end, '%a, %d %b %Y %H:%M:%S GMT')
-            if dc_end > camp_end:
-                app_proj['date_end'] = c['date_end']
-            else:
-                app_proj['date_end'] = d_end
-        else:
-            if 'date_end' in c:
-                app_proj['date_end'] = c['date_end']
+        if 'date_end' in c:
+            app_proj['date_end'] = c['date_end']
         if proj_data['active'] and ('active_list' in c):
             c['active_list'].append(app_proj)
             c['total_goal'] += proj_data['goal']
