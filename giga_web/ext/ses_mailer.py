@@ -82,37 +82,37 @@ class SES_Mailer(object):
                           'Get Excited for Muhlenberg\'s Day of Giving Campaign!',
                           **context)
 
-    def mule_initial_gift(self, donation, share):
+    def lehigh_initial_gift(self, donation, share):
       context = {'share_id': share}
-      return self._send('mule_initial_gift.html',
+      return self._send('lehigh_initial_gift.html',
                         [donation['email']],
-                        'Thanks for your gift to MuleMentum!',
+                        'Thanks for your gift to the #Lehigh5000 Challenge!',
                         **context)
 
-    def mule_update(self, ref_user, share, count):
+    def lehigh_update(self, ref_user, share, count):
       context = {'share_id': share,
                  'ref_count': count}
-      return self._send('mule_ref_update.html',
+      return self._send('lehigh_ref_update.html',
                         [ref_user['email']],
-                        'Someone used your MuleMentum link!',
+                        'Someone used your #Lehigh5000 Challenge link!',
                         **context)
 
-    def mule_winner(self, ref_user, share, count):
+    def lehigh_winner(self, ref_user, share, count):
       context = {'share_id': share,
                  'ref_count': count,
                  'donor_email': ref_user['email'],
                  'donor_name': ref_user['fullname']}
       self._send('share_winner.html',
                  ['jacob.katzen@gigawatt.co','jake@gigawatt.co','greg@gigawatt.co',
-                 'Maurice.Rapp@gw.muhlenberg.edu', 'Kim.Anderson@gw.muhlenberg.edu','hlavin@muhlenberg.edu'],
+                 'roger@gigawatt.co','tedbrooks2@gmail.com'],
                  'A winner based on shares has been made!',
                  **context)
-      return self._send('mule_ref_winner.html',
+      return self._send('lehigh_ref_winner.html',
                         [ref_user['email']],
-                        'Hooray! You are getting a \'Berg Prize from MuleMentum!',
+                        'Hooray! You\'re getting a Secret Prize from the #Lehigh5000 Challenge!',
                         **context)
 
-    def mule_num_winner(self, donation, count):
+    def lehigh_num_winner(self, donation, count):
       context = {'donor_email': donation['email'],
                  'donor_name': donation['fullname'],
                  'donor_count': count}

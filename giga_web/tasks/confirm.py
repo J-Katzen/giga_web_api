@@ -62,10 +62,10 @@ def update_user_post(data):
             if 'error' in upd_p:
                 update_user_post.delay(data)
                 return
-            if data['client_id'] == '5249d6ab718ae03c6435c357':
+            if data['client_id'] == '5286b8817b5141361f9204c1':
                 mailer = SES_Mailer()
                 share = helpers.baseconvert(data['user_id'], helpers.BASE16, helpers.BASE62)
-                res = mailer.mule_initial_gift(data, share)
+                res = mailer.lehigh_initial_gift(data, share)
             return
     except:
         update_user_post.delay(data)
@@ -87,13 +87,13 @@ def update_ref_user_post(data):
                     pj['donated'][client_list_idx]['amt_ref'] += data['total_donated']
                     pj['donated'][client_list_idx]['people_ref_ct'] += 1
                     pj['donated'][client_list_idx]['people_ref_names'].append({'uid': data['user_id'], 'email': data['email']})
-                    if data['client_id'] == '5249d6ab718ae03c6435c357':
+                    if data['client_id'] == '5286b8817b5141361f9204c1':
                         mailer = SES_Mailer()
                         share = helpers.baseconvert(pj['_id'], helpers.BASE16, helpers.BASE62)
                         if pj['donated'][client_list_idx]['people_ref_ct'] < 10:
-                            res = mailer.mule_update(pj, share, pj['donated'][client_list_idx]['people_ref_ct'])
+                            res = mailer.lehigh_update(pj, share, pj['donated'][client_list_idx]['people_ref_ct'])
                         else:
-                            res = mailer.mule_winner(pj, share, pj['donated'][client_list_idx]['people_ref_ct'])
+                            res = mailer.lehigh_winner(pj, share, pj['donated'][client_list_idx]['people_ref_ct'])
             try:
                 upd_p = helpers.generic_patch('/users/', pj, pj['etag'])
             except:
