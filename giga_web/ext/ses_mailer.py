@@ -117,7 +117,6 @@ class SES_Mailer(object):
                  'donor_name': donation['fullname'],
                  'donor_count': count}
       self._send('numeric_winner.html',
-                 ['jacob.katzen@gigawatt.co','jake@gigawatt.co','greg@gigawatt.co',
-                 'Maurice.Rapp@gw.muhlenberg.edu', 'Kim.Anderson@gw.muhlenberg.edu','hlavin@muhlenberg.edu'],
+                 ['jacob.katzen@gigawatt.co','jake@gigawatt.co','greg@gigawatt.co'],
                  'A winner for a milestone has been made!',
                  **context)
