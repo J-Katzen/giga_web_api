@@ -108,8 +108,10 @@ class ProjectAPI(MethodView):
         if 'thumbnail' in proj_data:
             app_proj['proj_thumb'] = proj_data['thumbnail']
         if 'rewards' in proj_data:
+            print 'hi'
             app_proj['items_sold'] = []
             for reward in proj_data['rewards']:
+                print 'whoa'
                 app_proj['items_sold'].append({'reward_name': reward['reward_name'], 
                                                 'amt_sold': 0})
         if 'date_start' in c:
