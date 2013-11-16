@@ -86,8 +86,6 @@ def update_ref_user_post(data):
                 else:
                     pj['donated'][client_list_idx]['amt_ref'] += data['total_donated']
                     pj['donated'][client_list_idx]['people_ref_ct'] += 1
-                    if 'second_fullname' in data:
-                        pj['donated'][client_list_idx]['people_ref_ct'] += 1
                     pj['donated'][client_list_idx]['people_ref_names'].append({'uid': data['user_id'], 'email': data['email']})
                     if data['client_id'] == '5249d6ab718ae03c6435c357':
                         mailer = SES_Mailer()
@@ -117,9 +115,11 @@ def update_project_post(data):
             p = helpers.generic_get('/projects/', data['proj_id'])
             pj = p.json()
             pj['raised'] += data['donated']
-            if 'second_fullname' in data:
-                pj['donor_count'] += 1
             pj['donor_count'] += 1
+            if 'rewards' in data:
+                for reward in data['rewards']:
+                    rwd_idx = helpers.get_index(pj['rewards'], 'reward_name', reward['reward_name'])
+                    pj['rewards'][rwd_idx]['amt_sold'] += reward['qty']
             if (pj['raised'] >= pj['goal']) and ('completed' not in pj):
                 now = datetime.now()
                 stamp = mktime(now.timetuple())
@@ -146,24 +146,20 @@ def update_campaign_post(data):
             camp_j = camp.json()
             camp_j['total_raised'] += data['total_donated']
             camp_j['total_donor_ct'] += 1
-            if data['client_id'] == '5249d6ab718ae03c6435c357':
-                if (camp_j['total_donor_ct'] == 1) or (camp_j['total_donor_ct'] == 330) \
-                or (camp_j['total_donor_ct'] == 580) or (camp_j['total_donor_ct'] == 910) \
-                or (camp_j['total_donor_ct'] == 600) or (camp_j['total_donor_ct'] == 683) \
-                or (camp_j['total_donor_ct'] == 700) or (camp_j['total_donor_ct'] == 800) \
-                or (camp_j['total_donor_ct'] == 810) or (camp_j['total_donor_ct'] == 860) \
-                or (camp_j['total_donor_ct'] == 900) or (camp_j['total_donor_ct'] == 1000) \
-                or (camp_j['total_donor_ct'] == 1415):
-                    mailer = SES_Mailer()
-                    res = mailer.mule_num_winner(data,camp_j['total_donor_ct'])
-            if 'second_fullname' in data:
-                camp_j['total_donor_ct'] += 1
+            if 'prize_contribution' in data:
+                camp_j['total_prize'] += data['prize_contribution']
 
             for projs in data['proj_list']:
                 activelist_proj = helpers.get_index(camp_j['active_list'], 'p_id', projs['proj_id'])
                 if activelist_proj is not None:
                     camp_j['active_list'][activelist_proj]['raised'] += projs['donated']
                     camp_j['active_list'][activelist_proj]['donor_count'] += 1
+                if 'rewards' in projs:
+                    for reward in projs['rewards']:
+                        rwd_idx = helpers.get_index(camp_j['active_list'][activelist_proj]['items_sold'], 
+                                                    'reward_name', 
+                                                    reward['reward_name'])
+                        camp_j['active_list'][activelist_proj]['items_sold'][rwd_idx]['amt_sold'] += reward['qty']
             try:
                 upd_camp = helpers.generic_patch('/campaigns/', camp_j, camp_j['etag'])
             except:

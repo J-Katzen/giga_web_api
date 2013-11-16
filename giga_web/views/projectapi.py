@@ -108,6 +108,11 @@ class ProjectAPI(MethodView):
                     'donor_count': proj_data['donor_count']}
         if 'thumbnail' in proj_data:
             app_proj['proj_thumb'] = proj_data['thumbnail']
+        if 'rewards' in proj_data:
+            app_proj['items_sold'] = []
+            for reward in proj_data['rewards']:
+                app_proj['items_sold'].append({'reward_name': reward['reward_name'], 
+                                                'amt_sold': 0})
         if 'date_start' in c:
             app_proj['date_start'] = c['date_start']
         if proj_data['type'] != 'uncapped':
