@@ -102,7 +102,6 @@ class ProjectAPI(MethodView):
                     'proj_name': proj_data['name'],
                     'perma_name': proj_data['perma_name'],
                     'goal': proj_data['goal'],
-                    'type': proj_data['type'],
                     'description': proj_data['summary'],
                     'raised': proj_data['raised'],
                     'donor_count': proj_data['donor_count']}
