@@ -26,8 +26,12 @@ class DonationAPI(MethodView):
     def post(self, id=None):
         data = request.get_json(force=True, silent=False)
         if id is not None:
-            # wait - why do we ever patch a donation? refunds? what else?
-            pass
+            data['_id'] = id
+            patched = helpers.generic_patch(self.path, data, data['etag'])
+            if 'error' in patched:
+                return json.dumps(patched)
+            else:
+                return patched.content
         else:
             payload = {'data': data}
 
