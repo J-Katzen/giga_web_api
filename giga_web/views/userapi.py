@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from giga_web import crud_url, helpers
+from giga_web.models import User
 from giga_web.tasks import new_user_mail, verified_mail
 from flask.views import MethodView
 from flask import request
@@ -14,7 +15,7 @@ class UserAPI(MethodView):
 
     def get(self, id):
         if id is None:
-            return json.dumps({'error': 'no id provided'})
+            raise Exception, "No user id has been specified"
         else:
             user = helpers.generic_get(self.path, id)
             if user.status_code == requests.codes.ok:

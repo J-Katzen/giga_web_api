@@ -1,20 +1,18 @@
 from flask import Flask
+from flask.ext.mongoengine import MongoEngine
 from make_celery import make_celery
-from converter import ObjectIDConverter
-from settings import ProductionConfig, DevelopmentConfig, TestingConfig
+from settings import ProductionConfig, TestConfig
 from celery.utils.log import get_task_logger
-
-crud_url = 'http://crud.gigawatt.co'
 
 
 giga_web = Flask('giga_web')
-giga_web.config.from_object(ProductionConfig)
-giga_web.url_map.converters['objectid'] = ObjectIDConverter
+giga_web.config.from_object(TestConfig)
 celery_logger = get_task_logger('giga_web')
 celery = make_celery(giga_web)
+db = MongoEngine(giga_web)
+db.init_app(giga_web)
 #running celery requires this command:
 #celery worker -A giga_web.celery --autoscale=4,2 -Q test_queue
 
-from redis_lock import Lock, LockTimeout
 import helpers
-from giga_web import views, tasks, ext
+from giga_web import views, tasks, ext, models

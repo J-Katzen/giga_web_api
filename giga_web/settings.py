@@ -48,19 +48,17 @@ class ProductionConfig(Config):
                      'giga_web.tasks.mailer.mail_list_reg': {'queue': 'prod-mail_list_reg', 'routing_key': 'prod.mail.list_reg'}
                     }
 
-    #STRIPE_LIVE_SECRECT = 'sk_live_dlcNxJyn9yftBbiUTZDk98oZ'
-    #STRIPE_LIVE_PUBLISHABLE = 'pk_live_MnOBDFHMlwZ5dy41gfHhIybN'
-    #STRIPE_PROD_CLIENTID = 'ca_1tCskwf0RADJ30qwFpoKXrtpnQMcJLQL'
-    #app.config['SITE'] = 'https://connect.stripe.com'
-    #app.config['AUTHORIZE_URI'] = '/oauth/authorize'
-    #app.config['TOKEN_URI'] = '/oauth/token'
 
-
-class DevelopmentConfig(Config):
+class TestConfig(Config):
     DEBUG = True
     REDIS = 'ec2-54-226-128-157.compute-1.amazonaws.com'
     REDIS_PORT = 6379
-    REDIS_DB = 1
+    REDIS_DB = 2
+    SECRET_KEY = '\x9b\xc9M\xf8\xc5\xc3]8N9p\x00\xc8\x86\xec\x88w\x02\xd3\x0e\xb3)\xd0\x98'
+    MONGODB_SETTINGS = {
+        "DB": "giga_db",
+        "HOST": "mongodb://giga:thefuture@ec2-107-20-187-59.compute-1.amazonaws.com:27017/giga_db"
+    }
     CELERY_DEFAULT_QUEUE = 'test'
     CELERY_QUEUES = (
         Queue('test-donation_confirms', Exchange('test-donation_confirms'), routing_key='test.confirm'),
@@ -83,5 +81,3 @@ class DevelopmentConfig(Config):
                      'giga_web.tasks.mailer.verified_mail': {'queue': 'test-verified_mail', 'routing_key': 'test.mail.verified_user'}
                      }
 
-class TestingConfig(Config):
-    TESTING = True

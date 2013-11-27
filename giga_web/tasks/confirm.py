@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from giga_web import celery, helpers, celery_logger
-from giga_web import Lock, LockTimeout
+from giga_web.ext import Lock
 from giga_web.ext import SES_Mailer
 from wsgiref.handlers import format_date_time
 from datetime import datetime

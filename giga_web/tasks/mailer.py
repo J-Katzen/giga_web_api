@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from giga_web import celery, celery_logger, helpers
-from giga_web import Lock, LockTimeout
-from giga_web.ext import SES_Mailer
+from giga_web.ext import Lock, LockTimeout, SES_Mailer
 
 logger = celery_logger
 

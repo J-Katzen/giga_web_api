@@ -8,14 +8,10 @@ import hashlib
 import base64
 
 
-def generic_get(collection_path, datum, projection=None):
-    r = requests.get(crud_url + collection_path + datum + '/',
-                     params=projection)
-    if r.status_code == requests.codes.ok:
-        return r
-    else:
-        err = {'error': 'Could not get from ' + collection_path}
-        return err
+
+def created_date(objectid):
+    o = ObjectId(objectid)
+    return o.generation_time
 
 
 def generic_patch(collection_path, data_dict, etag):
