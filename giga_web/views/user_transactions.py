@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from giga_web import giga_web, crud_url
+from giga_web import giga_web
 import requests
 import json
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import request
-from giga_web import giga_web, crud_url, helpers
+from giga_web import giga_web, helpers
 from giga_web.tasks import confirm_donation
 from wsgiref.handlers import format_date_time
 from datetime import datetime, timedelta

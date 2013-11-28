@@ -1,12 +1,24 @@
 # -*- coding: utf-8 -*-
 
 from flask import current_app
-from giga_web import crud_url
+from bson.objectid import ObjectId
+from wsgiref.handlers import format_date_time
+from time import mktime
 import requests
 import json
 import hashlib
 import base64
 
+
+def readable_time(datetime):
+    stamp = mktime(datetime.timetuple())
+    return format_date_time(stamp)
+
+
+def api_return(status, updated, id, collection):
+    data = {'data': {'status': status, 'updated': readable_time(updated),
+                     'id': str(id), 'collection': collection}}
+    return json.dumps(data)
 
 
 def created_date(objectid):
@@ -14,44 +26,15 @@ def created_date(objectid):
     return o.generation_time
 
 
-def generic_patch(collection_path, data_dict, etag):
-    new_data = dict()
-    # don't try to patch eve keys or _id
-    bad_keys = ['_links', 'created', 'etag', '_id', 'updated']
-    r = requests.get(crud_url + collection_path + data_dict['_id'] + '/')
-    if r.status_code == requests.codes.ok:
-        obj_json = r.json()
-        for key, value in data_dict.iteritems():
-            # only specify fields that changed
-            if key not in obj_json.keys():
-                new_data[key] = value
-            elif (obj_json[key] != value) and (key not in bad_keys):
-                if value in ['True', 'true', 't']:
-                    new_data[key] = True
-                elif value in ['False', 'false', 'f']:
-                    new_data[key] = False
-                else:
-                    new_data[key] = value
-        dat = {'data': new_data}
-        data_dict['_id'] = obj_json['_id']
-        upd = requests.post(
-            crud_url + collection_path + data_dict['_id'] + '/',
-            data=json.dumps(dat),
-            headers={'Content-Type': 'application/json',
-                     'X-HTTP-Method-Override': 'PATCH',
-                     'If-Match': etag})
-        if upd.status_code == requests.codes.ok:
-            return upd
-        else:
-            err = {'error': 'Could not correctly patch %s with the id of: %s' % (collection_path, data_dict['_id'])}
-            return err
-    else:
-        err = {'error': 'Could not verify the data against the database'}
-        return err
+def generic_update(general_object, data):
+    for key, value in data.iteritems():
+        setattr(general_object, key, value)
+    return general_object
 
 
 def get_index(seq, attr, value):
-    idx = next((index for (index, d) in enumerate(seq) if d[attr] == value), None)
+    idx = next(
+        (index for (index, d) in enumerate(seq) if d[attr] == value), None)
     return idx
 
 

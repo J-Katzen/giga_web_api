@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from giga_web import crud_url, helpers
+from giga_web import helpers
 from giga_web.tasks import confirm_donation
 from flask.views import MethodView
 from flask import request

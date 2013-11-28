@@ -12,16 +12,17 @@ class School(db.EmbeddedDocument):
 
 
 class User(db.Document):
-    email = db.EmailField(unique=True)
+    email = db.EmailField(unique=True, required=True)
     firstname = db.StringField()
     lastname = db.StringField()
     password = db.StringField()
     verified = db.BooleanField(default=False)
     facebook_id = db.StringField()
     twitter_id = db.StringField()
-    avatar_url = db.StringField()
+    avatar_url = db.URLField()
     phone = db.StringField()
     education = db.ListField(db.EmbeddedDocumentField(School))
+    updated = db.DateTimeField()
     meta = {
     	'indexes': ['email']
     }
