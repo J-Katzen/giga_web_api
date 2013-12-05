@@ -14,6 +14,7 @@ class Organization(db.Document):
     header_url = db.URLField()
     perma_name = db.URLField(unique=True, required=True)
     logo_url = db.URLField()
+    org_type = db.StringField()
     giga_fee_percent = db.IntField(default=500)
     giga_fee_cents = db.IntField(default=0)
     trans_fee_percent = db.IntField(default=290)
@@ -21,6 +22,7 @@ class Organization(db.Document):
     claimed = db.BooleanField(default=False)
     stripe_info = db.EmbeddedDocumentField(StripeInfo)
     total_raised = db.IntField(default=0)
+    updated = db.DateTimeField()
     meta = {
         'indexes': ['perma_name']
     }

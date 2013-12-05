@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-
+from mongoengine.errors import ValidationError, NotUniqueError
+from werkzeug.exceptions import NotFound, BadRequest, InternalServerError
 from giga_web import helpers
+from giga_web.models import Project
 from flask.views import MethodView
 from flask import request
 from datetime import datetime, timedelta
@@ -9,7 +11,6 @@ import requests
 
 
 class ProjectAPI(MethodView):
-    path = '/projects/'
 
     def get(self, id, cid=None, camp_id=None, proj_perma=None):
         if id is None:
@@ -45,7 +46,8 @@ class ProjectAPI(MethodView):
                     return json.dumps(patched)
                 a = self.campaign_append_proj(data)
                 if a['data']['status'] != 'OK':
-                    patched = {'error': 'Could not append to campaign properly'}
+                    patched = {
+                        'error': 'Could not append to campaign properly'}
                     return json.dumps(patched)
             # otherwise just patch project
             patched = helpers.generic_patch(self.path, data, data['etag'])
@@ -97,7 +99,8 @@ class ProjectAPI(MethodView):
         else:
             proj_data['summary'] = proj_data['summary'][0:254]
             if len(proj_data['summary']) >= 255:
-                proj_data['summary'] = proj_data['summary'][:proj_data['summary'].rfind('.') + 1]
+                proj_data['summary'] = proj_data['summary'][
+                    :proj_data['summary'].rfind('.') + 1]
         app_proj = {'p_id': proj_data['_id'],
                     'proj_name': proj_data['name'],
                     'perma_name': proj_data['perma_name'],
@@ -110,8 +113,9 @@ class ProjectAPI(MethodView):
         if 'rewards' in proj_data:
             app_proj['items_sold'] = []
             for reward in proj_data['rewards']:
-                app_proj['items_sold'].append({'reward_name': reward['reward_name'], 
-                                                'amt_sold': 0})
+                app_proj[
+                    'items_sold'].append({'reward_name': reward['reward_name'],
+                                          'amt_sold': 0})
         if 'date_start' in c:
             app_proj['date_start'] = c['date_start']
         if 'date_end' in c:
@@ -137,7 +141,8 @@ class ProjectAPI(MethodView):
                                          if d['p_id'] != cj['_id']]
                 if cur_len != len(cam['active_list']):
                     cam['total_goal'] -= cj['goal']
-                patched = helpers.generic_patch('/campaigns/', cam, cam['etag'])
+                patched = helpers.generic_patch(
+                    '/campaigns/', cam, cam['etag'])
                 return patched.json()
         else:
             return proj.json()

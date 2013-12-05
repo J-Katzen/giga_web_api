@@ -10,10 +10,12 @@ class Transaction(db.Document):
     project = db.ReferenceField(Project)
     user = db.ReferenceField(User)
     referring_user = db.ReferenceField(User)
-    total_amt = db.IntField()
-    giga_fee = db.IntField()
-    trans_fee = db.IntField()
+    giga_fee = db.IntField(required=True)
+    trans_fee = db.IntField(required=True)
+    net_amt = db.IntField(required=True)
+    total_amt = db.IntField(required=True)
     comment = db.StringField()
+    updated = db.DateTimeField()
     meta = {
     	'indexes': ['organization', 'user', 'project', 'referring_user']
     }

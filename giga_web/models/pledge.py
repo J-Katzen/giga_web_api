@@ -10,6 +10,7 @@ class Pledge(db.Document):
     project = db.ReferenceField(Project)
     user = db.ReferenceField(User)
     amount = db.IntField()
+    updated = db.DateTimeField()
     meta = {
     	'indexes': ['organization', 'project', 'user']
     }

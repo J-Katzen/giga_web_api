@@ -7,7 +7,6 @@ from giga_web.tasks import new_user_mail, verified_mail
 from datetime import datetime
 from flask.views import MethodView
 from flask import request
-import json
 import bcrypt
 
 
@@ -17,7 +16,7 @@ class UserAPI(MethodView):
         if id is None:
             raise NotFound('No user_id provided!')
         else:
-            return User.objects.get_or_404(id=id).to_json()
+            return User.objects.get_or_404(id=id).select_related(2).to_json()
 
     def post(self, id=None):
         data = request.get_json(force=True, silent=False)
@@ -27,30 +26,21 @@ class UserAPI(MethodView):
             data['password'] = bcrypt.hashpw(
                 data['password'], bcrypt.gensalt())
         if id is not None:
-            o_user = User.objects.get_or_404(id=id)
-            o_user = helpers.generic_update(o_user, data)
-            o_user.updated = datetime.utcnow()
-            try:
-                o_user.save()
-            except ValidationError as e:
-                raise BadRequest(json.dumps(e.errors))
-            except NotUniqueError as e:
-                raise BadRequest(e)
-            except Exception:
-                raise InternalServerError("Something went wrong! Check your parameters!")
-            return helpers.api_return('OK', o_user.updated, o_user.id, 'User')
+            user = User.objects.get_or_404(id=id)
+            user = helpers.generic_update(user, data)
+            user.updated = datetime.utcnow()
         else:
-            n_user = User(**data)
-            n_user.updated = datetime.utcnow()
-            try:
-                n_user.save()
-            except ValidationError as e:
-                raise BadRequest(e.errors)
-            except NotUniqueError as e:
-                raise BadRequest(e)
-            except Exception:
-                raise InternalServerError("Something went wrong! Check your parameters!")
-            return helpers.api_return('OK', n_user.updated, n_user.id, 'User')
+            user = User(**data)
+            user.updated = datetime.utcnow()
+        try:
+            user.save()
+        except ValidationError as e:
+            raise BadRequest(e.errors)
+        except NotUniqueError as e:
+            raise BadRequest(e)
+        except Exception:
+            raise InternalServerError("Something went wrong! Check your request parameters!")
+        return helpers.api_return('OK', user.updated, user.id, 'User')
 
     def delete(self, id):
         if id is None:

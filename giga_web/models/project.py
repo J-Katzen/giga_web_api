@@ -29,6 +29,9 @@ class Project(db.Document):
     description = db.StringField()
     total_raised = db.IntField(default=0)
     total_goal = db.IntField(default=0)
+    total_giga_fee = db.IntField(default=0)
+    total_trans_fee = db.IntField(default=0)
+    total_net_raised = db.IntField(default=0)
     rewards = db.ListField(db.EmbeddedDocumentField(Reward))
     tags = db.ListField(db.StringField())
     organization = db.ReferenceField(Organization)
@@ -39,6 +42,7 @@ class Project(db.Document):
     fulfilled = db.DateTimeField()
     donor_list = db.ListField(db.ReferenceField(User))
     updates = db.ListField(db.EmbeddedDocumentField(Post))
+    updated = db.DateTimeField()
     meta = {
         'indexes': ['organization', 'creator']
     }
