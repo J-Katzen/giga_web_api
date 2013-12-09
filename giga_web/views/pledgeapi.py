@@ -19,18 +19,17 @@ class PledgeAPI(MethodView):
         if id is not None:
             pledge = Pledge.objects.get_or_404(id=id)
             pledge = helpers.generic_update(pledge, data)
-            pledge.updated = datetime.utcnow()
         else:
             pledge = Pledge(**data)
             pledge.updated = datetime.utcnow()
-        try:
-            pledge.save()
-        except ValidationError as e:
-            raise BadRequest(e.errors)
-        except NotUniqueError as e:
-            raise BadRequest(e)
-        except Exception:
-            raise InternalServerError("Something went wrong! Check your request parameters!")
+            try:
+                pledge.save()
+            except ValidationError as e:
+                raise BadRequest(e.errors)
+            except NotUniqueError as e:
+                raise BadRequest(e)
+            except Exception:
+                raise InternalServerError("Something went wrong! Check your request parameters!")
         return helpers.api_return('OK', pledge.updated, pledge.id, 'Pledge')
 
 

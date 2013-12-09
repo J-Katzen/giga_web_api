@@ -10,7 +10,6 @@ class Post(db.EmbeddedDocument):
     updated = db.DateTimeField()
     content = db.StringField()
     tags = db.ListField(db.StringField())
-    author = db.ReferenceField(User)
 
 
 class Reward(db.EmbeddedDocument):
@@ -21,7 +20,7 @@ class Reward(db.EmbeddedDocument):
 
 
 class Project(db.Document):
-    name = db.StringField()
+    name = db.StringField(required=True)
     creator = db.ReferenceField(User)
     twitter_hash = db.StringField()
     video_url = db.URLField()
@@ -41,7 +40,7 @@ class Project(db.Document):
     end_date = db.DateTimeField()
     fulfilled = db.DateTimeField()
     donor_list = db.ListField(db.ReferenceField(User))
-    updates = db.ListField(db.EmbeddedDocumentField(Post))
+    update_posts = db.ListField(db.EmbeddedDocumentField(Post))
     updated = db.DateTimeField()
     meta = {
         'indexes': ['organization', 'creator']

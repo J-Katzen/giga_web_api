@@ -28,18 +28,17 @@ class UserAPI(MethodView):
         if id is not None:
             user = User.objects.get_or_404(id=id)
             user = helpers.generic_update(user, data)
-            user.updated = datetime.utcnow()
         else:
             user = User(**data)
             user.updated = datetime.utcnow()
-        try:
-            user.save()
-        except ValidationError as e:
-            raise BadRequest(e.errors)
-        except NotUniqueError as e:
-            raise BadRequest(e)
-        except Exception:
-            raise InternalServerError("Something went wrong! Check your request parameters!")
+            try:
+                user.save()
+            except ValidationError as e:
+                raise BadRequest(e.errors)
+            except NotUniqueError as e:
+                raise BadRequest(e)
+            except Exception:
+                raise InternalServerError("Something went wrong! Check your request parameters!")
         return helpers.api_return('OK', user.updated, user.id, 'User')
 
     def delete(self, id):

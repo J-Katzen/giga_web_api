@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
-
+from mongoengine.errors import ValidationError, NotUniqueError
+from werkzeug.exceptions import BadRequest, InternalServerError
 from flask import current_app
 from bson.objectid import ObjectId
 from wsgiref.handlers import format_date_time
 from time import mktime
+from datetime import datetime
 import json
 import hashlib
 import base64
@@ -26,9 +28,20 @@ def created_date(objectid):
 
 
 def generic_update(general_object, data):
+    gen_update = {}
     for key, value in data.iteritems():
-        setattr(general_object, key, value)
-    return general_object
+        gen_update["set__%s" % key] = value
+    gen_update["set__updated"] = datetime.utcnow()
+    try:
+        general_object.update(**gen_update)
+    except ValidationError as e:
+        raise BadRequest(e.errors)
+    except NotUniqueError as e:
+        raise BadRequest(e)
+    except Exception:
+        raise InternalServerError(
+            "Something went wrong! Check your update request parameters!")
+    return general_object.reload()
 
 
 def get_index(seq, attr, value):

@@ -26,3 +26,6 @@ class User(db.Document):
     meta = {
     	'indexes': ['email']
     }
+
+# queries!
+# User.objects(education__organization=o) where o is organization object or objectid

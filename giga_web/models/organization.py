@@ -12,7 +12,7 @@ class StripeInfo(db.EmbeddedDocument):
 class Organization(db.Document):
     name = db.StringField()
     header_url = db.URLField()
-    perma_name = db.URLField(unique=True, required=True)
+    perma_name = db.StringField(unique=True, required=True)
     logo_url = db.URLField()
     org_type = db.StringField()
     giga_fee_percent = db.IntField(default=500)
