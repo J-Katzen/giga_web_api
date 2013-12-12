@@ -22,6 +22,7 @@ class UserAPI(MethodView):
         data = request.get_json(force=True, silent=False)
         if 'email' in data:
             data['email'] = data['email'].lower()
+            # verification email
         if 'password' in data:
             data['password'] = bcrypt.hashpw(
                 data['password'], bcrypt.gensalt())

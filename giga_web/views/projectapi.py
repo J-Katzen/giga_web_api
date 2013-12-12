@@ -9,12 +9,13 @@ from datetime import datetime
 from slugify import slugify
 
 class ProjectAPI(MethodView):
-    def get(self, id, cid=None, org_id=None, proj_perma=None):
+    def get(self, id, cid=None, org_perma=None, proj_perma=None):
         if id is None:
             if cid is not None:
-                pass
-            elif (org_id is not None) and (proj_perma is not None):
-                org = Organization.objects.get_or_404(id=org_id)
+                # this is temporary - return list of projects for this cid?
+                raise NotFound('No Project ID Provided!')
+            elif (org_perma is not None) and (proj_perma is not None):
+                org = Organization.objects.get_or_404(perma_name=org_perma)
                 return Project.objects.get_or_404(organization=org, perma_name=proj_perma).select_related(1).to_json()
             else:
                 raise NotFound('No Project ID Provided!')

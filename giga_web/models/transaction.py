@@ -10,6 +10,8 @@ class Transaction(db.Document):
     project = db.ReferenceField(Project)
     user = db.ReferenceField(User)
     referring_user = db.ReferenceField(User)
+    stripe_id = db.StringField()
+    status = db.StringField()
     giga_fee = db.IntField(required=True)
     trans_fee = db.IntField(required=True)
     net_amt = db.IntField(required=True)

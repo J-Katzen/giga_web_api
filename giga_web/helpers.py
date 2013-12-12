@@ -49,7 +49,7 @@ def get_index(seq, attr, value):
         (index for (index, d) in enumerate(seq) if d[attr] == value), None)
     return idx
 
-
+# do i still need this?
 def create_dict_from_form(req_form):
     d = {}
     for key, value in req_form.iteritems():

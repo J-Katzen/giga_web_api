@@ -13,8 +13,7 @@ class School(db.EmbeddedDocument):
 
 class User(db.Document):
     email = db.EmailField(unique=True, required=True)
-    firstname = db.StringField()
-    lastname = db.StringField()
+    fullname = db.StringField()
     password = db.StringField()
     verified = db.BooleanField(default=False)
     facebook_id = db.StringField()
@@ -23,6 +22,7 @@ class User(db.Document):
     phone = db.StringField()
     education = db.ListField(db.EmbeddedDocumentField(School))
     updated = db.DateTimeField()
+    roles = db.ListField(db.StringField(), default=['ROLE_USER'])
     meta = {
     	'indexes': ['email']
     }
