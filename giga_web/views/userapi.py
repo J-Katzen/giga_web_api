@@ -14,7 +14,7 @@ class UserAPI(MethodView):
 
     def get(self, id):
         if id is None:
-            if request.args['email'] != None:
+            if request.args['email'] is not None:
                 return User.objects.get_or_404(email=request.args['email']).select_related(2).to_json()
             raise NotFound('No user_id provided!')
         else:
