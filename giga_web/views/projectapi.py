@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from mongoengine.errors import ValidationError, NotUniqueError
-from werkzeug.exceptions import NotFound, BadRequest, InternalServerError
 from giga_web import helpers
 from giga_web.models import Project, Organization, User
 from flask.views import MethodView
@@ -13,19 +12,19 @@ class ProjectAPI(MethodView):
         if id is None:
             if cid is not None:
                 # this is temporary - return list of projects for this cid?
-                raise NotFound('No Project ID Provided!')
+                raise helpers.api_error('No Project ID Provided!', 404), 404
             elif (org_perma is not None) and (proj_perma is not None):
                 org = Organization.objects.get_or_404(perma_name=org_perma)
                 return Project.objects.get_or_404(organization=org, perma_name=proj_perma).select_related(1).to_json()
             else:
-                raise NotFound('No Project ID Provided!')
+                raise helpers.api_error('No Project ID Provided!', 404), 404
         else:
             return Project.objects.get_or_404(id=id).select_related(1).to_json()
 
     def post(self, id=None):
         data = request.get_json(force=True, silent=False)
         if 'name' not in data:
-            raise BadRequest('Please enter an appropriate name for your project!')
+            raise helpers.api_error('Please enter an appropriate name for your project!', 400), 400
         elif 'perma_name' not in data:
             data['perma_name'] = slugify(data['name'])
         if id is not None:
@@ -44,16 +43,16 @@ class ProjectAPI(MethodView):
             try:
                 proj.save()
             except ValidationError as e:
-                raise BadRequest(e.errors)
+                return helpers.api_error(e.message, 400), 400
             except NotUniqueError as e:
-                raise BadRequest(e)
+                return helpers.api_error(e.message, 409), 409
             except Exception:
-                raise InternalServerError("Something went wrong! Check your request parameters!")
+                return helpers.api_error("Something went wrong! Check your request parameters!", 500), 500
         return helpers.api_return("OK", proj.updated, proj.id, 'Project')
 
     def delete(self, id):
         if id is None:
-            raise NotFound('No Project ID Provided!')
+            raise helpers.api_error('No Project ID Provided!', 404), 404
         else:
             p = Project.objects.get_or_404(id=id)
             p.delete()

@@ -21,6 +21,9 @@ def api_return(status, updated, id, collection):
                      'id': str(id), 'collection': collection}}
     return json.dumps(data)
 
+def api_error(message, errno):
+    data = {'error': {'errno': errno, 'message': message }}
+    return json.dumps(data)
 
 def created_date(objectid):
     o = ObjectId(objectid)
@@ -35,12 +38,11 @@ def generic_update(general_object, data):
     try:
         general_object.update(**gen_update)
     except ValidationError as e:
-        raise BadRequest(e.errors)
+        return api_error(e.message, 400), 400
     except NotUniqueError as e:
-        raise BadRequest(e)
+        return api_error(e.message, 409), 409
     except Exception:
-        raise InternalServerError(
-            "Something went wrong! Check your update request parameters!")
+        return api_error("Something went wrong! Check your request parameters!", 500), 500
     return general_object.reload()
 
 

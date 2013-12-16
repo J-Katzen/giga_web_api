@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from mongoengine.errors import ValidationError, NotUniqueError
-from werkzeug.exceptions import NotFound, BadRequest, InternalServerError
 from giga_web import helpers
 from giga_web.models import Transaction, Project, User, Organization
 from datetime import datetime
@@ -11,7 +10,7 @@ from flask import request
 class TransactionAPI(MethodView):
     def get(self, id, cid=None):
         if id is None:
-            raise NotFound('No Transaction ID Provided!')
+            raise helpers.api_error('No Transaction ID Provided!', 404), 404
         else:
             return Transaction.objects.get_or_404(id=id).select_related(1).to_json()
 
@@ -45,11 +44,11 @@ class TransactionAPI(MethodView):
             try:
                 transaction.save()
             except ValidationError as e:
-                raise BadRequest(e.errors)
+                return helpers.api_error(e.message, 400), 400
             except NotUniqueError as e:
-                raise BadRequest(e)
+                return helpers.api_error(e.message, 409), 409
             except Exception:
-                raise InternalServerError("Something went wrong! Check your request parameters!")
+                return helpers.api_error("Something went wrong! Check your request parameters!", 500), 500
             proj.update(inc__total_raised=data['total_amt'],
                         inc__total_giga_fee=data['giga_fee'],
                         inc__total_trans_fee=data['trans_fee'],
@@ -59,7 +58,7 @@ class TransactionAPI(MethodView):
 
     def delete(self, id):
         if id is None:
-            raise NotFound('No Transaction ID Provided!')
+            raise helpers.api_error('No Transaction ID Provided!', 404), 404
         else:
             t = Transaction.objects.get_or_404(id=id)
             u = User.objects.get_or_404(id=t.user.id)

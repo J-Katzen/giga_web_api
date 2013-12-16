@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from mongoengine.errors import ValidationError, NotUniqueError
-from werkzeug.exceptions import NotFound, BadRequest, InternalServerError
 from giga_web import helpers
 from giga_web.models import User
 from giga_web.tasks import new_user_mail, verified_mail
@@ -19,7 +18,7 @@ class UserAPI(MethodView):
                 return User.objects.get_or_404(facebook_id=request.args['facebook']).select_related(2).to_json()
             elif request.args['twitter'] is not None:
                 return User.objects.get_or_404(twitter_id=request.args['twitter']).select_related(2).to_json()
-            raise NotFound('No user_id provided!')
+            raise helpers.api_error('No user_id provided!', 404), 404
         else:
             return User.objects.get_or_404(id=id).select_related(2).to_json()
 
@@ -40,16 +39,16 @@ class UserAPI(MethodView):
             try:
                 user.save()
             except ValidationError as e:
-                raise BadRequest(e.errors)
+                return helpers.api_error(e.message, 400), 400
             except NotUniqueError as e:
-                raise BadRequest(e)
+                return helpers.api_error(e.message, 409), 409
             except Exception:
-                raise InternalServerError("Something went wrong! Check your request parameters!")
+                return helpers.api_error("Something went wrong! Check your request parameters!", 500), 500
         return helpers.api_return('OK', user.updated, user.id, 'User')
 
     def delete(self, id):
         if id is None:
-            raise NotFound('No user_id provided!')
+            raise helpers.api_error('No user_id provided!', 404), 404
         else:
             u = User.objects.get_or_404(id=id)
             u.delete()

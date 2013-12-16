@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from mongoengine.errors import ValidationError, NotUniqueError
-from werkzeug.exceptions import NotFound, BadRequest, InternalServerError
 from giga_web import helpers
 from giga_web.models import Organization
 from datetime import datetime
@@ -12,14 +11,14 @@ from slugify import slugify
 class OrganizationAPI(MethodView):
     def get(self, id):
         if id is None:
-            raise NotFound('No Organization ID Provided')
+            raise helpers.api_error('No Organization ID Provided', 404), 404
         else:
             return Organization.objects.get_or_404(id=id).to_json()
 
     def post(self, id=None):
         data = request.get_json(force=True, silent=False)
         if 'name' not in data:
-            raise BadRequest('Please enter an appropriate name for this Organization!')
+            raise helpers.api_error('Please enter an appropriate name for this Organization!', 400), 400
         elif 'perma_name' not in data:
             data['perma_name'] = slugify(data['name'])
         if id is not None:
@@ -31,16 +30,16 @@ class OrganizationAPI(MethodView):
             try:
                 org.save()
             except ValidationError as e:
-                raise BadRequest(e.errors)
+                return helpers.api_error(e.message, 400), 400
             except NotUniqueError as e:
-                raise BadRequest(e)
+                return helpers.api_error(e.message, 409), 409
             except Exception:
-                raise InternalServerError("Something went wrong! Check your request parameters!")
+                return helpers.api_error("Something went wrong! Check your request parameters!", 500), 500
         return helpers.api_return('OK', org.updated, org.id, 'Organization')
 
     def delete(self, id):
         if id is None:
-            raise NotFound('No Organization ID Provided!')
+            raise helpers.api_error('No Organization ID Provided!', 404), 404
         else:
             o = Organization.objects.get_or_404(id=id)
             o.delete()
