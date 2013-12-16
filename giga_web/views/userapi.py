@@ -11,11 +11,14 @@ import bcrypt
 
 
 class UserAPI(MethodView):
-
     def get(self, id):
         if id is None:
             if request.args['email'] is not None:
                 return User.objects.get_or_404(email=request.args['email']).select_related(2).to_json()
+            elif request.args['facebook'] is not None:
+                return User.objects.get_or_404(facebook_id=request.args['facebook']).select_related(2).to_json()
+            elif request.args['twitter'] is not None:
+                return User.objects.get_or_404(twitter_id=request.args['twitter']).select_related(2).to_json()
             raise NotFound('No user_id provided!')
         else:
             return User.objects.get_or_404(id=id).select_related(2).to_json()

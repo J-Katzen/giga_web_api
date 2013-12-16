@@ -4,6 +4,8 @@ from .organization import Organization
 from .user import User
 
 
+STATUSES = ('created', 'pending', 'approved', 'rejected', 'pledging', 'live', 'completed')
+
 class Post(db.EmbeddedDocument):
     title = db.StringField()
     published = db.DateTimeField()
@@ -38,10 +40,11 @@ class Project(db.Document):
     pledge_start_date = db.DateTimeField()
     start_date = db.DateTimeField()
     end_date = db.DateTimeField()
-    fulfilled = db.DateTimeField()
+    fulfilled_date = db.DateTimeField()
     donor_list = db.ListField(db.ReferenceField(User))
     update_posts = db.ListField(db.EmbeddedDocumentField(Post))
     updated = db.DateTimeField()
+    status = db.StringField(choices=STATUSES, default='created')
     meta = {
         'indexes': ['organization', 'creator']
     }
