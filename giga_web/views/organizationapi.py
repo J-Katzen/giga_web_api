@@ -11,7 +11,7 @@ from slugify import slugify
 class OrganizationAPI(MethodView):
     def get(self, id):
         if id is None:
-            raise helpers.api_error('No Organization ID Provided', 404), 404
+            return helpers.api_error('No Organization ID Provided', 404), 404
         else:
             return Organization.objects.get_or_404(id=id).to_json()
 
@@ -39,7 +39,7 @@ class OrganizationAPI(MethodView):
 
     def delete(self, id):
         if id is None:
-            raise helpers.api_error('No Organization ID Provided!', 404), 404
+            return helpers.api_error('No Organization ID Provided!', 404), 404
         else:
             o = Organization.objects.get_or_404(id=id)
             o.delete()

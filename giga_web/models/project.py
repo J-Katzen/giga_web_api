@@ -18,16 +18,17 @@ class Reward(db.EmbeddedDocument):
     title = db.StringField(required=True)
     content = db.StringField(required=True)
     cost = db.IntField(required=True)
-    quantity = db.IntField(required=True)
+    quantity = db.IntField(required=True, default=0)
+    amt_sold = db.IntField(required=True, default=0)
 
 
 class Project(db.Document):
     name = db.StringField(required=True)
     creator = db.ReferenceField(User)
-    twitter_hash = db.StringField()
     video_url = db.URLField()
     logo_url = db.URLField()
     description = db.StringField()
+    summary = db.StringField()
     total_raised = db.IntField(default=0)
     total_goal = db.IntField(default=0)
     total_giga_fee = db.IntField(default=0)

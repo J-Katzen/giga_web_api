@@ -9,7 +9,7 @@ from flask import request
 class PledgeAPI(MethodView):
     def get(self, id, cid=None):
         if id is None:
-            raise helpers.api_error('No Pledge ID Provided!', 404), 404
+            return helpers.api_error('No Pledge ID Provided!', 404), 404
         else:
             return Pledge.objects.get_or_404(id=id).select_related(1).to_json()
 
@@ -34,7 +34,7 @@ class PledgeAPI(MethodView):
 
     def delete(self, id):
         if id is None:
-            raise helpers.api_error('No Pledge ID Provided!', 404), 404
+            return helpers.api_error('No Pledge ID Provided!', 404), 404
         else:
             p = Pledge.objects.get_or_404(id=id)
             p.delete()

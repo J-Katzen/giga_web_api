@@ -3,7 +3,7 @@ from mongoengine.errors import ValidationError, NotUniqueError
 from giga_web import helpers
 from giga_web.models import Project, Organization, User
 from flask.views import MethodView
-from flask import request
+from flask import request, jsonify
 from datetime import datetime
 from slugify import slugify
 
@@ -12,19 +12,23 @@ class ProjectAPI(MethodView):
         if id is None:
             if cid is not None:
                 # this is temporary - return list of projects for this cid?
-                raise helpers.api_error('No Project ID Provided!', 404), 404
+                return helpers.api_error('No Project ID Provided!', 404), 404
             elif (org_perma is not None) and (proj_perma is not None):
                 org = Organization.objects.get_or_404(perma_name=org_perma)
                 return Project.objects.get_or_404(organization=org, perma_name=proj_perma).select_related(1).to_json()
+            elif 'user' in request.args:
+                u = User.objects.get_or_404(id=request.args['user'])
+                projects = Project.objects(creator=u)
+                return jsonify(result=projects.to_json())
             else:
-                raise helpers.api_error('No Project ID Provided!', 404), 404
+                return helpers.api_error('No Project ID Provided!', 404), 404
         else:
             return Project.objects.get_or_404(id=id).select_related(1).to_json()
 
     def post(self, id=None):
         data = request.get_json(force=True, silent=False)
         if 'name' not in data:
-            raise helpers.api_error('Please enter an appropriate name for your project!', 400), 400
+            return helpers.api_error('Please enter an appropriate name for your project!', 400), 400
         elif 'perma_name' not in data:
             data['perma_name'] = slugify(data['name'])
         if id is not None:
@@ -52,7 +56,7 @@ class ProjectAPI(MethodView):
 
     def delete(self, id):
         if id is None:
-            raise helpers.api_error('No Project ID Provided!', 404), 404
+            return helpers.api_error('No Project ID Provided!', 404), 404
         else:
             p = Project.objects.get_or_404(id=id)
             p.delete()

@@ -12,13 +12,16 @@ import bcrypt
 class UserAPI(MethodView):
     def get(self, id):
         if id is None:
-            if request.args['email'] is not None:
+            if 'email' in request.args:
                 return User.objects.get_or_404(email=request.args['email']).select_related(2).to_json()
-            elif request.args['facebook'] is not None:
+            elif 'facebook' in request.args:
                 return User.objects.get_or_404(facebook_id=request.args['facebook']).select_related(2).to_json()
-            elif request.args['twitter'] is not None:
+            elif 'twitter' in request.args:
                 return User.objects.get_or_404(twitter_id=request.args['twitter']).select_related(2).to_json()
-            raise helpers.api_error('No user_id provided!', 404), 404
+            # elif 'test' in request.args:
+            #     users = User.objects
+            #     return jsonify(result=users.to_json())
+            return helpers.api_error('No user_id provided!', 404), 404
         else:
             return User.objects.get_or_404(id=id).select_related(2).to_json()
 
@@ -48,7 +51,7 @@ class UserAPI(MethodView):
 
     def delete(self, id):
         if id is None:
-            raise helpers.api_error('No user_id provided!', 404), 404
+            return helpers.api_error('No user_id provided!', 404), 404
         else:
             u = User.objects.get_or_404(id=id)
             u.delete()

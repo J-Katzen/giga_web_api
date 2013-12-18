@@ -10,7 +10,7 @@ from flask import request
 class TransactionAPI(MethodView):
     def get(self, id, cid=None):
         if id is None:
-            raise helpers.api_error('No Transaction ID Provided!', 404), 404
+            return helpers.api_error('No Transaction ID Provided!', 404), 404
         else:
             return Transaction.objects.get_or_404(id=id).select_related(1).to_json()
 
@@ -58,7 +58,7 @@ class TransactionAPI(MethodView):
 
     def delete(self, id):
         if id is None:
-            raise helpers.api_error('No Transaction ID Provided!', 404), 404
+            return helpers.api_error('No Transaction ID Provided!', 404), 404
         else:
             t = Transaction.objects.get_or_404(id=id)
             u = User.objects.get_or_404(id=t.user.id)
