@@ -14,3 +14,4 @@ class Pledge(db.Document):
     meta = {
     	'indexes': ['organization', 'project', 'user']
     }
+ 

@@ -4,7 +4,7 @@ from .organization import Organization
 from .user import User
 
 
-STATUSES = ('created', 'pending', 'approved', 'rejected', 'pledging', 'live', 'completed')
+STATUSES = ('created', 'pending', 'approved', 'rejected', 'live', 'completed')
 
 class Post(db.EmbeddedDocument):
     title = db.StringField()
@@ -26,9 +26,8 @@ class Project(db.Document):
     name = db.StringField(required=True)
     creator = db.ReferenceField(User)
     video_url = db.URLField()
-    logo_url = db.URLField()
+    image_url = db.URLField()
     description = db.StringField()
-    summary = db.StringField()
     total_raised = db.IntField(default=0)
     total_goal = db.IntField(default=0)
     total_giga_fee = db.IntField(default=0)
@@ -36,6 +35,7 @@ class Project(db.Document):
     total_net_raised = db.IntField(default=0)
     rewards = db.ListField(db.EmbeddedDocumentField(Reward))
     tags = db.ListField(db.StringField())
+    org_text = db.StringField()
     organization = db.ReferenceField(Organization)
     perma_name = db.StringField(unique_with='organization')
     pledge_start_date = db.DateTimeField()

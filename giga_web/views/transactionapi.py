@@ -32,14 +32,16 @@ class TransactionAPI(MethodView):
         else:
             proj = Project.objects.get_or_404(id=data['project'])
             user = User.objects.get_or_404(id=data['user'])
-            org = Organization.objects.get_or_404(id=data['organization'])
-            transaction = Transaction(organization=org, project=proj, user=user, total_amt=data['total_amt'],
+            transaction = Transaction(project=proj, user=user, total_amt=data['total_amt'],
                 giga_fee=data['giga_fee'], trans_fee=data['trans_fee'], net_amt=data['net_amt'])
             if 'comment' in data:
                 transaction.comment = data['comment']
             if 'referring_user' in data:
                 ref = User.objects.get_or_404(id=data['referring_user'])
                 transaction.referring_user = ref
+            if 'organization' in data:
+                org = Organization.objects.get_or_404(id=data['organization'])
+                transaction.organization=org
             transaction.updated = datetime.utcnow()
             try:
                 transaction.save()

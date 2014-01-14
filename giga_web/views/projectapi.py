@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 from mongoengine.errors import ValidationError, NotUniqueError
 from giga_web import helpers
-from giga_web.models import Project, Organization, User
+from giga_web.models import Project, Organization, User, Reward, Post
 from flask.views import MethodView
 from flask import request, jsonify
 from datetime import datetime
-from slugify import slugify
 
 class ProjectAPI(MethodView):
     def get(self, id, cid=None, org_perma=None, proj_perma=None):
@@ -29,8 +28,11 @@ class ProjectAPI(MethodView):
         data = request.get_json(force=True, silent=False)
         if 'name' not in data:
             return helpers.api_error('Please enter an appropriate name for your project!', 400), 400
-        elif 'perma_name' not in data:
-            data['perma_name'] = slugify(data['name'])
+        if 'rewards' in data:
+            reward_list = []
+            for reward in data['rewards']:
+                reward_list.append(Reward(**reward))
+            data['rewards'] = reward_list
         if id is not None:
             proj = Project.objects.get_or_404(id=id)
             proj = helpers.generic_update(proj, data)
