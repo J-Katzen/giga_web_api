@@ -26,9 +26,7 @@ class ProjectAPI(MethodView):
 
     def post(self, id=None):
         data = request.get_json(force=True, silent=False)
-        if 'name' not in data:
-            return helpers.api_error('Please enter an appropriate name for your project!', 400), 400
-        if 'rewards' in data:
+                if 'rewards' in data:
             reward_list = []
             for reward in data['rewards']:
                 reward_list.append(Reward(**reward))
@@ -37,6 +35,8 @@ class ProjectAPI(MethodView):
             org = Organization.objects.get_or_404(id=data['organization'])
             data['organization'] = org
         if id is not None:
+            if 'name' not in data:
+                return helpers.api_error('Please enter an appropriate name for your project!', 400), 400
             proj = Project.objects.get_or_404(id=id)
             proj = helpers.generic_update(proj, data)
             # acceptable changes to name, twitter_hash, video_url, logo_url, 
