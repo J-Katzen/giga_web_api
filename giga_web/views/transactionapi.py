@@ -31,8 +31,7 @@ class TransactionAPI(MethodView):
             transaction = helpers.generic_update(transaction, data)
         else:
             proj = Project.objects.get_or_404(id=data['project'])
-            user = User.objects.get_or_404(id=data['user'])
-            transaction = Transaction(project=proj, user=user, total_amt=data['total_amt'],
+            transaction = Transaction(email=data['email'], project=proj, total_amt=data['total_amt'],
                 giga_fee=data['giga_fee'], trans_fee=data['trans_fee'], net_amt=data['net_amt'])
             if 'comment' in data:
                 transaction.comment = data['comment']
@@ -42,6 +41,9 @@ class TransactionAPI(MethodView):
             if 'organization' in data:
                 org = Organization.objects.get_or_404(id=data['organization'])
                 transaction.organization=org
+            if 'user' in data:
+                user = User.objects.get_or_404(id=data['user'])
+                transaction.user=user
             transaction.updated = datetime.utcnow()
             try:
                 transaction.save()

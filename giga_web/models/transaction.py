@@ -8,6 +8,7 @@ from .project import Project
 class Transaction(db.Document):
     organization = db.ReferenceField(Organization)
     project = db.ReferenceField(Project)
+    email = db.EmailField(required=True)
     user = db.ReferenceField(User)
     referring_user = db.ReferenceField(User)
     stripe_id = db.StringField()
@@ -19,5 +20,5 @@ class Transaction(db.Document):
     comment = db.StringField()
     updated = db.DateTimeField()
     meta = {
-    	'indexes': ['organization', 'user', 'project', 'referring_user']
+    	'indexes': ['organization', 'email', 'user', 'project', 'referring_user']
     }
