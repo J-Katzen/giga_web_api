@@ -37,7 +37,6 @@ class Project(db.Document):
     tags = db.ListField(db.StringField())
     org_text = db.StringField()
     organization = db.ReferenceField(Organization)
-    perma_name = db.StringField(unique_with='organization')
     pledge_start_date = db.DateTimeField()
     start_date = db.DateTimeField()
     end_date = db.DateTimeField()
