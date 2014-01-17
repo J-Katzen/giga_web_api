@@ -19,7 +19,7 @@ class ProjectAPI(MethodView):
                 u = User.objects.get_or_404(id=request.args['user'])
                 projects = Project.objects(creator=u)
                 for proj in projects:
-                    proj.created = created_date(proj.id)
+                    proj.created = helpers.created_date(proj.id)
                     proj.id = str(proj.id)
                 return jsonify(result=projects.to_json())
             else:
