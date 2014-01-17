@@ -18,12 +18,7 @@ class ProjectAPI(MethodView):
             elif 'user' in request.args:
                 u = User.objects.get_or_404(id=request.args['user'])
                 projects = Project.objects(creator=u)
-                new_projs = []
-                for proj in projects:
-                    proj.created = helpers.created_date(proj.id)
-                    proj.id = str(proj.id)
-                    new_projs.append(proj)
-                return jsonify(result=new_projs.to_json())
+                return jsonify(result=projects.to_json())
             else:
                 return helpers.api_error('No Project ID Provided!', 404), 404
         else:
