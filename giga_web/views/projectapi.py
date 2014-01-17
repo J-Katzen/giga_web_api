@@ -33,6 +33,9 @@ class ProjectAPI(MethodView):
             for reward in data['rewards']:
                 reward_list.append(Reward(**reward))
             data['rewards'] = reward_list
+        if 'organization' in data:
+            org = Organization.objects.get_or_404(id=data['organization'])
+            data['organization'] = org
         if id is not None:
             proj = Project.objects.get_or_404(id=id)
             proj = helpers.generic_update(proj, data)
@@ -40,10 +43,8 @@ class ProjectAPI(MethodView):
             # description, rewards, tags, perma_name, 
             # pledge start date, start_date, end_date, 
         else:
-            user = User.objects.get_or_404(id=data['user'])
-            org = Organization.objects.get_or_404(id=data['organization'])
-            data['user'] = user
-            data['organization'] = org
+            user = User.objects.get_or_404(id=data['creator'])
+            data['creator'] = user
             proj = Project(**data)
             proj.updated = datetime.utcnow()
             try:
