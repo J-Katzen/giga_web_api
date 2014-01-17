@@ -15,20 +15,19 @@ def readable_time(datetime):
     stamp = mktime(datetime.timetuple())
     return format_date_time(stamp)
 
+def created_date(objectid):
+    o = ObjectId(objectid)
+    return o.generation_time
 
 def api_return(status, updated, id, collection):
+    created = created_date(ObjectId(id))
     data = {'data': {'status': status, 'updated': readable_time(updated),
-                     'id': str(id), 'collection': collection}}
+                     'id': str(id), 'collection': collection, 'created': readable_time(created)}}
     return json.dumps(data)
 
 def api_error(message, errno):
     data = {'error': {'errno': errno, 'message': message }}
     return json.dumps(data)
-
-def created_date(objectid):
-    o = ObjectId(objectid)
-    return o.generation_time
-
 
 def generic_update(general_object, data):
     gen_update = {}
