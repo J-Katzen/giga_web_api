@@ -4,7 +4,7 @@ from .organization import Organization
 from .user import User
 
 
-STATUSES = ('created', 'pending', 'approved', 'rejected', 'live', 'completed')
+STATUSES = ('created', 'pending', 'approved', 'rejected', 'active', 'success', 'fail')
 
 class Post(db.EmbeddedDocument):
     title = db.StringField()
@@ -37,11 +37,10 @@ class Project(db.Document):
     tags = db.ListField(db.StringField())
     org_text = db.StringField()
     organization = db.ReferenceField(Organization)
-    pledge_start_date = db.DateTimeField()
     start_date = db.DateTimeField()
     end_date = db.DateTimeField()
     fulfilled_date = db.DateTimeField()
-    donor_list = db.ListField(db.ReferenceField(User))
+    donor_list = db.ListField(db.EmailField())
     update_posts = db.ListField(db.EmbeddedDocumentField(Post))
     updated = db.DateTimeField()
     status = db.StringField(choices=STATUSES, default='created')

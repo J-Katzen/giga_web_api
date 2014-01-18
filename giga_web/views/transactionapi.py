@@ -57,7 +57,7 @@ class TransactionAPI(MethodView):
                         inc__total_giga_fee=data['giga_fee'],
                         inc__total_trans_fee=data['trans_fee'],
                         inc__total_net_raised=data['net_amt'],
-                        add_to_set__donor_list=user)
+                        add_to_set__donor_list=data['email'])
         return helpers.api_return('OK', transaction.updated, transaction.id, 'Transaction')
 
     def delete(self, id):
