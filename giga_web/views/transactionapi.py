@@ -77,11 +77,10 @@ class TransactionAPI(MethodView):
             return helpers.api_error('No Transaction ID Provided!', 404), 404
         else:
             t = Transaction.objects.get_or_404(id=id)
-            u = User.objects.get_or_404(id=t.user.id)
             Project.objects(id=t.project.id).update_one(dec__total_raised=t.total_amt,
                                                         dec__total_giga_fee=t.giga_fee,
                                                         dec__total_trans_fee=t.trans_fee,
                                                         dec__total_net_amt=t.net_amt,
-                                                        pull__donor_list=u)
+                                                        pull__donor_list=t.email)
             t.delete()
             return helpers.api_return('DELETED', datetime.utcnow(), id, 'Transaction')
