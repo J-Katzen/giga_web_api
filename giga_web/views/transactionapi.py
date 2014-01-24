@@ -21,9 +21,14 @@ class TransactionAPI(MethodView):
             if 'total_amt' in data:
                 org = transaction.organization
                 diff = data['total_amt'] - transaction.total_amt
-                diff_giga = ((data['total_amt']*(org.giga_fee_percent/10000.0))+org.giga_fee_cents)-transaction.giga_fee
-                diff_trans = ((data['total_amt']*(org.trans_fee_percent/10000.0))+org.trans_fee_cents)-transaction.trans_fee
-                net_amt = (data['total_amt']-(diff_giga+diff_trans))-transaction.net_amt
+                if org is not None:
+                    diff_giga = ((data['total_amt']*(org.giga_fee_percent/10000.0))+org.giga_fee_cents)-transaction.giga_fee
+                    diff_trans = ((data['total_amt']*(org.trans_fee_percent/10000.0))+org.trans_fee_cents)-transaction.trans_fee
+                    net_amt = (data['total_amt']-(diff_giga+diff_trans))-transaction.net_amt
+                else:
+                    diff_giga = (data['total_amt']*0.05)-transaction.giga_fee
+                    diff_trans = ((data['total_amt']*0.029)+30)-transaction.trans_fee
+                    net_amt = (data['total_amt']-(diff_giga+diff_trans))-transaction.net_amt
                 Project.objects(id=transaction.project.id).update_one(inc__total_raised=diff,
                                                                       inc__total_giga_fee=diff_giga,
                                                                       inc__total_trans_fee=diff_trans,
