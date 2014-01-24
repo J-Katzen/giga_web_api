@@ -11,7 +11,7 @@ class Transaction(db.Document):
     email = db.EmailField(required=True)
     user = db.ReferenceField(User)
     referring_user = db.ReferenceField(User)
-    stripe_id = db.StringField()
+    stripe_id = db.StringField(required=True, unique=True)
     status = db.StringField()
     giga_fee = db.IntField(required=True)
     trans_fee = db.IntField(required=True)
