@@ -4,13 +4,18 @@ from giga_web import helpers
 from giga_web.models import Transaction, Project, User, Organization
 from datetime import datetime
 from flask.views import MethodView
-from flask import request
+from flask import request, jsonify
 
 
 class TransactionAPI(MethodView):
     def get(self, id, cid=None):
         if id is None:
-            return helpers.api_error('No Transaction ID Provided!', 404), 404
+            if cid is not None:
+                return helpers.api_error('No Transaction ID Provided!', 404), 404
+            elif 'project' in request.args:
+                p = Project.objects.get_or_404(id=request.args['project'])
+                trans = Transaction.objects(project=p)
+                return jsonify(result=trans.to_json())
         else:
             return Transaction.objects.get_or_404(id=id).select_related(1).to_json()
 
@@ -51,6 +56,7 @@ class TransactionAPI(MethodView):
                 user = User.objects.get_or_404(id=data['user'])
                 transaction.user=user
             transaction.updated = datetime.utcnow()
+            transaction.created = datetime.utcnow()
             try:
                 transaction.save()
             except ValidationError as e:

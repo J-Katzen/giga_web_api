@@ -19,6 +19,7 @@ class Transaction(db.Document):
     total_amt = db.IntField(required=True)
     comment = db.StringField()
     updated = db.DateTimeField()
+    created = db.DateTimeField()
     meta = {
     	'indexes': ['organization', 'project', 'email', 'user', 'referring_user']
     }
