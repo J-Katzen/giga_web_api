@@ -20,5 +20,5 @@ class Transaction(db.Document):
     comment = db.StringField()
     updated = db.DateTimeField()
     meta = {
-    	'indexes': ['organization', 'email', 'user', 'project', 'referring_user']
+    	'indexes': ['organization', 'project', 'email', 'user', 'referring_user']
     }
