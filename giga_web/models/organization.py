@@ -2,7 +2,7 @@
 from giga_web import db
 
 
-class StripeInfo(db.EmbeddedDocument):
+class OrgStripeInfo(db.EmbeddedDocument):
     stripe_id = db.StringField(unique=True)
     access_token = db.StringField()
     publishable_key = db.StringField()
@@ -20,7 +20,7 @@ class Organization(db.Document):
     trans_fee_percent = db.IntField(default=290)
     trans_fee_cents = db.IntField(default=30)
     claimed = db.BooleanField(default=False)
-    stripe_info = db.EmbeddedDocumentField(StripeInfo)
+    stripe_info = db.EmbeddedDocumentField(OrgStripeInfo)
     total_raised = db.IntField(default=0)
     updated = db.DateTimeField()
     meta = {

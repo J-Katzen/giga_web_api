@@ -10,6 +10,11 @@ class School(db.EmbeddedDocument):
     minor = db.StringField()
     organization = db.ReferenceField(Organization)
 
+class UserStripeInfo(db.EmbeddedDocument):
+    stripe_id = db.StringField(unique=True)
+    access_token = db.StringField()
+    publishable_key = db.StringField()
+    refresh_token = db.StringField()
 
 class User(db.Document):
     email = db.EmailField(unique=True, required=True)
@@ -22,6 +27,7 @@ class User(db.Document):
     twitter_id = db.StringField()
     avatar_url = db.URLField()
     phone = db.StringField()
+    stripe_info = db.EmbeddedDocumentField(UserStripeInfo)
     education = db.ListField(db.EmbeddedDocumentField(School))
     updated = db.DateTimeField()
     roles = db.ListField(db.StringField(), default=['ROLE_USER'])

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from mongoengine.errors import ValidationError, NotUniqueError
 from giga_web import helpers
-from giga_web.models import User
+from giga_web.models import User, UserStripeInfo
 from giga_web.tasks import new_user_mail, verified_mail
 from datetime import datetime
 from flask.views import MethodView
@@ -33,6 +33,8 @@ class UserAPI(MethodView):
         if 'password' in data:
             data['password'] = bcrypt.hashpw(
                 data['password'], bcrypt.gensalt())
+        if 'stripe_info' in data:
+            data['stripe_info'] = UserStripeInfo(**data['stripe_info'])
         if id is not None:
             user = User.objects.get_or_404(id=id)
             user = helpers.generic_update(user, data)
