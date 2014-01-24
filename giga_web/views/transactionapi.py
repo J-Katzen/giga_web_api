@@ -80,7 +80,7 @@ class TransactionAPI(MethodView):
             Project.objects(id=t.project.id).update_one(dec__total_raised=t.total_amt,
                                                         dec__total_giga_fee=t.giga_fee,
                                                         dec__total_trans_fee=t.trans_fee,
-                                                        dec__total_net_amt=t.net_amt,
+                                                        dec__total_net_raised=t.net_amt,
                                                         pull__donor_list=t.email)
             t.delete()
             return helpers.api_return('DELETED', datetime.utcnow(), id, 'Transaction')
