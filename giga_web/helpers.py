@@ -32,7 +32,10 @@ def api_error(message, errno):
 def generic_update(general_object, data):
     gen_update = {}
     for key, value in data.iteritems():
-        gen_update["set__%s" % key] = value
+        if key in ['start_date', 'end_date', 'fulfilled_date', 'published']:
+            gen_update["set__%s" % key] = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+        else:
+            gen_update["set__%s" % key] = value
     gen_update["set__updated"] = datetime.utcnow()
     try:
         general_object.update(**gen_update)
