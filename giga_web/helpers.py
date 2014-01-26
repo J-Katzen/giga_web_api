@@ -33,8 +33,7 @@ def generic_update(general_object, data):
     gen_update = {}
     for key, value in data.iteritems():
         if key in ['start_date', 'end_date', 'fulfilled_date', 'published']:
-            print value
-            #gen_update["set__%s" % key] = datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+            gen_update["set__%s" % key] = datetime.strptime(value['date'], "%Y-%m-%d %H:%M:%S")
         else:
             gen_update["set__%s" % key] = value
     gen_update["set__updated"] = datetime.utcnow()
