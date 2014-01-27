@@ -44,6 +44,11 @@ class ProjectAPI(MethodView):
             if 'name' not in data:
                 return helpers.api_error('Please enter an appropriate name for your project!', 400), 400
             user = User.objects.get_or_404(id=data['creator'])
+            for key, value in data.iteritems():
+                if key in ['start_date', 'end_date', 'fulfilled_date', 'published']:
+                    data[key] = datetime.strptime(value['date'], "%Y-%m-%d %H:%M:%S")
+                else:
+                    data[key] = value
             data['creator'] = user
             proj = Project(**data)
             proj.updated = datetime.utcnow()
