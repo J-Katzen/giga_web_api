@@ -21,6 +21,10 @@ class ProductionConfig(Config):
     REDIS = 'ec2-54-227-124-243.compute-1.amazonaws.com'
     REDIS_PORT = 6379
     REDIS_DB = 1
+    MONGODB_SETTINGS = {
+        "DB": "giga_db",
+        "HOST": "mongodb://giga:back2future@ec2-54-211-73-122.compute-1.amazonaws.com:27017,ec2-23-22-148-116.compute-1.amazonaws.com:27017,ec2-50-19-60-4.compute-1.amazonaws.com:27017/giga_db?replicaSet=Prod_RS0"
+    }
     CELERY_DEFAULT_QUEUE = 'prod'
     CELERY_QUEUES = (
         Queue('prod-donation_confirms', Exchange('prod-donation_confirms'), routing_key='prod.confirm'),
