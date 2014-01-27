@@ -65,8 +65,10 @@ class SES_Mailer(object):
                           **context)
 
     def send_info_mail(self, form_info):
+        form_info['uemail'] = form_info['email']
+        form_info.pop('email')
         self._send('info_thanks.html',
-                   [form_info['email']],
+                   [form_info['uemail']],
                    '%s - Thanks for contacting Gigawatt!' % (form_info['name']),
                     **form_info)
         return self._send('info_email.html',
