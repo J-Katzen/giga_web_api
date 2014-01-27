@@ -67,6 +67,7 @@ class TestConfig(Config):
         Queue('test-update_leaderboard', Exchange('test-update_leaderboard'), routing_key='test.leaderboard'),
         Queue('test-update_user', Exchange('test-update_user'), routing_key='test.user'),
         Queue('test-new_user_mail', Exchange('test-new_user_mail'), routing_key='test.mail.new_user'),
+        Queue('test-info_mail', Exchange('test-info_mail'), routing_key='test.mail.info_mail'),
         Queue('test-verified_mail', Exchange('test-verified_mail'), routing_key='test.mail.verified_user')
     
     )
@@ -78,6 +79,7 @@ class TestConfig(Config):
                      'giga_web.tasks.confirm.update_leaderboard_post': {'queue': 'test-update_leaderboard', 'routing_key': 'test.leaderboard'},
                      'giga_web.tasks.confirm.update_user_post': {'queue': 'test-update_user', 'routing_key': 'test.user'},
                      'giga_web.tasks.mailer.new_user_mail': {'queue': 'test-new_user_mail', 'routing_key': 'test.mail.new_user'},
+                     'giga_web.tasks.mailer.info_mail': {'queue': 'test-info_mail', 'routing_key': 'test.mail.info_mail'},
                      'giga_web.tasks.mailer.verified_mail': {'queue': 'test-verified_mail', 'routing_key': 'test.mail.verified_user'}
                      }
 
