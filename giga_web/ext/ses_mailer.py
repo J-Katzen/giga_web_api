@@ -78,7 +78,7 @@ class SES_Mailer(object):
 
     def thankyou_email(self, email, project_id):
         data = {'uemail': email, 'project_id': project_id}
-        return self._send('thankyou_email.html',
+        return self._send('thankyou_mail.html',
                           [email],
                           'Thanks for your gift to Blitz Day (your special link is included!)',
                           **data)
