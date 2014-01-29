@@ -36,6 +36,7 @@ class ProductionConfig(Config):
         Queue('prod-new_user_mail', Exchange('prod-new_user_mail'), routing_key='prod.mail.new_user'),
         Queue('prod-verified_mail', Exchange('prod-verified_mail'), routing_key='prod.mail.verified_user'),
         Queue('prod-info_mail', Exchange('prod-info_mail'), routing_key='prod.mail.info_mail'),
+        Queue('prod-thank_you_mail', Exchange('prod-thank_you_mail'), routing_key='prod.mail.thank_you_mail'),
         Queue('prod-mail_list_reg', Exchange('prod-mail_list_reg'), routing_key='prod.mail.list_reg')
     )
     CELERY_DEFAULT_EXCHANGE = 'prod'
@@ -48,6 +49,7 @@ class ProductionConfig(Config):
                      'giga_web.tasks.confirm.update_ref_user_post': {'queue': 'prod-update_ref_user', 'routing_key': 'prod.ref_user'},
                      'giga_web.tasks.mailer.new_user_mail': {'queue': 'prod-new_user_mail', 'routing_key': 'prod.mail.new_user'},
                      'giga_web.tasks.mailer.verified_mail': {'queue': 'prod-verified_mail', 'routing_key': 'prod.mail.verified_user'},
+                     'giga_web.tasks.mailer.thank_you_mail': {'queue': 'prod-thank_you_mail', 'routing_key': 'prod.mail.thank_you_mail'},
                      'giga_web.tasks.mailer.info_mail': {'queue': 'prod-info_mail', 'routing_key': 'prod.mail.info_mail'},
                      'giga_web.tasks.mailer.mail_list_reg': {'queue': 'prod-mail_list_reg', 'routing_key': 'prod.mail.list_reg'}
                     }
@@ -71,6 +73,7 @@ class TestConfig(Config):
         Queue('test-update_leaderboard', Exchange('test-update_leaderboard'), routing_key='test.leaderboard'),
         Queue('test-update_user', Exchange('test-update_user'), routing_key='test.user'),
         Queue('test-new_user_mail', Exchange('test-new_user_mail'), routing_key='test.mail.new_user'),
+        Queue('test-thank_you_mail', Exchange('test-thank_you_mail'), routing_key='test.mail.thank_you_mail'),
         Queue('test-info_mail', Exchange('test-info_mail'), routing_key='test.mail.info_mail'),
         Queue('test-verified_mail', Exchange('test-verified_mail'), routing_key='test.mail.verified_user')
     
@@ -83,6 +86,7 @@ class TestConfig(Config):
                      'giga_web.tasks.confirm.update_leaderboard_post': {'queue': 'test-update_leaderboard', 'routing_key': 'test.leaderboard'},
                      'giga_web.tasks.confirm.update_user_post': {'queue': 'test-update_user', 'routing_key': 'test.user'},
                      'giga_web.tasks.mailer.new_user_mail': {'queue': 'test-new_user_mail', 'routing_key': 'test.mail.new_user'},
+                     'giga_web.tasks.mailer.thank_you_mail': {'queue': 'test-thank_you_mail', 'routing_key': 'test.mail.thank_you_mail'},
                      'giga_web.tasks.mailer.info_mail': {'queue': 'test-info_mail', 'routing_key': 'test.mail.info_mail'},
                      'giga_web.tasks.mailer.verified_mail': {'queue': 'test-verified_mail', 'routing_key': 'test.mail.verified_user'}
                      }

@@ -2,6 +2,7 @@
 from mongoengine.errors import ValidationError, NotUniqueError
 from giga_web import helpers
 from giga_web.models import Transaction, Project, User, Organization
+from giga_web.tasks import thank_you_mail
 from datetime import datetime
 from flask.views import MethodView
 from flask import request, jsonify
@@ -70,6 +71,7 @@ class TransactionAPI(MethodView):
                         inc__total_trans_fee=data['trans_fee'],
                         inc__total_net_raised=data['net_amt'],
                         add_to_set__donor_list=data['email'])
+            thank_you_mail.delay(data['email'], str(proj.id))
         return helpers.api_return('OK', transaction.updated, transaction.id, 'Transaction')
 
     def delete(self, id):
