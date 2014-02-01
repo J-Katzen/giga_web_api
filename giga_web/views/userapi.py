@@ -15,13 +15,14 @@ class UserAPI(MethodView):
             if 'email' in request.args:
                 return User.objects.get_or_404(email=request.args['email']).select_related(2).to_json()
             elif 'facebook' in request.args:
-                return User.objects.get_or_404(facebook_id=request.args['facebook']).select_related(2).to_json()
+                return User.objects.get_or_404(facebook_id=int(request.args['facebook'])).select_related(2).to_json()
             elif 'twitter' in request.args:
-                return User.objects.get_or_404(twitter_id=request.args['twitter']).select_related(2).to_json()
+                return User.objects.get_or_404(twitter_id=int(request.args['twitter'])).select_related(2).to_json()
             # elif 'test' in request.args:
             #     users = User.objects
             #     return jsonify(result=users.to_json())
-            return helpers.api_error('No user_id provided!', 404), 404
+            else:
+                return helpers.api_error('No user_id provided!', 404), 404
         else:
             return User.objects.get_or_404(id=id).select_related(2).to_json()
 

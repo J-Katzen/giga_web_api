@@ -24,7 +24,6 @@ class User(db.Document):
     email_verified = db.BooleanField(default=False)
     phone_verified = db.BooleanField(default=False)
     facebook_id = db.StringField()
-    twitter_id = db.StringField()
     avatar_url = db.URLField()
     phone = db.StringField()
     stripe_info = db.EmbeddedDocumentField(UserStripeInfo)
