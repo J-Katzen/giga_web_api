@@ -21,7 +21,8 @@ class UserAPI(MethodView):
             # elif 'test' in request.args:
             #     users = User.objects
             #     return jsonify(result=users.to_json())
-            return helpers.api_error('No user_id provided!', 404), 404
+            else:
+                return helpers.api_error('No user_id provided!', 404), 404
         else:
             return User.objects.get_or_404(id=id).select_related(2).to_json()
 
