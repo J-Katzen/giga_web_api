@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from mongoengine.errors import ValidationError, NotUniqueError
 from giga_web import helpers
-from giga_web.models import User, UserStripeInfo
+from giga_web.models import User, UserStripeInfo, FBFriend
 from giga_web.tasks import new_user_mail, verified_mail
 from datetime import datetime
 from flask.views import MethodView
@@ -36,6 +36,11 @@ class UserAPI(MethodView):
                 data['password'], bcrypt.gensalt())
         if 'stripe_info' in data:
             data['stripe_info'] = UserStripeInfo(**data['stripe_info'])
+        if 'fb_friends' in data:
+            new_list = [];
+            for friend in data['fb_friends']:
+                new_list.append(FBFriend(**friend))
+            data['fb_friends'] = new_list
         if id is not None:
             user = User.objects.get_or_404(id=id)
             user = helpers.generic_update(user, data)

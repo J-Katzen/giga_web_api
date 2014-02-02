@@ -17,8 +17,8 @@ class UserStripeInfo(db.EmbeddedDocument):
     refresh_token = db.StringField()
 
 class FBFriend(db.EmbeddedDocument):
-    id = db.StringField()
-    name = db.StringField()
+    fb_id = db.StringField()
+    fb_name = db.StringField()
 
 class User(db.Document):
     email = db.EmailField(unique=True, required=True)
