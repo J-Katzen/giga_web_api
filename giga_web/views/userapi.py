@@ -39,7 +39,7 @@ class UserAPI(MethodView):
         if 'fb_friends' in data:
             new_list = []
             for friend in data['fb_friends']:
-                new_list.append(FBFriend(**friend))
+                new_list.append({'fb_id':friend['id'], 'fb_name':friend['name']})
             data['fb_friends'] = new_list
         if id is not None:
             user = User.objects.get_or_404(id=id)
