@@ -16,6 +16,10 @@ class UserStripeInfo(db.EmbeddedDocument):
     publishable_key = db.StringField()
     refresh_token = db.StringField()
 
+class FBFriend(db.EmbeddedDocument):
+    fb_id = db.StringField()
+    fb_name = db.StringField()
+
 class User(db.Document):
     email = db.EmailField(unique=True, required=True)
     fullname = db.StringField()
@@ -24,6 +28,7 @@ class User(db.Document):
     email_verified = db.BooleanField(default=False)
     phone_verified = db.BooleanField(default=False)
     facebook_id = db.StringField()
+    fb_friends = db.ListField(FBFriend)
     avatar_url = db.URLField()
     phone = db.StringField()
     stripe_info = db.EmbeddedDocumentField(UserStripeInfo)
