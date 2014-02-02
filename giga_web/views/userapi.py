@@ -37,7 +37,7 @@ class UserAPI(MethodView):
         if 'stripe_info' in data:
             data['stripe_info'] = UserStripeInfo(**data['stripe_info'])
         if 'fb_friends' in data:
-            new_list = [];
+            new_list = []
             for friend in data['fb_friends']:
                 new_list.append(FBFriend(**friend))
             data['fb_friends'] = new_list
