@@ -9,7 +9,7 @@ app = giga_web
 def hompage_stats():
 	all_total_raised = Project.objects.sum('total_raised')
 	all_avg = Project.objects.average('total_raised')
-	all_projs = len(Projects.objects)
+	all_projs = len(Project.objects)
 	data = {'data': {'status': 'OK', 'total_raised': all_total_raised,
 					 'avg_raised': all_avg, 'total_projs': all_projs}}
 	return json.dumps(data)
