@@ -9,3 +9,4 @@ import login
 import confirm
 import user_transactions
 import various_emails
+import stats
