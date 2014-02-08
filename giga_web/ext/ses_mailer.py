@@ -111,8 +111,7 @@ class SES_Mailer(object):
                  'donor_email': ref_user['email'],
                  'donor_name': ref_user['fullname']}
       self._send('share_winner.html',
-                 ['jacob.katzen@gigawatt.co','jake@gigawatt.co','greg@gigawatt.co',
-                 'roger@gigawatt.co','tedbrooks2@gmail.com'],
+                 ['jacob.katzen@gigawatt.co','jake@gigawatt.co','greg@gigawatt.co'],
                  'A winner based on shares has been made!',
                  **context)
       return self._send('lehigh_ref_winner.html',
