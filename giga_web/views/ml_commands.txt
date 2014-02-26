@@ -1,0 +1,17 @@
+from giga_web.models import MarketingList
+from giga_web.models import Contact
+ml = MarketingList.objects.first()
+
+ml = MarketingList.objects(id='53052d4d11e6da3af8e6ac49',contacts__email='john@doe.com')
+ml = MarketingList.objects(id='53052d4d11e6da3af8e6ac49',contacts__email='john@doe.com').update(push__contacts__S__owners='george@lucas.com')
+
+ml = MarketingList.objects(id='53052d4d11e6da3af8e6ac49',contacts__email='john@doe.com')
+ml = MarketingList.objects(id='53052d4d11e6da3af8e6ac49',contacts__owners='george@lucas.com')
+ml (returns expected result)
+
+ml = MarketingList.objects(id='53052d4d11e6da3af8e6ac49',contacts__email='john@doe.com').update(pull__contacts__S__owners='george@lucas.com')
+
+ml = MarketingList.objects(id='53052d4d11e6da3af8e6ac49',contacts__email='john@doe.com')
+ml[0].contacts[0].owners
+[u'john@doe.com']
+
