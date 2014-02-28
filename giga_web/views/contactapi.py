@@ -11,7 +11,7 @@ class ContactAPI(MethodView):
         if email is None or ml_id is None:
             return helpers.api_error('No Contact ID Provided!', 404), 404
         else:
-            return MarketingList.objects.get_or_404(id=ml_id).select_related(1).to_json()
+            return MarketingList.objects.get_or_404(id=ml_id, contacts__email=email).select_related(1).to_json()
 
     def post(self, ml_id, email=None):
         data = request.get_json(force=True, silent=False)
