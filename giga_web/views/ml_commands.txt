@@ -15,3 +15,5 @@ ml = MarketingList.objects(id='53052d4d11e6da3af8e6ac49',contacts__email='john@d
 ml[0].contacts[0].owners
 [u'john@doe.com']
 
+con = Contacts(**data)
+MarketingList.objects(id='53052d4d11e6da3af8e6ac49', contacts__email='john@doe.com').update(push__contacts=con)

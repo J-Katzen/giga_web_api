@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from mongoengine.errors import ValidationError, NotUniqueError
 from giga_web import helpers
-from giga_web.models import Project, Organization, User, Reward, Post
+from giga_web.models import Project, Organization, User, Reward, Post, MarketingList
 from flask.views import MethodView
 from flask import request, jsonify
 from datetime import datetime
@@ -60,6 +60,8 @@ class ProjectAPI(MethodView):
                 return helpers.api_error(e.message, 409), 409
             except Exception:
                 return helpers.api_error("Something went wrong! Check your request parameters!", 500), 500
+            ml = MarketingList(project=proj.id, contacts=[], pledge_conversion=0, convert_conversion=0, total_donated=0)
+            ml.save()
         return helpers.api_return("OK", proj.updated, proj.id, 'Project')
 
     def delete(self, id):
