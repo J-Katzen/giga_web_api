@@ -51,30 +51,3 @@ def info_mail(form_info, email):
     if 'error' in res:
         info_mail.delay(form_info)
     return
-
-@celery.task
-def mail_list_reg(email_list_id, email_address):
-    mailer = SES_Mailer()
-    logger.info('task mail_list_reg called: args: %s %s' % (email_list_id, email_address))
-    try:
-        with Lock('el_' + email_list_id):
-            p = helpers.generic_get('/email_lists/', email_list_id)
-            pj = p.json()
-            email_idx = helpers.get_index(pj['emails'], 'address', email_address)
-            if email_idx is None:
-                pj['emails'].append({'address': email_address})
-                try:
-                    upd_list = helpers.generic_patch('/email_lists/', pj, pj['etag'])
-                except:
-                    mail_list_reg.delay(email_list_id, email_address)
-                    return
-                if 'error' in upd_list:
-                    mail_list_reg.delay(email_list_id, email_address)
-                    return
-                res = mailer.confirm_subscription(email_address)
-                if 'error' in res:
-                    mail_list_reg.delay(email_list_id, email_address)
-                return
-    except:
-        mail_list_reg.delay(email_list_id, email_address)
-    return

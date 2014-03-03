@@ -29,22 +29,19 @@ class SES_Mailer(object):
         return True
 
     def _send(self, template, email, title, **args):
-        if self._check_limit():
-            try:
-                res = self.conn.send_email(
-                    'Gigawatt <%s>' % (current_app.config.get('GIGA_NO_REPLY')),
-                    title,
-                    render_template(template, **args),
-                    email,
-                    bcc_addresses=[],
-                    format='html')
-                return res
-            except Exception:
-                exc_type, exc_obj, exc_tb = sys.exc_info()
-                fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-                return {'error': 'could not send', 'other_1': exc_type, 'other_2': fname, 'other_3': exc_tb.tb_lineno}
-        else:
-            return {'error': 'over-rate-limit'}
+        try:
+            res = self.conn.send_email(
+                'Gigawatt <%s>' % (current_app.config.get('GIGA_NO_REPLY')),
+                title,
+                render_template(template, **args),
+                email,
+                bcc_addresses=[],
+                format='html')
+            return res
+        except:
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            return {'error': 'could not send', 'other_1': exc_type, 'other_2': fname, 'other_3': exc_tb.tb_lineno}
 
     def send_new_user(self, email, hash, id, name):
         context = {'hash': hash,
@@ -118,12 +115,3 @@ class SES_Mailer(object):
                         [ref_user['email']],
                         'Hooray! You\'re getting a Secret Prize from the #Lehigh5000 Challenge!',
                         **context)
-
-    def lehigh_num_winner(self, donation, count):
-      context = {'donor_email': donation['email'],
-                 'donor_name': donation['fullname'],
-                 'donor_count': count}
-      self._send('numeric_winner.html',
-                 ['jacob.katzen@gigawatt.co','jake@gigawatt.co','greg@gigawatt.co'],
-                 'A winner for a milestone has been made!',
-                 **context)
