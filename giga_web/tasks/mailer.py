@@ -4,17 +4,6 @@ from giga_web.ext import Lock, LockTimeout, SES_Mailer
 
 logger = celery_logger
 
-
-@celery.task
-def feedback_mail(name, email, message):
-    mailer = SES_Mailer()
-    logger.info('task feedback_mail called: args: %s %s %s' % (name, email, message))
-    res = mailer.send_feedback_mail(email, name, message)
-    if 'error' in res:
-        feedback_mail.delay(name, email, message)
-    return
-
-
 @celery.task
 def new_user_mail(email, hash, id, name=''):
     mailer = SES_Mailer()
