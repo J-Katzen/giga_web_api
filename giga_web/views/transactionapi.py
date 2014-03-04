@@ -15,7 +15,7 @@ class TransactionAPI(MethodView):
                 return helpers.api_error('No Transaction ID Provided!', 404), 404
             elif 'project' in request.args:
                 p = Project.objects.get_or_404(id=request.args['project'])
-                trans = Transaction.objects(project=p)
+                trans = Transaction.objects(project=p).order_by('-created')
                 return jsonify(result=trans.to_json())
         else:
             return Transaction.objects.get_or_404(id=id).select_related(1).to_json()
