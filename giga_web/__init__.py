@@ -6,7 +6,7 @@ from celery.utils.log import get_task_logger
 
 
 giga_web = Flask('giga_web')
-giga_web.config.from_object(ProductionConfig)
+giga_web.config.from_object(TestConfig)
 celery_logger = get_task_logger('giga_web')
 celery = make_celery(giga_web)
 db = MongoEngine(giga_web)

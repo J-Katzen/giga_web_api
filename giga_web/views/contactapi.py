@@ -22,7 +22,7 @@ class ContactAPI(MethodView):
             ml = MarketingList.objects(id=ml_id, contacts__email=email).update(set__contacts__S=contact)
         else:
             ml = MarketingList.objects(id=ml_id).update(push__contacts=contact)
-        return helpers.api_return('OK', datetime.utcnow(), ml.id, 'Contact')
+        return helpers.api_return('OK', datetime.utcnow(), ml_id, 'Contact')
 
     def delete(self, ml_id, email=None):
         email = request.args.get('email', None)
