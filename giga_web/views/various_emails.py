@@ -2,7 +2,7 @@
 
 from flask import request
 from giga_web import giga_web
-from giga_web.tasks import info_mail, mail_list_reg
+from giga_web.tasks import info_mail
 import json
 
 app = giga_web

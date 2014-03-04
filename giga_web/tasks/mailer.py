@@ -4,17 +4,6 @@ from giga_web.ext import Lock, LockTimeout, SES_Mailer
 
 logger = celery_logger
 
-
-@celery.task
-def feedback_mail(name, email, message):
-    mailer = SES_Mailer()
-    logger.info('task feedback_mail called: args: %s %s %s' % (name, email, message))
-    res = mailer.send_feedback_mail(email, name, message)
-    if 'error' in res:
-        feedback_mail.delay(name, email, message)
-    return
-
-
 @celery.task
 def new_user_mail(email, hash, id, name=''):
     mailer = SES_Mailer()
@@ -50,31 +39,4 @@ def info_mail(form_info, email):
     res = mailer.send_info_mail(form_info)
     if 'error' in res:
         info_mail.delay(form_info)
-    return
-
-@celery.task
-def mail_list_reg(email_list_id, email_address):
-    mailer = SES_Mailer()
-    logger.info('task mail_list_reg called: args: %s %s' % (email_list_id, email_address))
-    try:
-        with Lock('el_' + email_list_id):
-            p = helpers.generic_get('/email_lists/', email_list_id)
-            pj = p.json()
-            email_idx = helpers.get_index(pj['emails'], 'address', email_address)
-            if email_idx is None:
-                pj['emails'].append({'address': email_address})
-                try:
-                    upd_list = helpers.generic_patch('/email_lists/', pj, pj['etag'])
-                except:
-                    mail_list_reg.delay(email_list_id, email_address)
-                    return
-                if 'error' in upd_list:
-                    mail_list_reg.delay(email_list_id, email_address)
-                    return
-                res = mailer.confirm_subscription(email_address)
-                if 'error' in res:
-                    mail_list_reg.delay(email_list_id, email_address)
-                return
-    except:
-        mail_list_reg.delay(email_list_id, email_address)
     return
