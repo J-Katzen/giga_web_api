@@ -51,6 +51,7 @@ class ProductionConfig(Config):
                      'giga_web.tasks.mailer.thank_you_mail': {'queue': 'prod-thank_you_mail', 'routing_key': 'prod.mail.thank_you_mail'},
                      'giga_web.tasks.mailer.info_mail': {'queue': 'prod-info_mail', 'routing_key': 'prod.mail.info_mail'}
                     }
+    CELERY_DEFAULT_RATE_LIMIT = '5/s'
 
 
 class TestConfig(Config):
@@ -88,4 +89,5 @@ class TestConfig(Config):
                      'giga_web.tasks.mailer.info_mail': {'queue': 'test-info_mail', 'routing_key': 'test.mail.info_mail'},
                      'giga_web.tasks.mailer.verified_mail': {'queue': 'test-verified_mail', 'routing_key': 'test.mail.verified_user'}
                      }
+    CELERY_DEFAULT_RATE_LIMIT = '5/s'
 
