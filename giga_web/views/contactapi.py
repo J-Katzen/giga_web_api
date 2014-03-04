@@ -18,9 +18,10 @@ class ContactAPI(MethodView):
         email = request.args.get('email', None)
         data = request.get_json(force=True, silent=False)
         contact = Contact(**data)
+        ml = 0
         if email is not None:
             ml = MarketingList.objects(id=ml_id, contacts__email=email).update(set__contacts__S=contact)
-        else:
+        if ml == 0:
             ml = MarketingList.objects(id=ml_id).update(push__contacts=contact)
         return helpers.api_return('OK', datetime.utcnow(), ml_id, 'Contact')
 

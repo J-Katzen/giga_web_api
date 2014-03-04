@@ -73,7 +73,7 @@ class TransactionAPI(MethodView):
                         add_to_set__donor_list=data['email'])
             ml = MarketingList.objects(project=proj.id, contacts__email=data['email']).update(set__contacts__S__status='converted', 
                                                                                               set__contacts__S__donated=data['total_amt'])
-            if(ml > 0):
+            if ml > 0:
                 ml = MarketingList.objects(project=proj.id).update(inc__convert_conversion=1,
                                                                    inc__total_donated=data['total_amt'])
         return helpers.api_return('OK', transaction.updated, transaction.id, 'Transaction')
