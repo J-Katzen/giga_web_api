@@ -15,22 +15,23 @@ class MarketingListAPI(MethodView):
 
     def post(self, id=None):
         data = request.get_json(force=True, silent=False)
-        if id is not None:
-            ml = MarketingList.objects.get_or_404(id=id)
-            ml = helpers.generic_update(ml, data)
-        else:
-            ml = MarketingList(**data)
-            ml.updated = datetime.utcnow()
-            try:
-                ml.save()
-            except ValidationError as e:
-                return helpers.api_error(e.message, 400), 400
-            except NotUniqueError as e:
-                return helpers.api_error(e.message, 409), 409
-            except Exception:
-                return helpers.api_error("Something went wrong! Check your request parameters!", 500), 500
+        ml = MarketingList(**data)
+        ml.updated = datetime.utcnow()
+        try:
+            ml.save()
+        except ValidationError as e:
+            return helpers.api_error(e.message, 400), 400
+        except NotUniqueError as e:
+            return helpers.api_error(e.message, 409), 409
+        except Exception:
+            return helpers.api_error("Something went wrong! Check your request parameters!", 500), 500
         return helpers.api_return('OK', ml.updated, ml.id, 'MarketingList')
 
+    def put(self, id):
+        data = request.get_json(force=True, silent=False)
+        ml = MarketingList.objects.get_or_404(id=id)
+        ml = helpers.generic_update(ml, data)
+        return helpers.api_return('OK', ml.updated, ml.id, 'MarketingList')
 
     def delete(self, id):
         if id is None:

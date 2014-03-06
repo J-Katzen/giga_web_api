@@ -24,7 +24,7 @@ def register_api(view, endpoint, url, pk='id'):
 
     app.add_url_rule(url, view_func=view_func, methods=['POST', ])
     app.add_url_rule('%s<%s>' % (url, pk), view_func=view_func,
-                     methods=['GET', 'POST', 'DELETE'])
+                     methods=['GET', 'PUT', 'DELETE'])
 
 register_api(UserAPI, 'user_api', '/users/')
 register_api(PledgeAPI, 'pledge_api', '/pledges/')
@@ -32,4 +32,4 @@ register_api(ProjectAPI, 'project_api', '/projects/')
 register_api(OrganizationAPI, 'organization_api', '/organizations/')
 register_api(TransactionAPI, 'transaction_api', '/transactions/')
 register_api(MarketingListAPI, 'marketing_list_api', '/marketing_lists/')
-register_api(ContactAPI, 'contact_api', '/marketing_lists/<ml_id>/contacts/', pk='email')
+register_api(ContactAPI, 'contact_api', '/marketing_lists/<ml_id>/contacts/')

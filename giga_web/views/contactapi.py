@@ -5,18 +5,21 @@ from giga_web.models import MarketingList, Contact
 from datetime import datetime
 from flask.views import MethodView
 from flask import request
+from bson.objectid import ObjectId
 
 class ContactAPI(MethodView):
-    def get(self, ml_id, email=None):
+    def get(self, ml_id, id=None):
         email = request.args.get('email', None)
-        if ml_id is None or email is None:
-            return helpers.api_error('No Contact ID Provided!', 404), 404
-        else:
-            return MarketingList.objects.get_or_404(id=ml_id, contacts__email=email).select_related(1).to_json()
+        if ml_id is not None:
+            if id is not None:
+                return MarketingList.objects.get_or_404(id=ml_id, contacts__con_id=id).to_json()
+            if email is not None:
+                return MarketingList.objects.get_or_404(id=ml_id, contacts__email=email).to_json()
+        return helpers.api_error('No Contact ID Provided!', 404), 404
 
-    def post(self, ml_id, email=None):
-        email = request.args.get('email', None)
+    def post(self, ml_id, id=None):
         data = request.get_json(force=True, silent=False)
+        data['con_id'] = ObjectId()
         contact = Contact(**data)
         ml = 0
         if email is not None:
@@ -25,7 +28,13 @@ class ContactAPI(MethodView):
             ml = MarketingList.objects(id=ml_id).update(push__contacts=contact)
         return helpers.api_return('OK', datetime.utcnow(), ml_id, 'Contact')
 
-    def delete(self, ml_id, email=None):
+    def put(self, ml_id, id):
+        data = request.get_json(force=True, silent=False)
+        contact = Contact(**data)
+        ml = MarketingList.objects(id=ml_id, contacts__con_id=id).update(set__contacts__S=contact)
+        return helpers.api_return('OK', datetime.utcnow(), ml_id, 'Contact')
+
+    def delete(self, ml_id, id):
         email = request.args.get('email', None)
         if ml_id is None or email is None:
             return helpers.api_error('No Contact ID Provided!', 404), 404

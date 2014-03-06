@@ -5,6 +5,7 @@ from .project import Project
 STATUSES = ('not contacted', 'converted', 'pledged', 'maybe', 'no')
 
 class Contact(db.EmbeddedDocument):
+    con_id = db.ObjectIdField(required=True)
     email = db.EmailField(required=True)
     owners = db.ListField(db.EmailField())
     fullname = db.StringField()

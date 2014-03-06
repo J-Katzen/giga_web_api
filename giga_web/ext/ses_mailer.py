@@ -2,23 +2,20 @@ import boto.ses
 import sys
 import os
 from flask import current_app, render_template
-from giga_web import celery_logger
-
-logger = celery_logger
-
 
 class SES_Mailer(object):
 
-    def __init__(self):
+    def __init__(self, app=None):
         """
         SES Mailer Class
 
         """
-
-        self.conn = boto.ses.connect_to_region(
-            current_app.config.get('BOTO_REGION'),
-            aws_access_key_id=current_app.config.get('AWS_ACCESS_KEY_ID'),
-            aws_secret_access_key=current_app.config.get('AWS_SECRET_ACCESS_KEY'))
+        self.app = app
+        if app is not None:
+            self.conn = boto.ses.connect_to_region(
+                app.config['BOTO_REGION'],
+                aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
+                aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY'])
 
     def _check_limit(self):
         quota = self.conn.get_send_quota()
