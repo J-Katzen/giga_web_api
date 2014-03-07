@@ -28,7 +28,7 @@ class SES_Mailer(object):
     def _send(self, template, email, title, **args):
         try:
             res = self.conn.send_email(
-                'Gigawatt <%s>' % (current_app.config.get('GIGA_NO_REPLY')),
+                'Gigawatt <%s>' % (self.app.config['GIGA_NO_REPLY']),
                 title,
                 render_template(template, **args),
                 email,
