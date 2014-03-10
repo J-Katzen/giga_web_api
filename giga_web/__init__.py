@@ -1,6 +1,7 @@
 from flask import Flask
+from gevent import monkey; monkey.patch_all()
 from flask.ext.mongoengine import MongoEngine
-#from flask.ext.socketio import SocketIO
+from flask.ext.socketio import SocketIO
 from giga_web.ext.ses_mailer import SES_Mailer
 from make_celery import make_celery
 from settings import ProductionConfig, TestConfig
@@ -14,8 +15,8 @@ celery = make_celery(giga_web)
 mailer = SES_Mailer(giga_web)
 db = MongoEngine(giga_web)
 db.init_app(giga_web)
-#socketio = SocketIO(giga_web)
-#socketio.init_app(giga_web)
+socketio = SocketIO(giga_web)
+socketio.init_app(giga_web)
 #running celery requires this command:
 #celery worker -A giga_web.celery --autoscale=4,2 -Q test_queue
 
