@@ -1,5 +1,4 @@
 from giga_web import giga_web
-from gevent import monkey; monkey.patch_all()
 
 application = giga_web
 
