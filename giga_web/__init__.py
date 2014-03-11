@@ -1,6 +1,6 @@
 from flask import Flask
 from flask.ext.mongoengine import MongoEngine
-from flask.ext.socketio import SocketIO
+#from flask.ext.socketio import SocketIO
 from giga_web.ext.ses_mailer import SES_Mailer
 from make_celery import make_celery
 from settings import ProductionConfig, TestConfig
