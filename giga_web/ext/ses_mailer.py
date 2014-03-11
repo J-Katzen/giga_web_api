@@ -85,30 +85,30 @@ class SES_Mailer(object):
                           **context)
 
     def lehigh_initial_gift(self, donation, share):
-      context = {'share_id': share}
-      return self._send('lehigh_initial_gift.html',
+        context = {'share_id': share}
+        return self._send('lehigh_initial_gift.html',
                         [donation['email']],
                         'Thanks for your gift to the #Lehigh5000 Challenge!',
                         **context)
 
     def lehigh_update(self, ref_user, share, count):
-      context = {'share_id': share,
-                 'ref_count': count}
-      return self._send('lehigh_ref_update.html',
+        context = {'share_id': share,
+                   'ref_count': count}
+        return self._send('lehigh_ref_update.html',
                         [ref_user['email']],
                         'Someone used your #Lehigh5000 Challenge link!',
                         **context)
 
     def lehigh_winner(self, ref_user, share, count):
-      context = {'share_id': share,
-                 'ref_count': count,
-                 'donor_email': ref_user['email'],
-                 'donor_name': ref_user['fullname']}
-      self._send('share_winner.html',
-                 ['jacob.katzen@gigawatt.co','jake@gigawatt.co','greg@gigawatt.co'],
-                 'A winner based on shares has been made!',
-                 **context)
-      return self._send('lehigh_ref_winner.html',
-                        [ref_user['email']],
-                        'Hooray! You\'re getting a Secret Prize from the #Lehigh5000 Challenge!',
-                        **context)
+        context = {'share_id': share,
+                   'ref_count': count,
+                   'donor_email': ref_user['email'],
+                   'donor_name': ref_user['fullname']}
+        self._send('share_winner.html',
+                  ['jacob.katzen@gigawatt.co','jake@gigawatt.co','greg@gigawatt.co'],
+                   'A winner based on shares has been made!',
+                   **context)
+        return self._send('lehigh_ref_winner.html',
+                         [ref_user['email']],
+                          'Hooray! You\'re getting a Secret Prize from the #Lehigh5000 Challenge!',
+                          **context)
