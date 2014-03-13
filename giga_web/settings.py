@@ -18,9 +18,9 @@ class Config(object):
 
 class ProductionConfig(Config):
     DEBUG = False
-    REDIS = 'ec2-54-227-124-243.compute-1.amazonaws.com'
-    REDIS_PORT = 6379
-    REDIS_DB = 1
+    # REDIS = 'ec2-54-227-124-243.compute-1.amazonaws.com'
+    # REDIS_PORT = 6379
+    # REDIS_DB = 1
     MONGODB_SETTINGS = {
         "DB": "giga_db",
         "HOST": "mongodb://giga:back2future@ec2-54-211-73-122.compute-1.amazonaws.com:27017,ec2-23-22-148-116.compute-1.amazonaws.com:27017,ec2-50-19-60-4.compute-1.amazonaws.com:27017/giga_db?replicaSet=Prod_RS0"
@@ -56,9 +56,9 @@ class ProductionConfig(Config):
 
 class TestConfig(Config):
     DEBUG = True
-    REDIS = 'ec2-54-226-128-157.compute-1.amazonaws.com'
-    REDIS_PORT = 6379
-    REDIS_DB = 2
+    # REDIS = 'ec2-54-226-128-157.compute-1.amazonaws.com'
+    # REDIS_PORT = 6379
+    # REDIS_DB = 2
     SECRET_KEY = '\x9b\xc9M\xf8\xc5\xc3]8N9p\x00\xc8\x86\xec\x88w\x02\xd3\x0e\xb3)\xd0\x98'
     MONGODB_SETTINGS = {
         "DB": "giga_db",
