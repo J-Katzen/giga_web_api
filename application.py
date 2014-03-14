@@ -1,5 +1,4 @@
-from gevent import monkey; monkey.patch_all();
-from giga_web import giga_web, socketio
+from giga_web import giga_web
 application = giga_web
 
 if __name__ == '__main__':
