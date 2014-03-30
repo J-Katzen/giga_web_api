@@ -10,7 +10,7 @@ class MarketingListAPI(MethodView):
     def get(self, id):
         proj = request.args.get('blitz', None)
         if proj is not None:
-            return MarketingList.objects.get_or_404(project=id).select_related(1).to_json()
+            return MarketingList.objects.get_or_404(project=proj).select_related(1).to_json()
         if id is None:
             return helpers.api_error('No MarketingList ID Provided!', 404), 404
         else:
