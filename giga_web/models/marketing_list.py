@@ -11,6 +11,7 @@ class Contact(db.EmbeddedDocument):
     owners = db.ListField(db.EmailField())
     fullname = db.StringField()
     phone = db.StringField()
+    pledged = db.IntField()
     donated = db.IntField()
     updated = db.DateTimeField()
     status = db.StringField(choices=STATUSES, default='not contacted')

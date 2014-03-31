@@ -22,6 +22,7 @@ class ContactAPI(MethodView):
         data['con_id'] = ObjectId()
         contact = Contact(**data)
         email = contact.email
+        contact.updated = datetime.utcnow()
         ml = 0
         if email is not None:
             ml = MarketingList.objects(id=ml_id, contacts__email=email).update(set__contacts__S=contact)
