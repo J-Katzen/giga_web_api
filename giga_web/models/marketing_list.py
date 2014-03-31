@@ -12,7 +12,7 @@ class Contact(db.EmbeddedDocument):
     fullname = db.StringField()
     phone = db.StringField()
     donated = db.IntField()
-    updated = db.DateTimeFIeld()
+    updated = db.DateTimeField()
     status = db.StringField(choices=STATUSES, default='not contacted')
 
 class MarketingList(db.Document):
