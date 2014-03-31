@@ -27,11 +27,13 @@ class ContactAPI(MethodView):
             ml = MarketingList.objects(id=ml_id, contacts__email=email).update(set__contacts__S=contact)
         if ml == 0:
             ml = MarketingList.objects(id=ml_id).update(push__contacts=contact)
-        return helpers.api_return('OK', datetime.utcnow(), ml_id, 'Contact')
+        return helpers.api_return('OK', datetime.utcnow(), data['con_id'], 'Contact')
 
     def put(self, ml_id, id):
         data = request.get_json(force=True, silent=False)
         contact = Contact(**data)
+        contact.con_id = id
+        contact.updated = datetime.utcnow()
         ml = MarketingList.objects(id=ml_id, contacts__con_id=id).update(set__contacts__S=contact)
         return helpers.api_return('OK', datetime.utcnow(), ml_id, 'Contact')
 
