@@ -7,7 +7,7 @@ from celery.utils.log import get_task_logger
 
 
 giga_web = Flask('giga_web')
-giga_web.config.from_object(TestConfig)
+giga_web.config.from_object(ProductionConfig)
 celery_logger = get_task_logger('giga_web')
 celery = make_celery(giga_web)
 mailer = SES_Mailer(giga_web)
