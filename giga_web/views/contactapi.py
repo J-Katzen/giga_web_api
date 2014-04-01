@@ -19,7 +19,6 @@ class ContactAPI(MethodView):
 
     def post(self, ml_id, id=None):
         data = request.get_json(force=True, silent=False)
-        data['con_id'] = ObjectId()
         contact = Contact(**data)
         email = contact.email
         contact.updated = datetime.utcnow()
@@ -27,6 +26,7 @@ class ContactAPI(MethodView):
         if email is not None:
             ml = MarketingList.objects(id=ml_id, contacts__email=email).update(set__contacts__S=contact)
         if ml == 0:
+            contact.con_id = ObjectId()
             ml = MarketingList.objects(id=ml_id).update(push__contacts=contact)
         return helpers.api_return('OK', datetime.utcnow(), data['con_id'], 'Contact')
 
