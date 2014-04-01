@@ -28,7 +28,7 @@ class SES_Mailer(object):
     def _send(self, template, email, title, **args):
         try:
             res = self.conn.send_email(
-                'Gigawatt <%s>' % (current_app.config.get('GIGA_NO_REPLY')),
+                'Gigawatt <%s>' % (self.app.config['GIGA_NO_REPLY']),
                 title,
                 render_template(template, **args),
                 email,
@@ -93,7 +93,7 @@ class SES_Mailer(object):
 
     def lehigh_update(self, ref_user, share, count):
         context = {'share_id': share,
-                 'ref_count': count}
+                   'ref_count': count}
         return self._send('lehigh_ref_update.html',
                         [ref_user['email']],
                         'Someone used your #Lehigh5000 Challenge link!',
@@ -101,14 +101,14 @@ class SES_Mailer(object):
 
     def lehigh_winner(self, ref_user, share, count):
         context = {'share_id': share,
-                 'ref_count': count,
-                 'donor_email': ref_user['email'],
-                 'donor_name': ref_user['fullname']}
+                   'ref_count': count,
+                   'donor_email': ref_user['email'],
+                   'donor_name': ref_user['fullname']}
         self._send('share_winner.html',
-                 ['jacob.katzen@gigawatt.co','jake@gigawatt.co','greg@gigawatt.co'],
-                 'A winner based on shares has been made!',
-                 **context)
+                  ['jacob.katzen@gigawatt.co','jake@gigawatt.co','greg@gigawatt.co'],
+                   'A winner based on shares has been made!',
+                   **context)
         return self._send('lehigh_ref_winner.html',
-                        [ref_user['email']],
-                        'Hooray! You\'re getting a Secret Prize from the #Lehigh5000 Challenge!',
-                        **context)
+                         [ref_user['email']],
+                          'Hooray! You\'re getting a Secret Prize from the #Lehigh5000 Challenge!',
+                          **context)

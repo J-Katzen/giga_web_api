@@ -11,7 +11,7 @@ class School(db.EmbeddedDocument):
     organization = db.ReferenceField(Organization)
 
 class UserStripeInfo(db.EmbeddedDocument):
-    stripe_id = db.StringField(unique=True)
+    stripe_id = db.StringField()
     access_token = db.StringField()
     publishable_key = db.StringField()
     refresh_token = db.StringField()
