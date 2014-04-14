@@ -20,6 +20,7 @@ class Transaction(db.Document):
     comment = db.StringField()
     updated = db.DateTimeField()
     created = db.DateTimeField()
+    survey_fields = db.DictField()
     meta = {
-    	'indexes': ['organization', 'project', 'email', 'user', 'referring_user']
+    	'indexes': ['organization', ('project', '-created'), 'email', 'user', 'referring_user']
     }
