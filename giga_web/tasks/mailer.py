@@ -5,6 +5,16 @@ import time
 
 logger = celery_logger
 
+# pledge signup for the future - maconday signup for right now
+@celery.task
+def macon_signup(email):
+    logger.info('task macon_signup called: args: %s' % (email))
+    res = mailer.send_pledge(email)
+    if 'error' in res:
+        time.sleep(.2)
+        macon_signup.delay(email)
+    return
+
 @celery.task
 def new_user_mail(email, hash, id, name=''):
     logger.info('task new_user_mail called: args: %s %s %s %s' % (email, hash, name, id))
