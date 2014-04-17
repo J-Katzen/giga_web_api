@@ -23,7 +23,7 @@ class TransactionAPI(MethodView):
     def post(self, id=None):
         data = request.get_json(force=True, silent=False)
         proj = Project.objects.get_or_404(id=data['project'])
-        transaction = Transaction(email=data['email'], project=proj, total_amt=data['total_amt'],
+        transaction = Transaction(fullname=data['fullname'], email=data['email'], project=proj, total_amt=data['total_amt'],
             giga_fee=data['giga_fee'], trans_fee=data['trans_fee'], net_amt=data['net_amt'],
             stripe_id=data['stripe_id'], survey_fields=data['survey_fields'])
         if 'comment' in data:

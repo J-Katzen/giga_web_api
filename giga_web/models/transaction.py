@@ -8,6 +8,7 @@ from .project import Project
 class Transaction(db.Document):
     organization = db.ReferenceField(Organization)
     project = db.ReferenceField(Project)
+    fullname = db.StringField()
     email = db.EmailField(required=True)
     user = db.ReferenceField(User)
     referring_user = db.ReferenceField(User)
