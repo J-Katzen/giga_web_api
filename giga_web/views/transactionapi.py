@@ -2,7 +2,7 @@
 from mongoengine.errors import ValidationError, NotUniqueError
 from giga_web import helpers
 from giga_web.models import Transaction, Project, User, Organization, MarketingList
-from giga_web.tasks import thank_you_mail
+from giga_web.tasks import thank_you_mail, rmc_email
 from datetime import datetime
 from flask.views import MethodView
 from flask import request, jsonify
@@ -23,7 +23,7 @@ class TransactionAPI(MethodView):
     def post(self, id=None):
         data = request.get_json(force=True, silent=False)
         proj = Project.objects.get_or_404(id=data['project'])
-        transaction = Transaction(email=data['email'], project=proj, total_amt=data['total_amt'],
+        transaction = Transaction(fullname=data['fullname'], email=data['email'], project=proj, total_amt=data['total_amt'],
             giga_fee=data['giga_fee'], trans_fee=data['trans_fee'], net_amt=data['net_amt'],
             stripe_id=data['stripe_id'], survey_fields=data['survey_fields'])
         if 'comment' in data:
@@ -47,6 +47,7 @@ class TransactionAPI(MethodView):
             return helpers.api_error(e.message, 409), 409
         except Exception:
             return helpers.api_error("Something went wrong! Check your request parameters!", 500), 500
+        rmc_email.delay(data['email'], data['project'])
         proj.update(inc__total_raised=data['total_amt'],
                     inc__total_giga_fee=data['giga_fee'],
                     inc__total_trans_fee=data['trans_fee'],
