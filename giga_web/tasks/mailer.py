@@ -44,6 +44,16 @@ def thank_you_mail(email, project_id):
     return
 
 @celery.task
+def rmc_email(email, project_id):
+    logger.info('task rmc_email called: args: %s %s' % (email, project_id))
+    res = mailer.rmc_thanks(email, project_id)
+    if 'error' in res:
+        time.sleep(.2)
+        rmc_email.delay(email, project_id)
+    return
+
+
+@celery.task
 def info_mail(form_info, email):
     logger.info('task info_email called: args: %s' % (email))
     res = mailer.send_info_mail(form_info)

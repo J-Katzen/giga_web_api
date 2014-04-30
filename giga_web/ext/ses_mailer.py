@@ -74,7 +74,14 @@ class SES_Mailer(object):
         data = {'uemail': email, 'project_id': project_id}
         return self._send('thankyou_mail.html',
                           [email],
-                          'Thanks for your gift to Blitz Day (your special link is included!)',
+                          'Thanks for your gift to Blitz Day',
+                          **data)
+
+    def rmc_thanks(self, email, project_id):
+        data = {'uemail': email, 'project_id': project_id}
+        return self._send('rmc_thankyou.html',
+                          [email],
+                          'Thanks for your gift to Macon Day!',
                           **data)
 
     def confirm_subscription(self, email):

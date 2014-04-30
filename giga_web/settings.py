@@ -33,7 +33,8 @@ class ProductionConfig(Config):
         Queue('prod-new_user_mail', Exchange('prod-new_user_mail'), routing_key='prod.mail.new_user'),
         Queue('prod-verified_mail', Exchange('prod-verified_mail'), routing_key='prod.mail.verified_user'),
         Queue('prod-info_mail', Exchange('prod-info_mail'), routing_key='prod.mail.info_mail'),
-        Queue('prod-thank_you_mail', Exchange('prod-thank_you_mail'), routing_key='prod.mail.thank_you_mail')
+        Queue('prod-thank_you_mail', Exchange('prod-thank_you_mail'), routing_key='prod.mail.thank_you_mail'),
+        Queue('prod-rmc_mail', Exchange('prod-rmc_mail', routing_key='prod.mail.rmc_mail'))
     )
     CELERY_DEFAULT_EXCHANGE = 'prod'
     CELERY_DEFAULT_ROUTING_KEY = 'prod.default'
@@ -46,7 +47,8 @@ class ProductionConfig(Config):
                      'giga_web.tasks.mailer.new_user_mail': {'queue': 'prod-new_user_mail', 'routing_key': 'prod.mail.new_user'},
                      'giga_web.tasks.mailer.verified_mail': {'queue': 'prod-verified_mail', 'routing_key': 'prod.mail.verified_user'},
                      'giga_web.tasks.mailer.thank_you_mail': {'queue': 'prod-thank_you_mail', 'routing_key': 'prod.mail.thank_you_mail'},
-                     'giga_web.tasks.mailer.info_mail': {'queue': 'prod-info_mail', 'routing_key': 'prod.mail.info_mail'}
+                     'giga_web.tasks.mailer.info_mail': {'queue': 'prod-info_mail', 'routing_key': 'prod.mail.info_mail'},
+                     'giga_web.tasks.mailer.rmc_email': {'queue': 'prod-rmc_mail', 'routing_key': 'prod.mail.rmc_mail'}
                     }
     CELERY_DEFAULT_RATE_LIMIT = '5/s'
 
@@ -68,7 +70,8 @@ class TestConfig(Config):
         Queue('test-new_user_mail', Exchange('test-new_user_mail'), routing_key='test.mail.new_user'),
         Queue('test-thank_you_mail', Exchange('test-thank_you_mail'), routing_key='test.mail.thank_you_mail'),
         Queue('test-info_mail', Exchange('test-info_mail'), routing_key='test.mail.info_mail'),
-        Queue('test-verified_mail', Exchange('test-verified_mail'), routing_key='test.mail.verified_user')
+        Queue('test-verified_mail', Exchange('test-verified_mail'), routing_key='test.mail.verified_user'),
+        Queue('test-rmc_mail', Exchange('test-rmc_mail', routing_key='test.mail.rmc_mail'))
     
     )
     CELERY_DEFAULT_EXCHANGE = 'test'
@@ -81,7 +84,8 @@ class TestConfig(Config):
                      'giga_web.tasks.mailer.new_user_mail': {'queue': 'test-new_user_mail', 'routing_key': 'test.mail.new_user'},
                      'giga_web.tasks.mailer.thank_you_mail': {'queue': 'test-thank_you_mail', 'routing_key': 'test.mail.thank_you_mail'},
                      'giga_web.tasks.mailer.info_mail': {'queue': 'test-info_mail', 'routing_key': 'test.mail.info_mail'},
-                     'giga_web.tasks.mailer.verified_mail': {'queue': 'test-verified_mail', 'routing_key': 'test.mail.verified_user'}
+                     'giga_web.tasks.mailer.verified_mail': {'queue': 'test-verified_mail', 'routing_key': 'test.mail.verified_user'},
+                     'giga_web.tasks.mailer.rmc_email': {'queue': 'test-rmc_mail', 'routing_key': 'test.mail.rmc_mail'}
                      }
     CELERY_DEFAULT_RATE_LIMIT = '5/s'
 
