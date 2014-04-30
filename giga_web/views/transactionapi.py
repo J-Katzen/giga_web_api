@@ -47,7 +47,8 @@ class TransactionAPI(MethodView):
             return helpers.api_error(e.message, 409), 409
         except Exception:
             return helpers.api_error("Something went wrong! Check your request parameters!", 500), 500
-        rmc_email.delay(data['email'], data['project'])
+        if data['project'] == '5341f31c21391d0d902b29f1' or data['project'] == '5341f12d242f872d43ffae59':
+            rmc_email.delay(data['email'], data['project'])
         proj.update(inc__total_raised=data['total_amt'],
                     inc__total_giga_fee=data['giga_fee'],
                     inc__total_trans_fee=data['trans_fee'],
