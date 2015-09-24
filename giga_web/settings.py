@@ -5,16 +5,16 @@ import urllib
 class Config(object):
     DEBUG = False
     TESTING = False
-    BROKER_URL = 'sqs://%s:%s@' % (urllib.quote('AKIAJXUZNWCYS2DR7FNQ', safe=''),
-                                   urllib.quote('cS7aurMhMikyk9/8y43UPQSnne5Zva+JuF1xPqgL', safe=''))
+    BROKER_URL = 'sqs://%s:%s@' % (urllib.quote('', safe=''),
+                                   urllib.quote('', safe=''))
     CELERY_IMPORTS = ('giga_web.tasks')
     CELERY_ENABLE_UTC = True
     CELERY_TIMEZONE = 'America/New_York'
     BOTO_REGION = 'us-east-1'
     GIGA_NO_REPLY = 'no-reply@gigawatt.co'
     GIGA_VERIFY_HASH_SALT = 'BjunHqx3TnyscBxVfyW0wA=='
-    AWS_ACCESS_KEY_ID = 'AKIAIK3ONM7NVRHJXINA'
-    AWS_SECRET_ACCESS_KEY = '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'
+    AWS_ACCESS_KEY_ID = ''
+    AWS_SECRET_ACCESS_KEY = ''
 
 class ProductionConfig(Config):
     DEBUG = False
